@@ -12,7 +12,7 @@
 
 - `<atom>`に特殊文字の列は認めない。
 - 後述のSystem Operatorsは`<operator>`として区別する。
-- `<number>`に32-bit整数を用いる。実数には対応していない。
+- `<number>`に32-bit整数を用いる。実数には対応しない。
 
 ## Syntax
 
@@ -26,7 +26,7 @@
 <compound term 1> ::= <compound term 2> (";" <compound term 2>)*
 <compound term 2> ::= <term> ("," <term>)*
 <term>            ::= "(" <term> ")" | <atom> | <number> | <variable> | <structure> | <list>
-<structure>       ::= <functor> "(" <term> ("," <term>)* ")" | <term> <operator> <term>
+<structure>       ::= <functor> "(" <term> ("," <term>)* ")" | <term> <operator> <term> | <operator> <term>
 <functor>         ::= <atom>
 <list>            ::= "[" [<term> ("," <term>)*] ["|" <list>] "]"
 ```
