@@ -1,3 +1,3 @@
 # D-Prolog (WIP)
 
-A Prolog interpreter written in Dlang.
+A simple Prolog implementation in Dlang.
