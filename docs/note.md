@@ -10,7 +10,8 @@
 <operator> ::= (省略)
 ```
 
-D-Prologでは`<atom>`に特殊文字の列は認めない。
+- D-Prologでは`<atom>`に特殊文字の列は認めない。
+- D-Prologでは`<number>`に32-bit整数を用いる。実数には対応していない。
 
 ## Syntax
 
