@@ -3,5 +3,5 @@
 	"authors": [
 		"Ark"
 	],
-	"description": "A Prolog interpreter written in Dlang."
+	"description": "A simple Prolog implementation in Dlang."
 }
