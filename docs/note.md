@@ -5,13 +5,13 @@
 ```
 <token>    ::= <atom> | <number> | <variable> | <operator>
 <atom>     ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` )
-<number>   ::= (省略)
+<number>   ::= regex( 0 | [1-9][0-9]* )
 <variable> ::= regex( [_A-Z][_0-9a-zA-Z]* )
 <operator> ::= (省略)
 ```
 
-- D-Prologでは`<atom>`に特殊文字の列は認めない。
-- D-Prologでは`<number>`に32-bit整数を用いる。実数には対応していない。
+- `<atom>`に特殊文字の列は認めない。
+- `<number>`に32-bit整数を用いる。実数には対応していない。
 
 ## Syntax
 
