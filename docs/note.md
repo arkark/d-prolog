@@ -11,6 +11,7 @@
 ```
 
 - `<atom>`に特殊文字の列は認めない。
+- 後述のSystem Operatorsは`<operator>`として区別する。
 - `<number>`に32-bit整数を用いる。実数には対応していない。
 
 ## Syntax
@@ -34,25 +35,13 @@
 
 | Precedence | Type | Name |
 | ---------: | :--: | :--- |
-| 1200 | xfx | `-->`, `:-` |
-| 1200 | fx | `:-`, `?-` |
-| 1150 | fx | `dynamic`, `discontiguous`, `initialization`, `meta_predicate`, `module_transparent`, `multifile`, `public`, `thread_local`, `thread_initialization`, `volatile` |
-| 1100 | xfy | `;`, ` | ` |
-| 1050 | xfy | `->`, `*->` |
+| 1200 | xfx | `:-` |
+| 1200 | fx | `?-` |
+| 1100 | xfy | `;`, `|` |
 | 1000 | xfy | `,` |
-| 990 | xfx | `:=` |
-| 900 | fy | `\+` |
-| 700 | xfx | `<`, `=`, `=..`, `=@=`, `\=@=`, `=:=`, `=<`, `==`, `=\=`, `>`, `>=`, `@<`, `@=<`, `@>`, `@>=`, `\=`, `\==`, `as`, `is`, `>:<`, `:<` |
-| 600 | xfy | `:` |
-| 500 | yfx | `+`, `-`, `/\`, `\/`, `xor` |
-| 500 | fx | `?` |
-| 400 | yfx | `*`, `/`, `//`, `div`, `rdiv`, `<<`, `>>`, `mod`, `rem` |
-| 200 | xfx | `**` |
-| 200 | xfy | `^` |
-| 200 | fy | `+`, `-`, `\` |
-| 100 | yfx | `.` |
-| 1 | fx | `$` |
-
-すべては実装しない。
+| 700 | xfx | `=`, `==`, `<`, `=<`, `>`, `>=`, `=:=`, `=\\=`, `is` |
+| 500 | yfx | `+`, `-` |
+| 400 | yfx | `*`, `div`, `mod` |
+| 200 | fy | `+`, `-` |
 
 ref: [4.25 Operators | SWI Prolog](http://www.swi-prolog.org/pldoc/man?section=operators)
