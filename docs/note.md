@@ -3,10 +3,11 @@
 ## Tokens
 
 ```
-<token>       ::= <atom> | <number> | <variable> | <left paren> | <right paren> | <period>
+<token>       ::= <atom> | <number> | <variable> | <operator> | <left paren> | <right paren> | <period>
 <atom>        ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` ) | (<special>)+
 <number>      ::= regex( 0 | [1-9][0-9]* )
 <variable>    ::= regex( [_A-Z][_0-9a-zA-Z]* )
+<operator>    ::= ( System Operators を参照 )
 <left paren>  ::= "("
 <right paren> ::= ")"
 <period>      ::= "."
@@ -14,6 +15,7 @@
 ```
 
 - `<number>`に32-bit整数を用いる。実数には対応しない。
+- `<atom>`より`<operator>`を優先する。
 
 ## Syntax
 
