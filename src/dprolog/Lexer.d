@@ -47,7 +47,10 @@ public:
 private:
 
     void clear() {
+        _isTokenized = false;
         _resultTokens.clear;
+        _hasError = false;
+        _errorMessage = "";
     }
 
     void tokenize(immutable string src) {
@@ -382,7 +385,10 @@ private:
         writeln(__FILE__, ": test errorMessage");
 
         auto lexer = new Lexer;
+        assert(!lexer.hasError);
         lexer.run("po][po");
         assert(lexer.hasError);
+        lexer.clear;
+        assert(!lexer.hasError);
     }
 }
