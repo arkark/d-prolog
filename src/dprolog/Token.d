@@ -1,27 +1,14 @@
 module dprolog.Token;
 
-import std.conv;
-import std.algorithm;
-import std.regex;
-import std.typecons;
+import std.conv,
+       std.algorithm,
+       std.typecons;
 
 /*
 
 Token -> Atom | Number | Variable | Operator | LParen | RParen | Period
 
 */
-
-unittest {
-    /*import std.stdio;
-    writeln("test regex");
-
-    Regex!char re = regex(`[a-z]+`);
-    "a".matchFirst(re).writeln;
-    "aaaa".matchFirst(re).writeln;
-    "_a_aosu".matchFirst(re).writeln;
-    "___".matchFirst(re).writeln;
-    "_a_aosu".splitter!(Yes.keepSeparators)(re).writeln;*/
-}
 
 abstract class Token {
 
