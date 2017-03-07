@@ -1,7 +1,5 @@
 {
 	"name": "d_prolog",
-	"authors": [
-		"Ark"
-	],
+	"authors": ["Ark"],
 	"description": "A simple Prolog implementation in Dlang."
 }
