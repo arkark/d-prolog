@@ -193,7 +193,7 @@ private:
 
     static TokenGen EmptyGen = TokenGen(
         (dchar head)     => head.isWhite,
-        (dstring lexeme) => lexeme.length==1 && lexeme.front.to!dchar.isWhite,
+        (dstring lexeme) => lexeme.length==1 && lexeme.front.isWhite,
         (Node node)      => null
     );
 
