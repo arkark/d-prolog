@@ -3,15 +3,17 @@
 ## Tokens
 
 ```
-<token>       ::= <atom> | <number> | <variable> | <operator> | <left paren> | <right paren> | <period>
-<atom>        ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` ) | (<special>)+
-<number>      ::= regex( 0 | [1-9][0-9]* )
-<variable>    ::= regex( [_A-Z][_0-9a-zA-Z]* )
-<operator>    ::= ( System Operators を参照 )
-<left paren>  ::= "("
-<right paren> ::= ")"
-<period>      ::= "."
-<special>     ::= ":" | "?" | "&" | ";" | "," | "|" | "=" | "<" | ">" | "+" | "-" | "*" | "/" | "\"
+<token>         ::= <atom> | <number> | <variable> | <operator> | <left paren> | <right paren> | <left bracket> | <right bracket> | <period>
+<atom>          ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` ) | (<special>)+
+<number>        ::= regex( 0 | [1-9][0-9]* )
+<variable>      ::= regex( [_A-Z][_0-9a-zA-Z]* )
+<operator>      ::= ( System Operators を参照 )
+<left paren>    ::= "("
+<right paren>   ::= ")"
+<left bracket>  ::= "["
+<right bracket> ::= "]"
+<period>        ::= "."
+<special>       ::= ":" | "?" | "&" | ";" | "," | "|" | "=" | "<" | ">" | "+" | "-" | "*" | "/" | "\"
 ```
 
 - `<number>`に32-bit整数を用いる。実数には対応しない。
@@ -29,9 +31,9 @@
 <compound term 1> ::= <compound term 2> (";" <compound term 2>)*
 <compound term 2> ::= <term> ("," <term>)*
 <term>            ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
-<structure>       ::= <functor> "(" <term> ("," <term>)* ")" | <term> <operator> <term> | <operator> <term>
+<structure>       ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term>
 <functor>         ::= <atom>
-<list>            ::= "[" [<term> ("," <term>)*] ["|" <list>] "]"
+<list>            ::= <left bracket> [<term> ("," <term>)*] ["|" <list>] <right bracket>
 ```
 
 ## System Operators

@@ -24,6 +24,10 @@ private:
     dstring _errorMessage;
 
 public:
+    this() {
+        clear();
+    }
+
     void run(immutable dstring src) {
         clear();
         tokenize(src);
@@ -75,6 +79,8 @@ private:
             VariableGen,
             LParenGen,
             RParenGen,
+            LBracketGen,
+            RBracketGen,
             PeriodGen,
             EmptyGen
         ].find!(gen => gen.varidateHead(c));
@@ -185,6 +191,18 @@ private:
         (Node node)      => new RParen(node.value, node.line, node.column)
     );
 
+    static TokenGen LBracketGen = TokenGen(
+        (dchar head)     => head=='[',
+        (dstring lexeme) => lexeme=="[",
+        (Node node)      => new LBracket(node.value, node.line, node.column)
+    );
+
+    static TokenGen RBracketGen = TokenGen(
+        (dchar head)     => head==']',
+        (dstring lexeme) => lexeme=="]",
+        (Node node)      => new RBracket(node.value, node.line, node.column)
+    );
+
     static TokenGen PeriodGen = TokenGen(
         (dchar head)     => head=='.',
         (dstring lexeme) => lexeme==".",
@@ -273,6 +291,12 @@ private:
         // RParenGen
         assert(RParenGen.varidateHead(')'));
         assert(RParenGen.varidate(")"));
+        // LBracketGen
+        assert(LBracketGen.varidateHead('['));
+        assert(LBracketGen.varidate("["));
+        // RBracketGen
+        assert(RBracketGen.varidateHead(']'));
+        assert(RBracketGen.varidate("]"));
         // PeriodGen
         assert(PeriodGen.varidateHead('.'));
         assert(PeriodGen.varidate("."));
@@ -403,7 +427,7 @@ private:
 
         auto lexer = new Lexer;
         assert(!lexer.hasError);
-        lexer.run("[po]");
+        lexer.run("{po}");
         assert(lexer.hasError);
         lexer.run("hoge(X).");
         assert(!lexer.hasError);

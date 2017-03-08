@@ -6,7 +6,7 @@ import std.conv,
 
 /*
 
-Token -> Atom | Number | Variable | Operator | LParen | RParen | Period
+Token -> Atom | Number | Variable | Operator | LParen | RParen | LBracket | RBracket | Period
 
 */
 
@@ -156,6 +156,38 @@ class RParen : Token {
 
     override string toString() {
         return "RParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    }
+
+}
+
+class LBracket : Token {
+
+    this(dstring lexeme, int line, int column) {
+        super(lexeme, line, column);
+    }
+
+    override bool opEquals(Object o) {
+        return true;
+    }
+
+    override string toString() {
+        return "LBracket(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    }
+
+}
+
+class RBracket : Token {
+
+    this(dstring lexeme, int line, int column) {
+        super(lexeme, line, column);
+    }
+
+    override bool opEquals(Object o) {
+        return true;
+    }
+
+    override string toString() {
+        return "RBracket(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
 }
