@@ -10,17 +10,18 @@ import std.stdio,
        std.array,
        std.algorithm,
        std.regex,
+       std.functional,
        std.concurrency,
        std.container : DList;
 
 class Lexer {
 
 private:
-    bool _isTokenized = false;
-    auto _resultTokens = DList!Token();
+    bool _isTokenized;
+    DList!Token _resultTokens;
 
-    bool _hasError = false;
-    string _errorMessage = "";
+    bool _hasError;
+    string _errorMessage;
 
 public:
     void run(immutable string src) {
@@ -54,7 +55,6 @@ private:
     }
 
     void tokenize(immutable string src) {
-        _resultTokens.clear;
         auto lookaheader = getLookaheader(src);
         while(!lookaheader.empty) {
             TokenGen tokenGen = getTokenGen(lookaheader);
@@ -97,11 +97,11 @@ private:
             while(!lookaheader.empty) {
                 Node tmpNode = nowNode ~ lookaheader.front;
                 if (tokenGen.varidate(tmpNode.value)) {
-                    nowNode = tmpNode;
                     existToken = true;
                 } else if (existToken) {
                     break;
                 }
+                nowNode = tmpNode;
                 lookaheader.popFront;
             }
         }
@@ -113,8 +113,12 @@ private:
     }
 
     void setErrorMessage(Node node) {
+        int num = 20;
+        string str = node.value.pipe!(
+            lexeme => lexeme.length>num ? lexeme.take(num).to!string ~ " ... " : lexeme
+        );
+        _errorMessage = "TokenError(" ~node.line.to!string~ ", " ~node.column.to!string~ "): cannot tokenize \"" ~str~ "\".";
         _hasError = true;
-        _errorMessage = "TokenError(" ~node.line.to!string~ ", " ~node.column.to!string~ "): cannot tokenize \"" ~node.value~ "\".";
     }
 
     Generator!Node getLookaheader(immutable string src) {
@@ -247,7 +251,9 @@ private:
         assert(!AtomGen.varidateHead('A'));
         assert(AtomGen.varidate("abc"));
         assert(AtomGen.varidate("' po _'"));
+        assert(AtomGen.varidate("''"));
         assert(AtomGen.varidate("|+|"));
+        assert(!AtomGen.varidate("'"));
         assert(!AtomGen.varidate("' po _"));
         // NumberGen
         assert(NumberGen.varidateHead('0'));
@@ -386,9 +392,12 @@ private:
 
         auto lexer = new Lexer;
         assert(!lexer.hasError);
-        lexer.run("po][po");
+        lexer.run("[po]");
         assert(lexer.hasError);
-        lexer.clear;
+        lexer.run("hoge(X).");
         assert(!lexer.hasError);
+        lexer.run("'aaaaaaaaaaaaaaaaabbbbbbbbbbbbbbb");
+        assert(lexer.hasError);
+        // lexer.errorMessage.writeln;
     }
 }
