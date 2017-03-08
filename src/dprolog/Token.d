@@ -12,12 +12,12 @@ Token -> Atom | Number | Variable | Operator | LParen | RParen | Period
 
 abstract class Token {
 
-    static immutable string specialCharacters = ":?&;,|=<>+-*/\\";
+    static immutable dstring specialCharacters = ":?&;,|=<>+-*/\\";
 
     immutable int line;
     immutable int column;
-    protected immutable string lexeme;
-    this(string lexeme, int line, int column) {
+    protected immutable dstring lexeme;
+    this(dstring lexeme, int line, int column) {
         this.lexeme = lexeme;
         this.line = line;
         this.column = column;
@@ -27,12 +27,12 @@ abstract class Token {
 
 class Atom : Token {
 
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
     }
 
     override string toString() {
-        return "Atom(lexeme: \"" ~ lexeme ~ "\")";
+        return "Atom(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
 }
@@ -40,7 +40,7 @@ class Atom : Token {
 class Number : Token {
 
     private immutable int value;
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
         this.value = lexeme.to!int;
     }
@@ -63,12 +63,12 @@ class Number : Token {
 
 class Variable : Token {
 
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
     }
 
     override string toString() {
-        return "Variable(\"" ~ lexeme ~ "\")";
+        return "Variable(\"" ~ lexeme.to!string ~ "\")";
     }
 }
 
@@ -76,17 +76,17 @@ class Operator : Token {
 
     private immutable int precedence;
     private immutable string type;
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
         this.precedence = -1;
         this.type = "_";
     }
 
     override string toString() {
-        return "Operator(lexeme: \"" ~ lexeme ~ "\", precedence: " ~precedence.to!string~ ", type: " ~type~  ")";
+        return "Operator(lexeme: \"" ~ lexeme.to!string ~ "\", precedence: " ~precedence.to!string~ ", type: " ~type~  ")";
     }
 
-    private this(string lexeme, int precedence, string type) in {
+    private this(dstring lexeme, int precedence, string type) in {
         assert(isLegalType(type));
     } body {
         super(lexeme, -1, -1);
@@ -98,7 +98,7 @@ class Operator : Token {
         return type=="xfx" || type=="xfy" || type=="yfx" || type=="fx" || type=="fy" || type=="xf" || type=="yf";
     }
 
-    static bool existOp(string lexeme) {
+    static bool existOp(dstring lexeme) {
         return opList.canFind!(op => op.lexeme==lexeme);
     }
 
@@ -130,7 +130,7 @@ class Operator : Token {
 
 class LParen : Token {
 
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
     }
 
@@ -139,14 +139,14 @@ class LParen : Token {
     }
 
     override string toString() {
-        return "LParen(lexeme: \"" ~ lexeme ~ "\")";
+        return "LParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
 }
 
 class RParen : Token {
 
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
     }
 
@@ -155,14 +155,14 @@ class RParen : Token {
     }
 
     override string toString() {
-        return "RParen(lexeme: \"" ~ lexeme ~ "\")";
+        return "RParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
 }
 
 class Period : Token {
 
-    this(string lexeme, int line, int column) {
+    this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
     }
 
@@ -171,7 +171,7 @@ class Period : Token {
     }
 
     override string toString() {
-        return "Period(lexeme: \"" ~ lexeme ~ "\")";
+        return "Period(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
 }

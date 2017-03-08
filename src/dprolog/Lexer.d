@@ -21,10 +21,10 @@ private:
     DList!Token _resultTokens;
 
     bool _hasError;
-    string _errorMessage;
+    dstring _errorMessage;
 
 public:
-    void run(immutable string src) {
+    void run(immutable dstring src) {
         clear();
         tokenize(src);
     }
@@ -39,7 +39,7 @@ public:
         return _hasError;
     }
 
-    string errorMessage() @property in {
+    dstring errorMessage() @property in {
         assert(hasError);
     } body {
         return _errorMessage;
@@ -54,7 +54,7 @@ private:
         _errorMessage = "";
     }
 
-    void tokenize(immutable string src) {
+    void tokenize(immutable dstring src) {
         auto lookaheader = getLookaheader(src);
         while(!lookaheader.empty) {
             TokenGen tokenGen = getTokenGen(lookaheader);
@@ -68,7 +68,7 @@ private:
 
     TokenGen getTokenGen(Generator!Node lookaheader) {
         Node node = lookaheader.front;
-        char c = node.value.to!char;
+        dchar c = node.value.to!dchar;
         auto genR = [
             AtomGen,
             NumberGen,
@@ -92,7 +92,7 @@ private:
     } body {
         Node nowNode = lookaheader.front;
         bool existToken = tokenGen.varidate(nowNode.value);
-        if (tokenGen.varidateHead(nowNode.value.to!char)) {
+        if (tokenGen.varidateHead(nowNode.value.to!dchar)) {
             nowNode = Node("", int.max, int.max);
             while(!lookaheader.empty) {
                 Node tmpNode = nowNode ~ lookaheader.front;
@@ -114,18 +114,18 @@ private:
 
     void setErrorMessage(Node node) {
         int num = 20;
-        string str = node.value.pipe!(
-            lexeme => lexeme.length>num ? lexeme.take(num).to!string ~ " ... " : lexeme
+        dstring str = node.value.pipe!(
+            lexeme => lexeme.length>num ? lexeme.take(num).to!dstring ~ " ... " : lexeme
         );
-        _errorMessage = "TokenError(" ~node.line.to!string~ ", " ~node.column.to!string~ "): cannot tokenize \"" ~str~ "\".";
+        _errorMessage = "TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".";
         _hasError = true;
     }
 
-    Generator!Node getLookaheader(immutable string src) {
+    Generator!Node getLookaheader(immutable dstring src) {
         return new Generator!Node({
             foreach(line, str; src.splitLines) {
                 foreach(column, ch; str) {
-                    Node(ch.to!string, line+1, column+1).yield;
+                    Node(ch.to!dstring, line+1, column+1).yield;
                 }
             }
         });
@@ -138,73 +138,73 @@ private:
     }
 
     struct TokenGen {
-        immutable bool function(char) varidateHead;
-        immutable bool function(string) varidate;
+        immutable bool function(dchar) varidateHead;
+        immutable bool function(dstring) varidate;
         immutable Token function(Node) getToken;
     }
 
     static TokenGen AtomGen = TokenGen(
-        (char head)     => head.isLower || head=='\'' || Token.specialCharacters.canFind(head),
-        (string lexeme) {
-            static auto re = regex(r"([a-z][_0-9a-zA-Z]*)|('[^']*')|([" ~Token.specialCharacters.escaper.to!string~ r"]+)");
+        (dchar head)     => head.isLower || head=='\'' || Token.specialCharacters.canFind(head),
+        (dstring lexeme) {
+            static auto re = regex(r"([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+)"d);
             auto res = lexeme.matchFirst(re);
             return !res.empty && res.front==lexeme;
         },
-        (Node node)     => Operator.existOp(node.value) ? new Operator(node.value, node.line, node.column) : new Atom(node.value, node.line, node.column)
+        (Node node)      => Operator.existOp(node.value) ? new Operator(node.value, node.line, node.column) : new Atom(node.value, node.line, node.column)
     );
 
     static TokenGen NumberGen = TokenGen(
-        (char head)     => head.isDigit,
-        (string lexeme) {
-            static auto re = regex(r"0|[1-9][0-9]*");
+        (dchar head)     => head.isDigit,
+        (dstring lexeme) {
+            static auto re = regex(r"0|[1-9][0-9]*"d);
             auto res = lexeme.matchFirst(re);
             return !res.empty && res.front==lexeme;
         },
-        (Node node)     => new Number(node.value, node.line, node.column)
+        (Node node)      => new Number(node.value, node.line, node.column)
     );
 
     static TokenGen VariableGen = TokenGen(
-        (char head)     => head.isUpper || head=='_',
-        (string lexeme) {
-            static auto re = regex(r"[_A-Z][_0-9a-zA-Z]*");
+        (dchar head)     => head.isUpper || head=='_',
+        (dstring lexeme) {
+            static auto re = regex(r"[_A-Z][_0-9a-zA-Z]*"d);
             auto res = lexeme.matchFirst(re);
             return !res.empty && res.front==lexeme;
         },
-        (Node node)     => new Variable(node.value, node.line, node.column)
+        (Node node)      => new Variable(node.value, node.line, node.column)
     );
 
     static TokenGen LParenGen = TokenGen(
-        (char head)     => head=='(',
-        (string lexeme) => lexeme=="(",
-        (Node node)     => new LParen(node.value, node.line, node.column)
+        (dchar head)     => head=='(',
+        (dstring lexeme) => lexeme=="(",
+        (Node node)      => new LParen(node.value, node.line, node.column)
     );
 
     static TokenGen RParenGen = TokenGen(
-        (char head)     => head==')',
-        (string lexeme) => lexeme==")",
-        (Node node)     => new RParen(node.value, node.line, node.column)
+        (dchar head)     => head==')',
+        (dstring lexeme) => lexeme==")",
+        (Node node)      => new RParen(node.value, node.line, node.column)
     );
 
     static TokenGen PeriodGen = TokenGen(
-        (char head)     => head=='.',
-        (string lexeme) => lexeme==".",
-        (Node node)     => new Period(node.value, node.line, node.column)
+        (dchar head)     => head=='.',
+        (dstring lexeme) => lexeme==".",
+        (Node node)      => new Period(node.value, node.line, node.column)
     );
 
     static TokenGen EmptyGen = TokenGen(
-        (char head)     => head.isWhite,
-        (string lexeme) => lexeme.length==1 && lexeme.front.to!char.isWhite,
-        (Node node)     => null
+        (dchar head)     => head.isWhite,
+        (dstring lexeme) => lexeme.length==1 && lexeme.front.to!dchar.isWhite,
+        (Node node)      => null
     );
 
     static TokenGen ErrorGen = TokenGen(
-        (char head)     => false,
-        (string lexeme) => false,
-        (Node node)     => null
+        (dchar head)     => false,
+        (dstring lexeme) => false,
+        (Node node)      => null
     );
 
     struct Node {
-        string value;
+        dstring value;
         int line;
         int column;
 
@@ -219,7 +219,7 @@ private:
         }
 
         string toString() {
-            return "Node(value: \"" ~value~ "\", line: " ~line.to!string~ ", column: " ~column.to!string~ ")";
+            return "Node(value: \"" ~value.to!string~ "\", line: " ~line.to!string~ ", column: " ~column.to!string~ ")";
         }
 
     }
@@ -373,9 +373,11 @@ private:
         writeln(__FILE__, ": test tokenize");
 
         auto lexer = new Lexer;
+        Token[] tokens;
+
         lexer.run("hoge(10, X).");
         assert(!lexer.hasError);
-        Token[] tokens = lexer.get();
+        tokens = lexer.get();
         assert(tokens.length == 7);
         assert(cast(Atom)     tokens[0]);
         assert(cast(LParen)   tokens[1]);
@@ -384,6 +386,15 @@ private:
         assert(cast(Variable) tokens[4]);
         assert(cast(RParen)   tokens[5]);
         assert(cast(Period)   tokens[6]);
+
+        lexer.run("('poあ').");
+        assert(!lexer.hasError);
+        tokens = lexer.get();
+        assert(tokens.length == 4);
+        assert(cast(LParen) tokens[0]);
+        assert(cast(Atom)   tokens[1]);
+        assert(cast(RParen) tokens[2]);
+        assert(cast(Period) tokens[3]);
     }
 
     // test errorMessage
@@ -396,6 +407,8 @@ private:
         assert(lexer.hasError);
         lexer.run("hoge(X).");
         assert(!lexer.hasError);
+        lexer.run("hoge(hogeあ)");
+        assert(lexer.hasError);
         lexer.run("'aaaaaaaaaaaaaaaaabbbbbbbbbbbbbbb");
         assert(lexer.hasError);
         // lexer.errorMessage.writeln;
