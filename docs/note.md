@@ -27,9 +27,7 @@
 <fact>            ::= <term> <period>
 <rule>            ::= <term> ":-" <compound term> <period>
 <query>           ::= "?-" <compound term> <period>
-<compound term>   ::= <compound term 1>
-<compound term 1> ::= <compound term 2> (";" <compound term 2>)*
-<compound term 2> ::= <term> ("," <term>)*
+<compound term>   ::= <term> (("," | ";") <term>)*
 <term>            ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
 <structure>       ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term>
 <functor>         ::= <atom>
