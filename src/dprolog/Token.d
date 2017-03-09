@@ -1,7 +1,9 @@
 module dprolog.Token;
 
 import std.conv,
+       std.range,
        std.algorithm,
+       std.functional,
        std.typecons;
 
 /*
@@ -16,7 +18,7 @@ abstract class Token {
 
     immutable int line;
     immutable int column;
-    protected immutable dstring lexeme;
+    immutable dstring lexeme;
     this(dstring lexeme, int line, int column) {
         this.lexeme = lexeme;
         this.line = line;
@@ -72,58 +74,89 @@ class Variable : Token {
     }
 }
 
-class Operator : Token {
+class Functor : Atom {
 
-    private immutable int precedence;
-    private immutable string type;
-    this(dstring lexeme, int line, int column) {
-        super(lexeme, line, column);
-        this.precedence = -1;
-        this.type = "_";
+    this(Atom atom) {
+        super(atom.lexeme, atom.line, atom.column);
+    }
+
+    override string toString() {
+        return "Functor(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    }
+
+}
+
+class Operator : Atom {
+
+    immutable int precedence;
+    immutable string type;
+    Notation notation() @property {
+        switch(type) {
+            case "fx" : case "fy" :             return Notation.Prefix;
+            case "xfx": case "xfy": case "yfx": return Notation.Infix;
+            case "xf" : case "yf" :             return Notation.Postfix;
+            default: assert(false);
+        }
     }
 
     override string toString() {
         return "Operator(lexeme: \"" ~ lexeme.to!string ~ "\", precedence: " ~precedence.to!string~ ", type: " ~type~  ")";
     }
 
-    private this(dstring lexeme, int precedence, string type) in {
-        assert(isLegalType(type));
-    } body {
+    static Operator getOperator(Atom atom, Notation notation) {
+        string[] types = getTypes(notation);
+        auto ary = systemOperatorList.find!(
+            op => op.lexeme==atom.lexeme && types.canFind(op.type)
+        );
+        return ary.empty ? null : new Operator(ary.front, atom.line, atom.column);
+    }
+
+    static private string[] getTypes(Notation notation) {
+        final switch(notation) {
+            case Notation.Prefix  : return ["fx", "fy"];
+            case Notation.Infix   : return ["xfx", "xfy", "yfx"];
+            case Notation.Postfix : return ["xf", "yf"];
+        }
+    }
+
+    private this(immutable Operator op, int line, int column) {
+        super(op.lexeme, line, column);
+        this.precedence = op.precedence;
+        this.type = op.type;
+    }
+
+    private this(dstring lexeme, int precedence, string type)  {
         super(lexeme, -1, -1);
         this.precedence = precedence;
         this.type = type;
     }
 
-    static bool isLegalType(string type) {
-        return type=="xfx" || type=="xfy" || type=="yfx" || type=="fx" || type=="fy" || type=="xf" || type=="yf";
+    enum Notation {
+        Prefix, Infix, Postfix
     }
 
-    static bool existOp(dstring lexeme) {
-        return opList.canFind!(op => op.lexeme==lexeme);
-    }
-
-    private static Operator[] opList = [
-        new Operator(":-", 1200, "xfx"),
-        new Operator("?-", 1200, "fx"),
-        new Operator(";", 1100, "xfy"),
-        new Operator("|", 1100, "xfy"),
-        new Operator(",", 1000, "xfy"),
-        new Operator("=", 700, "xfx"),
-        new Operator("==", 700, "xfx"),
-        new Operator("<", 700, "xfx"),
-        new Operator("=<", 700, "xfx"),
-        new Operator(">", 700, "xfx"),
-        new Operator(">=", 700, "xfx"),
-        new Operator("=:=", 700, "xfx"),
-        new Operator("=\\=", 700, "xfx"),
-        new Operator("is", 700, "xfx"),
-        new Operator("+", 500, "yfx"),
-        new Operator("-", 500, "yfx"),
-        new Operator("*", 400, "yfx"),
-        new Operator("div", 400, "yfx"),
-        new Operator("mod", 400, "yfx"),
-        new Operator("+", 200, "fy"),
-        new Operator("-", 200, "fy")
+    static private immutable immutable(Operator)[] systemOperatorList = [
+        cast(immutable) new Operator(":-", 1200, "xfx"),
+        cast(immutable) new Operator("?-", 1200, "fx"),
+        cast(immutable) new Operator(";", 1100, "xfy"),
+        cast(immutable) new Operator("|", 1100, "xfy"),
+        cast(immutable) new Operator(",", 1000, "xfy"),
+        cast(immutable) new Operator("=", 700, "xfx"),
+        cast(immutable) new Operator("==", 700, "xfx"),
+        cast(immutable) new Operator("<", 700, "xfx"),
+        cast(immutable) new Operator("=<", 700, "xfx"),
+        cast(immutable) new Operator(">", 700, "xfx"),
+        cast(immutable) new Operator(">=", 700, "xfx"),
+        cast(immutable) new Operator("=:=", 700, "xfx"),
+        cast(immutable) new Operator("=\\=", 700, "xfx"),
+        cast(immutable) new Operator("is", 700, "xfx"),
+        cast(immutable) new Operator("+", 500, "yfx"),
+        cast(immutable) new Operator("-", 500, "yfx"),
+        cast(immutable) new Operator("*", 400, "yfx"),
+        cast(immutable) new Operator("div", 400, "yfx"),
+        cast(immutable) new Operator("mod", 400, "yfx"),
+        cast(immutable) new Operator("+", 200, "fy"),
+        cast(immutable) new Operator("-", 200, "fy")
     ];
 
 }

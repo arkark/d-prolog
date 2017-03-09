@@ -1,6 +1,7 @@
 module dprolog.Lexer;
 
-import dprolog.Token;
+import dprolog.Token,
+       dprolog.util;
 
 import std.stdio,
        std.conv,
@@ -156,7 +157,7 @@ private:
             auto res = lexeme.matchFirst(re);
             return !res.empty && res.front==lexeme;
         },
-        (Node node)      => Operator.existOp(node.value) ? new Operator(node.value, node.line, node.column) : new Atom(node.value, node.line, node.column)
+        (Node node)      => new Atom(node.value, node.line, node.column)
     );
 
     static TokenGen NumberGen = TokenGen(
@@ -378,14 +379,14 @@ private:
 
         auto lexer = new Lexer;
         auto lookaheader = lexer.getLookaheader("hoge(10, X).");
-        assert(cast(Atom) lexer.getToken(lookaheader, AtomGen));
-        assert(cast(LParen) lexer.getToken(lookaheader, LParenGen));
-        assert(cast(Number) lexer.getToken(lookaheader, NumberGen));
-        assert(cast(Operator) lexer.getToken(lookaheader, AtomGen));
+        assert(lexer.getToken(lookaheader, AtomGen).instanceOf!Atom);
+        assert(lexer.getToken(lookaheader, LParenGen).instanceOf!LParen);
+        assert(lexer.getToken(lookaheader, NumberGen).instanceOf!Number);
+        assert(lexer.getToken(lookaheader, AtomGen).instanceOf!Atom);
         assert(lexer.getToken(lookaheader, EmptyGen) is null);
-        assert(cast(Variable) lexer.getToken(lookaheader, VariableGen));
-        assert(cast(RParen) lexer.getToken(lookaheader, RParenGen));
-        assert(cast(Period) lexer.getToken(lookaheader, PeriodGen));
+        assert(lexer.getToken(lookaheader, VariableGen).instanceOf!Variable);
+        assert(lexer.getToken(lookaheader, RParenGen).instanceOf!RParen);
+        assert(lexer.getToken(lookaheader, PeriodGen).instanceOf!Period);
         assert(lookaheader.empty);
 
         assert(!lexer._hasError);
@@ -403,22 +404,22 @@ private:
         assert(!lexer.hasError);
         tokens = lexer.get();
         assert(tokens.length == 7);
-        assert(cast(Atom)     tokens[0]);
-        assert(cast(LParen)   tokens[1]);
-        assert(cast(Number)   tokens[2]);
-        assert(cast(Operator) tokens[3]);
-        assert(cast(Variable) tokens[4]);
-        assert(cast(RParen)   tokens[5]);
-        assert(cast(Period)   tokens[6]);
+        assert(tokens[0].instanceOf!Atom);
+        assert(tokens[1].instanceOf!LParen);
+        assert(tokens[2].instanceOf!Number);
+        assert(tokens[3].instanceOf!Atom);
+        assert(tokens[4].instanceOf!Variable);
+        assert(tokens[5].instanceOf!RParen);
+        assert(tokens[6].instanceOf!Period);
 
         lexer.run("('poあ').");
         assert(!lexer.hasError);
         tokens = lexer.get();
         assert(tokens.length == 4);
-        assert(cast(LParen) tokens[0]);
-        assert(cast(Atom)   tokens[1]);
-        assert(cast(RParen) tokens[2]);
-        assert(cast(Period) tokens[3]);
+        assert(tokens[0].instanceOf!LParen);
+        assert(tokens[1].instanceOf!Atom);
+        assert(tokens[2].instanceOf!RParen);
+        assert(tokens[3].instanceOf!Period);
     }
 
     // test errorMessage
