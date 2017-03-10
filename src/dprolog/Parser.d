@@ -25,7 +25,6 @@ private:
 public:
 
     this() {
-        _resultAST = new ASTRoot;
         clear();
     }
 
@@ -54,12 +53,13 @@ private:
 
     void clear() {
         _isParsed = false;
-        _resultAST.clear;
+        _resultAST = null;
         _hasError = false;
         _errorMessage = "";
     }
 
     void parse(Token[] tokens) {
+        _resultAST = new ASTRoot(tokens);
         parseProgram(tokens, _resultAST);
         _isParsed = true;
     }
@@ -71,7 +71,7 @@ private:
                 setErrorMessage(tokens);
                 return;
             } else {
-                AST ast = new AST(tokens[cnt]);
+                AST ast = new AST(tokens[cnt], tokens[0..cnt+1]);
                 parseClause(tokens[0..cnt], ast);
                 parent.children ~= ast;
                 tokens = tokens[cnt+1..$];
@@ -90,7 +90,7 @@ private:
         if (op is null) {
             parseTerm(tokens, parent);
         } else {
-            AST ast = new AST(op);
+            AST ast = new AST(op, tokens);
             int cnt = tokens.countUntil(op);
             if (op.notation != Operator.Notation.Prefix) parseTermList(tokens[0..cnt], ast);
             if (op.notation != Operator.Notation.Postfix) parseTermList(tokens[cnt+1..$], ast);
@@ -110,7 +110,7 @@ private:
         } else if (head.instanceOf!Atom && tokens.length>1) {
             parseStructure(tokens, parent);
         } else if ((head.instanceOf!Atom || head.instanceOf!Number || head.instanceOf!Variable) && tokens.length==1) {
-            parent.children ~= new AST(head);
+            parent.children ~= new AST(head, tokens[0..1]);
         } else {
             setErrorMessage(tokens);
         }
@@ -125,7 +125,7 @@ private:
             setErrorMessage(tokens);
             return;
         }
-        AST ast = new AST(new Functor(cast(Atom) tokens.front));
+        AST ast = new AST(new Functor(cast(Atom) tokens.front), tokens);
         parseTermList(tokens[2..$-1], ast);
         parent.children ~= ast;
     }
@@ -139,7 +139,7 @@ private:
             setErrorMessage(tokens);
             return;
         }
-        AST ast = new AST(tokens.front);
+        AST ast = new AST(tokens.front, tokens[0..1]);
         parseTermList(tokens[1..$-1], ast);
         parent.children ~= ast;
     }
@@ -293,6 +293,32 @@ private:
         Parser.testAST!(Operator, Operator)(root, 0, 0, 1);
         Parser.testAST!(Number, Number)(root, 0, 0, 1, 0);
         Parser.testAST!(Variable, Number)(root, 0, 0, 1, 1);
+
+        // root.writeln;
+    }
+
+    unittest {
+        writeln(__FILE__, ": test parse 5");
+
+        auto lexer = new Lexer;
+        auto parser = new Parser;
+        lexer.run("conc([X|L1], L2, [X|List]) :- conc(L1, L2, List).");
+        parser.run(lexer.get());
+        assert(!parser.hasError);
+        ASTRoot root = parser.get();
+        Parser.testAST!(Period)(root);
+        Parser.testAST!(Operator)(root, 0);
+        Parser.testAST!(Functor, Functor)(root, 0, 0);
+        Parser.testAST!(Operator)(root, 0, 0, 0);
+        Parser.testAST!(LBracket, Operator)(root, 0, 0, 0, 0);
+        Parser.testAST!(Operator)(root, 0, 0, 0, 0, 0);
+        Parser.testAST!(Variable, Variable)(root, 0, 0, 0, 0, 0, 0);
+        Parser.testAST!(Variable, LBracket)(root, 0, 0, 0, 0, 1);
+        Parser.testAST!(Operator)(root, 0, 0, 0, 0, 1, 1);
+        Parser.testAST!(Variable, Variable)(root, 0, 0, 0, 0, 1, 1, 0);
+        Parser.testAST!(Operator)(root, 0, 0, 1);
+        Parser.testAST!(Variable, Operator)(root, 0, 0, 1, 0);
+        Parser.testAST!(Variable, Variable)(root, 0, 0, 1, 0, 1);
 
         // root.writeln;
     }

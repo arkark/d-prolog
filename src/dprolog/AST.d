@@ -10,10 +10,12 @@ import std.conv,
 
 class AST {
     Token token;
+    Token[] tokenList;
     AST[] children;
 
-    this(Token token) {
+    this(Token token, Token[] tokenList) {
         this.token = token;
+        this.tokenList = tokenList;
         this.children = [];
     }
 
@@ -37,12 +39,8 @@ class AST {
 
 class ASTRoot : AST {
 
-    this() {
-        super(null);
-    }
-
-    void clear() {
-        children = [];
+    this(Token[] tokenList) {
+        super(null, tokenList);
     }
 
     override string toString() {
