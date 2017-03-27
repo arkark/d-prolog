@@ -86,7 +86,7 @@ private:
             RBracketGen,
             PeriodGen,
             EmptyGen
-        ].find!(gen => gen.varidateHead(c));
+        ].find!(gen => gen.validateHead(c));
         return genR.empty ? ErrorGen : genR.front;
     }
 
@@ -100,12 +100,12 @@ private:
         assert(!lookaheader.empty);
     } body {
         Node nowNode = lookaheader.front;
-        bool existToken = tokenGen.varidate(nowNode.value);
-        if (tokenGen.varidateHead(nowNode.value.to!dchar)) {
+        bool existToken = tokenGen.validate(nowNode.value);
+        if (tokenGen.validateHead(nowNode.value.to!dchar)) {
             nowNode = Node("", int.max, int.max);
             while(!lookaheader.empty) {
                 Node tmpNode = nowNode ~ lookaheader.front;
-                if (tokenGen.varidate(tmpNode.value)) {
+                if (tokenGen.validate(tmpNode.value)) {
                     existToken = true;
                 } else if (existToken) {
                     break;
@@ -147,8 +147,8 @@ private:
     }
 
     struct TokenGen {
-        immutable bool function(dchar) varidateHead;
-        immutable bool function(dstring) varidate;
+        immutable bool function(dchar) validateHead;
+        immutable bool function(dstring) validate;
         immutable Token function(Node) getToken;
     }
 
@@ -266,46 +266,46 @@ private:
         writeln(__FILE__, ": test TokenGen");
 
         // AtomGen
-        assert(AtomGen.varidateHead('a'));
-        assert(AtomGen.varidateHead('\''));
-        assert(AtomGen.varidateHead(','));
-        assert(!AtomGen.varidateHead('A'));
-        assert(AtomGen.varidate("abc"));
-        assert(AtomGen.varidate("' po _'"));
-        assert(AtomGen.varidate("''"));
-        assert(AtomGen.varidate("|+|"));
-        assert(!AtomGen.varidate("'"));
-        assert(!AtomGen.varidate("' po _"));
+        assert(AtomGen.validateHead('a'));
+        assert(AtomGen.validateHead('\''));
+        assert(AtomGen.validateHead(','));
+        assert(!AtomGen.validateHead('A'));
+        assert(AtomGen.validate("abc"));
+        assert(AtomGen.validate("' po _'"));
+        assert(AtomGen.validate("''"));
+        assert(AtomGen.validate("|+|"));
+        assert(!AtomGen.validate("'"));
+        assert(!AtomGen.validate("' po _"));
         // NumberGen
-        assert(NumberGen.varidateHead('0'));
-        assert(!NumberGen.varidateHead('_'));
-        assert(NumberGen.varidate("123"));
-        assert(NumberGen.varidate("0"));
-        assert(!NumberGen.varidate("0123"));
+        assert(NumberGen.validateHead('0'));
+        assert(!NumberGen.validateHead('_'));
+        assert(NumberGen.validate("123"));
+        assert(NumberGen.validate("0"));
+        assert(!NumberGen.validate("0123"));
         // VariableGen
-        assert(VariableGen.varidateHead('A'));
-        assert(VariableGen.varidateHead('_'));
-        assert(!VariableGen.varidateHead('a'));
-        assert(VariableGen.varidate("Po"));
-        assert(VariableGen.varidate("_yeah"));
+        assert(VariableGen.validateHead('A'));
+        assert(VariableGen.validateHead('_'));
+        assert(!VariableGen.validateHead('a'));
+        assert(VariableGen.validate("Po"));
+        assert(VariableGen.validate("_yeah"));
         // LParenGen
-        assert(LParenGen.varidateHead('('));
-        assert(LParenGen.varidate("("));
+        assert(LParenGen.validateHead('('));
+        assert(LParenGen.validate("("));
         // RParenGen
-        assert(RParenGen.varidateHead(')'));
-        assert(RParenGen.varidate(")"));
+        assert(RParenGen.validateHead(')'));
+        assert(RParenGen.validate(")"));
         // LBracketGen
-        assert(LBracketGen.varidateHead('['));
-        assert(LBracketGen.varidate("["));
+        assert(LBracketGen.validateHead('['));
+        assert(LBracketGen.validate("["));
         // RBracketGen
-        assert(RBracketGen.varidateHead(']'));
-        assert(RBracketGen.varidate("]"));
+        assert(RBracketGen.validateHead(']'));
+        assert(RBracketGen.validate("]"));
         // PeriodGen
-        assert(PeriodGen.varidateHead('.'));
-        assert(PeriodGen.varidate("."));
+        assert(PeriodGen.validateHead('.'));
+        assert(PeriodGen.validate("."));
         // EmptyGen
-        assert(EmptyGen.varidateHead(' '));
-        assert(EmptyGen.varidate(" "));
+        assert(EmptyGen.validateHead(' '));
+        assert(EmptyGen.validate(" "));
     }
 
     // test lookaheader
