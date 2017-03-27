@@ -15,6 +15,8 @@ import std.stdio,
        std.concurrency,
        std.container : DList;
 
+// Lexer (lexical analyzer): dstring -> Token[]
+
 class Lexer {
 
 private:

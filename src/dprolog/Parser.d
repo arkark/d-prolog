@@ -13,6 +13,8 @@ import std.stdio,
        std.concurrency,
        std.container : DList;
 
+// Parser: Token[] -> AST
+
 class Parser {
 
 private:
