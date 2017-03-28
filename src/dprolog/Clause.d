@@ -8,48 +8,48 @@ import std.conv;
 interface Clause {}
 
 class Fact : Clause {
-    Term term;
+    Term first;
 
-    this(Term term) {
-        this.term = term;
+    this(Term first) {
+        this.first = first;
     }
 
     override string toString() {
-        return "Fact(" ~ term.to!string ~ ")";
+        return "Fact(" ~ first.to!string ~ ")";
     }
 
     invariant {
-        assert(term.isDetermined);
-        assert(!term.isCompound);
+        assert(first.isDetermined);
+        assert(!first.isCompound);
     }
 }
 
 class Rule : Clause {
-    Term headTerm;
-    Term bodyCompoundTerm;
+    Term first;
+    Term second;
 
-    this(Term headTerm, Term bodyCompoundTerm) {
-        this.headTerm  = headTerm;
-        this.bodyCompoundTerm = bodyCompoundTerm;
+    this(Term first, Term second) {
+        this.first  = first;
+        this.second = second;
     }
 
     override string toString() {
-        return "Rule(" ~ headTerm.to!string ~ " :- " ~ bodyCompoundTerm.to!string ~ ")";
+        return "Rule(" ~ first.to!string ~ " :- " ~ second.to!string ~ ")";
     }
 
     invariant {
-        assert(!headTerm.isCompound);
+        assert(!first.isCompound);
     }
 }
 
 class Query : Clause {
-    Term compoundTerm;
+    Term first;
 
-    this(Term compoundTerm) {
-        this.compoundTerm = compoundTerm;
+    this(Term first) {
+        this.first = first;
     }
 
     override string toString() {
-        return "Query(?- " ~ compoundTerm.to!string ~ ")";
+        return "Query(?- " ~ first.to!string ~ ")";
     }
 }
