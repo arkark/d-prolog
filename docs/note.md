@@ -28,9 +28,9 @@
 <query>           ::= "?-" <compound term> <period>
 <compound term>   ::= <term> (("," | ";") <term>)*
 <term>            ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
-<structure>       ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term>
+<structure>       ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator>
 <functor>         ::= <atom>
-<list>            ::= <left bracket> [<term> ("," <term>)*] ["|" <list>] <right bracket>
+<list>            ::= <left bracket> [<term> ("," <term>)*] ["|" <list>] <right bracket> | <atom>
 ```
 
 ## System Operators
