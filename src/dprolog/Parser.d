@@ -106,7 +106,7 @@ private:
         Token head = tokens.front;
         Token last = tokens.back;
         if (head.instanceOf!LParen && last.instanceOf!RParen && tokens.length>2) {
-            parseTerm(tokens[1..$-1], parent);
+            parseTermList(tokens[1..$-1], parent);
         } else if (head.instanceOf!LBracket) {
             parseList(tokens, parent);
         } else if (head.instanceOf!Atom && tokens.length>1) {
@@ -340,6 +340,12 @@ private:
             lexer.run(src);
             assert(!lexer.hasError);
             parser.run(lexer.get);
+            if (parser.hasError != isError) {
+                lexer.get.writeln;
+                parser.hasError.writeln;
+                parser.errorMessage.writeln;
+                parser.get.writeln;
+            }
             assert(parser.hasError == isError);
         }
 
@@ -350,6 +356,7 @@ private:
         testError("hoge(X).", false);
         testError("?- a :- b.", true);
         testError("aa :- bb :- cc.", true);
+        testError("aa :- (bb :- cc).", false);
         testError("hoge(aa aa).", true);
         testError("hoge(()).", true);
         testError("hoge((X).", true);
