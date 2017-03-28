@@ -44,6 +44,8 @@ class Term {
     override string toString() {
         if (isList) {
             return "[" ~ children.front.to!string ~ " | " ~ children.back.to!string ~ "]";
+        } else if (isCompound) {
+            return "(" ~ children.front.to!string ~ " " ~ token.lexeme.to!string ~ " " ~ children.back.to!string ~ ")";
         } else if (isStructure) {
             return token.lexeme.to!string ~ "(" ~ children.map!(c => c.to!string).join(", ") ~ ")";
         } else {
@@ -64,21 +66,40 @@ class Term {
 
     /* ---------- Unit Tests ---------- */
 
-
     unittest {
-        writeln(__FILE__, ": test kinds");
+        writeln(__FILE__, ": test");
 
         Atom atom = new Atom("a", -1, -1);
         Number num = new Number("1", -1, -1);
         Variable var = new Variable("X", -1, -1);
         Functor fun = new Functor(atom);
         Operator pipe = cast(Operator) Operator.pipe;
+        Operator comma = cast(Operator) Operator.comma;
 
         Term atomT = new Term(atom, []);
         Term numT = new Term(num, []);
         Term varT = new Term(var, []);
         Term funT = new Term(fun, [atomT, varT, numT]);
         Term listT = new Term(pipe, [funT,  new Term(pipe, [numT, varT])]);
+        Term comT = new Term(comma, [listT, funT]);
+
+        assert(atomT.isDetermined);
+        assert(numT.isDetermined);
+        assert(!varT.isDetermined);
+        assert(!funT.isDetermined);
+        assert(!listT.isDetermined);
+        assert(!listT.children.back.isDetermined);
+        assert(!listT.children.back.children.back.isDetermined);
+        assert(!comT.isDetermined);
+
+        assert(!atomT.isCompound);
+        assert(!numT.isCompound);
+        assert(!varT.isCompound);
+        assert(!funT.isCompound);
+        assert(!listT.isCompound);
+        assert(!listT.children.back.isCompound);
+        assert(!listT.children.back.children.back.isCompound);
+        assert(comT.isCompound);
 
         import std.range, std.array, std.algorithm, std.functional;
         bool function(Term, int) validate = (term, index) => term.adjoin!(
@@ -93,5 +114,6 @@ class Term {
         assert(validate(listT, 4));
         assert(validate(listT.children.back, 4));
         assert(validate(listT.children.back.children.back, 2));
+        assert(validate(comT, 3));
     }
 }
