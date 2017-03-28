@@ -33,9 +33,17 @@ class Atom : Token {
         super(lexeme, line, column);
     }
 
+    override bool opEquals(Object o) {
+        auto that = cast(Atom) o;
+        if (that is null) return false;
+        return this.lexeme==that.lexeme;
+    }
+
     override string toString() {
         return "Atom(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
+
+    static immutable Atom emptyAtom = cast(immutable) new Atom("", -1, -1); // 空リストに用いる
 
 }
 
@@ -57,6 +65,12 @@ class Number : Token {
         mixin("return new Number(this.value" ~ op ~ "that.value);");
     }
 
+    override bool opEquals(Object o) {
+        auto that = cast(Number) o;
+        if (that is null) return false;
+        return this.lexeme==that.lexeme;
+    }
+
     override string toString() {
         return "Number(value: " ~ value.to!string ~ ")";
     }
@@ -69,6 +83,12 @@ class Variable : Token {
         super(lexeme, line, column);
     }
 
+    override bool opEquals(Object o) {
+        auto that = cast(Variable) o;
+        if (that is null) return false;
+        return this.lexeme==that.lexeme;
+    }
+
     override string toString() {
         return "Variable(\"" ~ lexeme.to!string ~ "\")";
     }
@@ -78,6 +98,12 @@ class Functor : Atom {
 
     this(Atom atom) {
         super(atom.lexeme, atom.line, atom.column);
+    }
+
+    override bool opEquals(Object o) {
+        auto that = cast(Functor) o;
+        if (that is null) return false;
+        return this.lexeme==that.lexeme;
     }
 
     override string toString() {
@@ -97,6 +123,12 @@ class Operator : Atom {
             case "xf" : case "yf" :             return Notation.Postfix;
             default: assert(false);
         }
+    }
+
+    override bool opEquals(Object o) {
+        auto that = cast(Operator) o;
+        if (that is null) return false;
+        return this.lexeme==that.lexeme && this.precedence==that.precedence && this.type==that.type;
     }
 
     override string toString() {
@@ -135,12 +167,18 @@ class Operator : Atom {
         Prefix, Infix, Postfix
     }
 
+    static immutable Operator rulifier    = cast(immutable) new Operator(":-", 1200, "xfx");
+    static immutable Operator querifier   = cast(immutable) new Operator("?-", 1200, "fx");
+    static immutable Operator semicolon = cast(immutable) new Operator(";", 1100, "xfy");
+    static immutable Operator comma = cast(immutable) new Operator(",", 1000, "xfy");
+    static immutable Operator pipe        = cast(immutable) new Operator("|", 1100, "xfy");
+
     static private immutable immutable(Operator)[] systemOperatorList = [
-        cast(immutable) new Operator(":-", 1200, "xfx"),
-        cast(immutable) new Operator("?-", 1200, "fx"),
-        cast(immutable) new Operator(";", 1100, "xfy"),
-        cast(immutable) new Operator("|", 1100, "xfy"),
-        cast(immutable) new Operator(",", 1000, "xfy"),
+        rulifier,
+        querifier,
+        semicolon,
+        pipe,
+        comma,
         cast(immutable) new Operator("=", 700, "xfx"),
         cast(immutable) new Operator("==", 700, "xfx"),
         cast(immutable) new Operator("<", 700, "xfx"),

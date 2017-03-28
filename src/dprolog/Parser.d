@@ -93,7 +93,7 @@ private:
             parseTerm(tokens, parent);
         } else {
             AST ast = new AST(op, tokens);
-            int cnt = tokens.countUntil(op);
+            int cnt = tokens.countUntil!(t => t is op);
             if (op.notation != Operator.Notation.Prefix) parseTermList(tokens[0..cnt], ast);
             if (op.notation != Operator.Notation.Postfix) parseTermList(tokens[cnt+1..$], ast);
             parent.children ~= ast;
@@ -142,7 +142,12 @@ private:
             return;
         }
         AST ast = new AST(tokens.front, tokens[0..1]);
-        parseTermList(tokens[1..$-1], ast);
+        if (tokens.length == 2) {
+            // 空リスト
+            ast.children ~= new AST(cast(Token) Atom.emptyAtom, []);
+        } else {
+            parseTermList(tokens[1..$-1], ast);
+        }
         parent.children ~= ast;
     }
 
