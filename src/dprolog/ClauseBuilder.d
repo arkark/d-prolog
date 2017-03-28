@@ -381,6 +381,7 @@ private:
             assert(clauseBuilder.hasError == isError);
         }
 
+        testError("", false);                          //
         testError("hoge(X).", true);                   // => Error: FactなのにVariableがある
         testError("?- hoge(X).", false);               //
         testError("aaa(a), bbb(b).", true);            // => Error: Factが複合節
