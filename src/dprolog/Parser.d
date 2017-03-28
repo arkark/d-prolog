@@ -331,34 +331,34 @@ private:
     }
 
     unittest {
-        writeln(__FILE__, ": test errorMessage");
+        writeln(__FILE__, ": test error");
 
         auto lexer = new Lexer;
         auto parser = new Parser;
-        lexer.run("hoge(X). po");
-        parser.run(lexer.get());
-        assert(parser.hasError);
-        // parser.errorMessage.writeln;
-        lexer.run("hoge(X).");
-        parser.run(lexer.get());
-        // parser.get().writeln;
-        assert(!parser.hasError);
-        lexer.run("aa :- bb:- cc.");
-        parser.run(lexer.get());
-        assert(parser.hasError);
-        // parser.errorMessage.writeln;
-        lexer.run("hoge(aa aa).");
-        parser.run(lexer.get());
-        assert(parser.hasError);
-        // parser.errorMessage.writeln;
-        lexer.run("hoge(()).");
-        parser.run(lexer.get());
-        assert(parser.hasError);
-        // parser.errorMessage.writeln;
-        lexer.run("hoge((X).");
-        parser.run(lexer.get());
-        assert(parser.hasError);
-        // parser.errorMessage.writeln;
+
+        void testError(dstring src, bool isError) {
+            lexer.run(src);
+            assert(!lexer.hasError);
+            parser.run(lexer.get);
+            assert(parser.hasError == isError);
+        }
+
+        testError("", false);
+        testError(".....", false);
+        testError("().", true);
+        testError("hoge(X). po", true);
+        testError("hoge(X).", false);
+        testError("?- a :- b.", true);
+        testError("aa :- bb :- cc.", true);
+        testError("hoge(aa aa).", true);
+        testError("hoge(()).", true);
+        testError("hoge((X).", true);
+        testError("[].", false);
+        testError("[|].", false); // "|" がOperatorではなくAtomとしてパースされる
+        testError("[a|].", true);
+        testError("[|a].", true);
+        testError("+1+2+3.", false);
+        testError("*1*2*3.", true);
     }
 
 }
