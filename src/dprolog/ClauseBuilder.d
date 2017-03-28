@@ -36,7 +36,6 @@ public:
     void run(ASTRoot astRoot) {
         clear();
         build(astRoot);
-        _isBuilded = true;
     }
 
     Clause[] get() in {
@@ -70,15 +69,20 @@ private:
             assert(ast.children.length <= 1);
             if (ast.children.empty) continue;
 
-            AST clauseAST = ast.children.front;
-            if (clauseAST.pipe!isRule) {
-                _resultClauses.insertBack(clauseAST.pipe!toRule);
-            } else if (clauseAST.pipe!isQuery) {
-                _resultClauses.insertBack(clauseAST.pipe!toQuery);
-            } else {
-                _resultClauses.insertBack(clauseAST.pipe!toFact);
-            }
-            if (hasError) return;
+            Clause clause = ast.children.front.pipe!toClause;
+            if (hasError) break;
+            _resultClauses.insertBack(clause);
+        }
+        _isBuilded = true;
+    }
+
+    Clause toClause(AST ast) {
+        if (ast.pipe!isRule) {
+            return ast.pipe!toRule;
+        } else if (ast.pipe!isQuery) {
+            return ast.pipe!toQuery;
+        } else {
+            return ast.pipe!toFact;
         }
     }
 
@@ -91,36 +95,35 @@ private:
     }
 
     Fact toFact(AST ast) {
-        Term term = ast.pipe!toTerm;
+        Term first = ast.pipe!toTerm;
         if (hasError) return null;
-        if (!term.isDetermined || term.isCompound) setErrorMessage(ast.tokenList);
+        if (!first.isDetermined || first.isCompound) setErrorMessage(ast.tokenList);
         if (hasError) return null;
-        return new Fact(term);
+        return new Fact(first);
     }
 
     Rule toRule(AST ast) {
         assert(ast.children.length == 2);
-        Term headTerm = ast.children.front.pipe!toTerm;
-        Term bodyTerm = ast.children.back.pipe!toTerm;
+        Term first  = ast.children.front.pipe!toTerm;
+        Term second = ast.children.back.pipe!toTerm;
         if (hasError) return null;
-        if (headTerm.isCompound) setErrorMessage(ast.tokenList);
+        if (first.isCompound) setErrorMessage(ast.tokenList);
         if (hasError) return null;
-        return new Rule(headTerm, bodyTerm);
+        return new Rule(first, second);
     }
 
     Query toQuery(AST ast) {
         assert(ast.children.length == 1);
-        Term term = ast.children.front.pipe!toTerm;
+        Term first = ast.children.front.pipe!toTerm;
         if (hasError) return null;
-        return new Query(term);
+        return new Query(first);
     }
 
     Term toTerm(AST ast) {
-        Term term;
         if (ast.token.instanceOf!Functor) {
             // Structure
             assert(ast.children.length==1);
-            term = ast.children.front.pipe!toArguments.pipe!(
+            return ast.children.front.pipe!toArguments.pipe!(
                 children => hasError ? null : new Term(ast.token, children)
             );
         } else if (ast.token.instanceOf!Operator) {
@@ -134,19 +137,18 @@ private:
                 return null;
             }
             assert(ast.children.length==1 || ast.children.length==2);
-            term = ast.children.map!(c => c.pipe!toTerm).array.pipe!(
+            return ast.children.map!(c => c.pipe!toTerm).array.pipe!(
                 children => hasError ? null : new Term(ast.token, children)
             );
         } else if (ast.token.instanceOf!LBracket) {
             // List
             assert(ast.children.length == 1);
-            term = ast.children.front.pipe!toList;
+            return ast.children.front.pipe!toList;
         } else {
             // Atom, Number, Variable
             assert(ast.children.empty);
-            term = new Term(ast.token, []);
+            return new Term(ast.token, []);
         }
-        return term;
     }
 
     Term[] toArguments(AST ast) {
@@ -162,22 +164,27 @@ private:
         if (ast.token == Operator.pipe) {
             assert(ast.children.length == 2);
 
-            Term back;
-            if (ast.children.back.token.instanceOf!LBracket) {
-                assert(ast.children.back.children.length == 1);
-                back = ast.children.back.children.front.pipe!toList;
-                if (back.token != Operator.pipe && back.token != Atom.emptyAtom) {
-                    Term empty = new Term(cast(Token) Atom.emptyAtom, []);
-                    back = new Term(cast(Token) Operator.pipe, [back, empty]);
+            Term back = ast.children.back.pipe!((b) {
+                if (b.token.instanceOf!LBracket) {
+                    assert(b.children.length == 1);
+                    Term back = b.children.front.pipe!toList;
+                    if (hasError) return null;
+                    if (back.token != Operator.pipe && back.token != Atom.emptyAtom) {
+                        Term empty = new Term(cast(Token) Atom.emptyAtom, []);
+                        back = new Term(cast(Token) Operator.pipe, [back, empty]);
+                    }
+                    return back;
+                } else if (ast.children.back.token.instanceOf!Variable) {
+                    return new Term(ast.children.back.token, []);
+                } else {
+                    setErrorMessage(ast.tokenList);
+                    return null;
                 }
-            } else if (ast.children.back.token.instanceOf!Variable) {
-                back = new Term(ast.children.back.token, []);
-            } else {
-                setErrorMessage(ast.tokenList);
-                return null;
-            }
+            });
+            if (hasError) return null;
 
             Term front = ast.children.front.pipe!toList;
+            if (hasError) return null;
             if (front.token == Operator.pipe) {
                 Term parent = front;
                 while(parent.children.back.token == Operator.pipe) {
@@ -191,7 +198,7 @@ private:
         } else if (ast.token == Operator.comma) {
             assert(ast.children.length == 2);
             Term front = ast.children.front.pipe!toTerm;
-            Term back = ast.children.back.pipe!toList;
+            Term back  = ast.children.back.pipe!toList;
             if (back.token != Operator.pipe) {
                 Term empty = new Term(cast(Token) Atom.emptyAtom, []);
                 back = new Term(cast(Token) Operator.pipe, [back, empty]);
@@ -201,13 +208,6 @@ private:
             return ast.pipe!toTerm;
         }
     }
-
-    /*Term concatList(AST a, AST b) {
-
-    }*/
-
-
-
 
     void setErrorMessage(Token[] tokens) in {
         assert(!tokens.empty);
