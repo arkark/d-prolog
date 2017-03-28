@@ -67,7 +67,7 @@ private:
     void build(ASTRoot astRoot) {
         foreach(ast; astRoot.children) {
             assert(ast.token.instanceOf!Period);
-            assert(ast.children.length == 1);
+            assert(ast.children.length <= 1);
             if (ast.children.empty) continue;
 
             AST clauseAST = ast.children.front;
@@ -382,6 +382,7 @@ private:
         }
 
         testError("", false);                          //
+        testError(".", false);                         //
         testError("hoge(a).", false);                  //
         testError("hoge(X).", true);                   // => Error: FactなのにVariableがある
         testError("?- hoge(X).", false);               //
