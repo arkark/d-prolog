@@ -82,7 +82,7 @@ class Term {
         bool function(Term, int) validate = (term, index) => term.adjoin!(
             //          0,               1,                 2,                  3,             4
             t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure, t => t.isList
-        ).array.enumerate.map!(a => a.value == (a.index == index)).all;
+        ).array.enumerate.all!(a => a.value == (a.index == index));
 
         assert(validate(atomT, 0));
         assert(validate(numT, 1));
