@@ -34,20 +34,14 @@ class Term {
     }
 
     bool isStructure() @property {
-        return token.instanceOf!Functor || (token.instanceOf!Operator && token!=Operator.pipe);
-    }
-
-    bool isList() @property {
-        return token == Operator.pipe;
+        return token.instanceOf!Functor || token.instanceOf!Operator;
     }
 
     override string toString() {
-        if (isList) {
-            return "[" ~ children.front.to!string ~ " | " ~ children.back.to!string ~ "]";
-        } else if (isCompound) {
-            return "(" ~ children.front.to!string ~ " " ~ token.lexeme.to!string ~ " " ~ children.back.to!string ~ ")";
+        if (isCompound) {
+            return "( " ~ children.front.to!string ~ " " ~ token.lexeme.to!string ~ " " ~ children.back.to!string ~ " )";
         } else if (isStructure) {
-            return token.lexeme.to!string ~ "(" ~ children.map!(c => c.to!string).join(", ") ~ ")";
+            return token.lexeme.to!string ~ "( " ~ children.map!(c => c.to!string).join(", ") ~ " )";
         } else {
             return token.lexeme.to!string;
         }
@@ -103,16 +97,16 @@ class Term {
 
         import std.range, std.array, std.algorithm, std.functional;
         bool function(Term, int) validate = (term, index) => term.adjoin!(
-            //          0,               1,                 2,                  3,             4
-            t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure, t => t.isList
+            //          0,               1,                 2,                  3
+            t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure
         ).array.enumerate.all!(a => a.value == (a.index == index));
 
         assert(validate(atomT, 0));
         assert(validate(numT, 1));
         assert(validate(varT, 2));
         assert(validate(funT, 3));
-        assert(validate(listT, 4));
-        assert(validate(listT.children.back, 4));
+        assert(validate(listT, 3));
+        assert(validate(listT.children.back, 3));
         assert(validate(listT.children.back.children.back, 2));
         assert(validate(comT, 3));
     }
