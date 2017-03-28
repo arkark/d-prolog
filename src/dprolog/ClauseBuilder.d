@@ -382,11 +382,14 @@ private:
         }
 
         testError("", false);                          //
+        testError("hoge(a).", false);                  //
         testError("hoge(X).", true);                   // => Error: FactなのにVariableがある
         testError("?- hoge(X).", false);               //
         testError("aaa(a), bbb(b).", true);            // => Error: Factが複合節
         testError("aaa(a); bbb(b).", true);            // => Error: Factが複合節
         testError("aaa(X), bbb(X) :- ccc(X).", true);  // => Error: Ruleのheadが複合節
+        testError("aa :- (bb :- cc).", true);          // => Error: RuleのSyntaxが不適切
+        testError("?- (aa :- cc).", true);             // => Error: QueryのSyntaxが不適切
         testError("?- [].", false);                    //
         testError("?- [a | X].", false);               //
         testError("?- [a | a].", true);                // => Error: ListのSyntaxが不適切
