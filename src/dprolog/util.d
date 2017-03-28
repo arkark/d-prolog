@@ -1,5 +1,5 @@
 module dprolog.util;
 
-bool instanceOf(T)(const Object obj) {
-    return cast(T) obj !is null;
+bool instanceOf(S, T)(const T obj) {
+    return cast(S) obj !is null;
 }
