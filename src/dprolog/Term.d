@@ -66,6 +66,8 @@ class Term {
 
 
     unittest {
+        writeln(__FILE__, ": test kinds");
+
         Atom atom = new Atom("a", -1, -1);
         Number num = new Number("1", -1, -1);
         Variable var = new Variable("X", -1, -1);
