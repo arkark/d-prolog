@@ -8,7 +8,7 @@ import std.conv;
 interface Clause {}
 
 class Fact : Clause {
-    private Term term;
+    Term term;
 
     this(Term term) {
         this.term = term;
@@ -25,8 +25,8 @@ class Fact : Clause {
 }
 
 class Rule : Clause {
-    private Term headTerm;
-    private Term bodyCompoundTerm;
+    Term headTerm;
+    Term bodyCompoundTerm;
 
     this(Term headTerm, Term bodyCompoundTerm) {
         this.headTerm  = headTerm;
@@ -43,7 +43,7 @@ class Rule : Clause {
 }
 
 class Query : Clause {
-    private Term compoundTerm;
+    Term compoundTerm;
 
     this(Term compoundTerm) {
         this.compoundTerm = compoundTerm;
