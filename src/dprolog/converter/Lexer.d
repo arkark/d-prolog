@@ -1,7 +1,7 @@
-module dprolog.Lexer;
+module dprolog.converter.Lexer;
 
-import dprolog.Token,
-       dprolog.Converter,
+import dprolog.data.Token,
+       dprolog.converter.Converter,
        dprolog.util;
 
 import std.stdio,

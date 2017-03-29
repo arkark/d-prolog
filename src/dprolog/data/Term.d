@@ -1,6 +1,6 @@
-module dprolog.Term;
+module dprolog.data.Term;
 
-import dprolog.Token,
+import dprolog.data.Token,
        dprolog.util;
 
 import std.stdio,

@@ -1,12 +1,12 @@
-module dprolog.ClauseBuilder;
+module dprolog.converter.ClauseBuilder;
 
-import dprolog.Token,
-       dprolog.AST,
-       dprolog.Clause,
-       dprolog.Term,
-       dprolog.Converter,
-       dprolog.Lexer,
-       dprolog.Parser,
+import dprolog.data.Token,
+       dprolog.data.AST,
+       dprolog.data.Clause,
+       dprolog.data.Term,
+       dprolog.converter.Converter,
+       dprolog.converter.Lexer,
+       dprolog.converter.Parser,
        dprolog.util;
 
 import std.stdio,

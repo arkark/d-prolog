@@ -1,6 +1,6 @@
-module dprolog.AST;
+module dprolog.data.AST;
 
-import dprolog.Token;
+import dprolog.data.Token;
 
 import std.conv,
        std.range,

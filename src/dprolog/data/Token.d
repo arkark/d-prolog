@@ -1,4 +1,4 @@
-module dprolog.Token;
+module dprolog.data.Token;
 
 import std.conv,
        std.range,

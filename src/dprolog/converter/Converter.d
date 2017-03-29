@@ -1,4 +1,4 @@
-module dprolog.Converter;
+module dprolog.converter.Converter;
 
 // Converter: S => T
 

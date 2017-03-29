@@ -1,7 +1,7 @@
-module dprolog.Clause;
+module dprolog.data.Clause;
 
-import dprolog.Token,
-       dprolog.Term;
+import dprolog.data.Token,
+       dprolog.data.Term;
 
 import std.conv;
 

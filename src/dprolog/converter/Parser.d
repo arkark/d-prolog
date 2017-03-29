@@ -1,9 +1,9 @@
-module dprolog.Parser;
+module dprolog.converter.Parser;
 
-import dprolog.Token,
-       dprolog.AST,
-       dprolog.Converter,
-       dprolog.Lexer,
+import dprolog.data.Token,
+       dprolog.data.AST,
+       dprolog.converter.Converter,
+       dprolog.converter.Lexer,
        dprolog.util;
 
 import std.stdio,
