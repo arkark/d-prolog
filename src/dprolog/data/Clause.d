@@ -5,7 +5,7 @@ import dprolog.data.Token,
 
 import std.conv;
 
-interface Clause {}
+abstract class Clause {}
 
 class Fact : Clause {
     Term first;
