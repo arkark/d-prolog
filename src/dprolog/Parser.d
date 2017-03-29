@@ -41,6 +41,13 @@ public:
         return _resultAST;
     }
 
+    void clear() {
+        _isParsed = false;
+        _resultAST = null;
+        _hasError = false;
+        _errorMessage = "";
+    }
+
     bool hasError() @property {
         return _hasError;
     }
@@ -52,13 +59,6 @@ public:
     }
 
 private:
-
-    void clear() {
-        _isParsed = false;
-        _resultAST = null;
-        _hasError = false;
-        _errorMessage = "";
-    }
 
     void parse(Token[] tokens) {
         _resultAST = new ASTRoot(tokens);

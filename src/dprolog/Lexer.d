@@ -42,6 +42,13 @@ public:
         return _resultTokens.array;
     }
 
+    void clear() {
+        _isTokenized = false;
+        _resultTokens.clear;
+        _hasError = false;
+        _errorMessage = "";
+    }
+
     bool hasError() @property {
         return _hasError;
     }
@@ -53,13 +60,6 @@ public:
     }
 
 private:
-
-    void clear() {
-        _isTokenized = false;
-        _resultTokens.clear;
-        _hasError = false;
-        _errorMessage = "";
-    }
 
     void tokenize(immutable dstring src) {
         auto lookaheader = getLookaheader(src);
