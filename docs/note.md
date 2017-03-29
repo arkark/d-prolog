@@ -26,11 +26,11 @@
 <rule>          ::= <term> ":-" <compound term>
 <query>         ::= "?-" <compound term>
 <compound term> ::= <term> (("," | ";") <term>)*
-<term>          ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
-<structure>     ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator>
+<term>          ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure>
+<structure>     ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator> | <list>
 <functor>       ::= <atom>
 <operator>      ::= <atom>
-<list>          ::=  <variable> | <left bracket>  <right bracket> | <left bracket> <term> ("," <term>)* ["|" <list>] <right bracket>
+<list>          ::= <variable> | <left bracket>  <right bracket> | <left bracket> <term> ("," <term>)* ["|" <list>] <right bracket>
 ```
 
 ## System Operators
