@@ -44,6 +44,13 @@ public:
         return _resultClauses.array;
     }
 
+    void clear() {
+        _isBuilded = false;
+        _resultClauses.clear();
+        _hasError = false;
+        _errorMessage = "";
+    }
+
     bool hasError() {
         return _hasError;
     }
@@ -55,13 +62,6 @@ public:
     }
 
 private:
-
-    void clear() {
-        _isBuilded = false;
-        _resultClauses.clear();
-        _hasError = false;
-        _errorMessage = "";
-    }
 
     void build(ASTRoot astRoot) {
         foreach(ast; astRoot.children) {
