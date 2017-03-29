@@ -27,7 +27,9 @@ abstract class Token {
 
 }
 
-class Atom : Token {
+interface Constant {}
+
+class Atom : Token, Constant {
 
     this(dstring lexeme, int line, int column) {
         super(lexeme, line, column);
@@ -47,7 +49,7 @@ class Atom : Token {
 
 }
 
-class Number : Token {
+class Number : Token, Constant {
 
     private immutable int value;
     this(dstring lexeme, int line, int column) {
