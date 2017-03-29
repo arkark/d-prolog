@@ -20,18 +20,18 @@
 ## Syntax
 
 ```
-<program>         ::= (<clause>)*
-<clause>          ::= <fact> | <rule> | <query> | <empty clause>
-<fact>            ::= <term> <period>
-<rule>            ::= <term> ":-" <compound term> <period>
-<query>           ::= "?-" <compound term> <period>
-<empty clause>    ::= <period>
-<compound term>   ::= <term> (("," | ";") <term>)*
-<term>            ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
-<structure>       ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator>
-<functor>         ::= <atom>
-<operator>        ::= <atom>
-<list>            ::=  <variable> | <left bracket>  <right bracket> | <left bracket> <term> ("," <term>)* ["|" <list>] <right bracket>
+<program>       ::= (<clause>)*
+<clause>        ::= <fact> | <rule> | <query> | <empty clause>
+<fact>          ::= <term> <period>
+<rule>          ::= <term> ":-" <compound term> <period>
+<query>         ::= "?-" <compound term> <period>
+<empty clause>  ::= <period>
+<compound term> ::= <term> (("," | ";") <term>)*
+<term>          ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
+<structure>     ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator>
+<functor>       ::= <atom>
+<operator>      ::= <atom>
+<list>          ::=  <variable> | <left bracket>  <right bracket> | <left bracket> <term> ("," <term>)* ["|" <list>] <right bracket>
 ```
 
 ## System Operators
