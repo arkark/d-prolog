@@ -25,6 +25,14 @@ abstract class Token {
         this.column = column;
     }
 
+    override hash_t toHash() {
+        hash_t hash = 0u;
+        foreach(c; lexeme) {
+            hash = c.hashOf(hash);
+        }
+        return hash;
+    }
+
 }
 
 interface Constant {}
