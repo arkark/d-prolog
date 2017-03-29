@@ -3,11 +3,10 @@
 ## Tokens
 
 ```
-<token>         ::= <atom> | <number> | <variable> | <operator> | <left paren> | <right paren> | <left bracket> | <right bracket> | <period>
+<token>         ::= <atom> | <number> | <variable> | <left paren> | <right paren> | <left bracket> | <right bracket> | <period>
 <atom>          ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` ) | (<special>)+
 <number>        ::= regex( 0 | [1-9][0-9]* )
 <variable>      ::= regex( [_A-Z][_0-9a-zA-Z]* )
-<operator>      ::= ( System Operators を参照 )
 <left paren>    ::= "("
 <right paren>   ::= ")"
 <left bracket>  ::= "["
@@ -22,15 +21,17 @@
 
 ```
 <program>         ::= (<clause>)*
-<clause>          ::= <fact> | <rule> | <query>
+<clause>          ::= <fact> | <rule> | <query> | <empty clause>
 <fact>            ::= <term> <period>
 <rule>            ::= <term> ":-" <compound term> <period>
 <query>           ::= "?-" <compound term> <period>
+<empty clause>    ::= <period>
 <compound term>   ::= <term> (("," | ";") <term>)*
 <term>            ::= <left paren> <term> <right paren> | <atom> | <number> | <variable> | <structure> | <list>
 <structure>       ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator>
 <functor>         ::= <atom>
-<list>            ::= <left bracket> [<term> ("," <term>)*] ["|" <list>] <right bracket> | <atom>
+<operator>        ::= <atom>
+<list>            ::=  <variable> | <left bracket>  <right bracket> | <left bracket> <term> ("," <term>)* ["|" <list>] <right bracket>
 ```
 
 ## System Operators
