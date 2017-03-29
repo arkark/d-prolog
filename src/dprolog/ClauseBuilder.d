@@ -4,6 +4,7 @@ import dprolog.Token,
        dprolog.AST,
        dprolog.Clause,
        dprolog.Term,
+       dprolog.Converter,
        dprolog.Lexer,
        dprolog.Parser,
        dprolog.util;
@@ -16,9 +17,9 @@ import std.stdio,
        std.functional,
        std.container : DList;
 
-// ClauseBuilder: AST -> Clause[]
+// ClauseBuilder: ASTRoot -> Clause[]
 
-class ClauseBuilder {
+class ClauseBuilder : Converter!(ASTRoot, Clause[]) {
 
 private:
     bool _isBuilded;

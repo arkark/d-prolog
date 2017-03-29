@@ -2,6 +2,7 @@ module dprolog.Parser;
 
 import dprolog.Token,
        dprolog.AST,
+       dprolog.Converter,
        dprolog.Lexer,
        dprolog.util;
 
@@ -13,9 +14,9 @@ import std.stdio,
        std.concurrency,
        std.container : DList;
 
-// Parser: Token[] -> AST
+// Parser: Token[] -> ASTRoot
 
-class Parser {
+class Parser : Converter!(Token[], ASTRoot) {
 
 private:
     bool _isParsed;

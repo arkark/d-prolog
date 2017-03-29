@@ -1,6 +1,7 @@
 module dprolog.Lexer;
 
 import dprolog.Token,
+       dprolog.Converter,
        dprolog.util;
 
 import std.stdio,
@@ -17,7 +18,7 @@ import std.stdio,
 
 // Lexer (lexical analyzer): dstring -> Token[]
 
-class Lexer {
+class Lexer : Converter!(dstring, Token[]) {
 
 private:
     bool _isTokenized;
@@ -31,7 +32,7 @@ public:
         clear();
     }
 
-    void run(immutable dstring src) {
+    void run(dstring src) {
         clear();
         tokenize(src);
     }
@@ -61,7 +62,7 @@ public:
 
 private:
 
-    void tokenize(immutable dstring src) {
+    void tokenize(dstring src) {
         auto lookaheader = getLookaheader(src);
         while(!lookaheader.empty) {
             TokenGen tokenGen = getTokenGen(lookaheader);
