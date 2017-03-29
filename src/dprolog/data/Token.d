@@ -37,8 +37,7 @@ class Atom : Token, Constant {
 
     override bool opEquals(Object o) {
         auto that = cast(Atom) o;
-        if (that is null) return false;
-        return this.lexeme==that.lexeme;
+        return that && this.lexeme==that.lexeme;
     }
 
     override string toString() {
@@ -69,8 +68,7 @@ class Number : Token, Constant {
 
     override bool opEquals(Object o) {
         auto that = cast(Number) o;
-        if (that is null) return false;
-        return this.lexeme==that.lexeme;
+        return that && this.lexeme==that.lexeme;
     }
 
     override string toString() {
@@ -87,8 +85,7 @@ class Variable : Token {
 
     override bool opEquals(Object o) {
         auto that = cast(Variable) o;
-        if (that is null) return false;
-        return this.lexeme==that.lexeme;
+        return that && this.lexeme==that.lexeme;
     }
 
     override string toString() {
@@ -104,8 +101,7 @@ class Functor : Atom {
 
     override bool opEquals(Object o) {
         auto that = cast(Functor) o;
-        if (that is null) return false;
-        return this.lexeme==that.lexeme;
+        return that && this.lexeme==that.lexeme;
     }
 
     override string toString() {
@@ -129,8 +125,7 @@ class Operator : Atom {
 
     override bool opEquals(Object o) {
         auto that = cast(Operator) o;
-        if (that is null) return false;
-        return this.lexeme==that.lexeme && this.precedence==that.precedence && this.type==that.type;
+        return that && this.lexeme==that.lexeme && this.precedence==that.precedence && this.type==that.type;
     }
 
     override string toString() {
