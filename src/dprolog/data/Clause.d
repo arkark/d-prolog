@@ -1,7 +1,8 @@
 module dprolog.data.Clause;
 
 import dprolog.data.Token,
-       dprolog.data.Term;
+       dprolog.data.Term,
+       dprolog.util.UnionFind;
 
 import std.conv;
 
@@ -15,11 +16,10 @@ class Fact : Clause {
     }
 
     override string toString() {
-        return "Fact(" ~ first.to!string ~ ")";
+        return "Fact(\"" ~ first.to!string ~ ".\")";
     }
 
     invariant {
-        assert(first.isDetermined);
         assert(!first.isCompound);
     }
 }
@@ -34,7 +34,7 @@ class Rule : Clause {
     }
 
     override string toString() {
-        return "Rule(" ~ first.to!string ~ " :- " ~ second.to!string ~ ")";
+        return "Rule(\"" ~ first.to!string ~ " :- " ~ second.to!string ~ ".\")";
     }
 
     invariant {
@@ -50,6 +50,6 @@ class Query : Clause {
     }
 
     override string toString() {
-        return "Query(?- " ~ first.to!string ~ ")";
+        return "Query(\"?- " ~ first.to!string ~ ".\")";
     }
 }
