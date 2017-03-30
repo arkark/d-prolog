@@ -4,17 +4,22 @@ module dprolog.Engine;
 import dprolog.data.Token,
        dprolog.data.Term,
        dprolog.data.Clause,
+       dprolog.data.Variant,
        dprolog.converter.Converter,
        dprolog.converter.Lexer,
        dprolog.converter.Parser,
        dprolog.converter.ClauseBuilder,
-       dprolog.util;
+       dprolog.util.util,
+       dprolog.util.UnionFind;
 
 import std.stdio,
+       std.conv,
        std.range,
        std.array,
        std.algorithm,
-       std.functional;
+       std.typecons,
+       std.functional,
+       std.container : DList;
 
 class Engine {
 
@@ -23,39 +28,45 @@ private:
     Parser _parser               = new Parser;
     ClauseBuilder _clauseBuilder = new ClauseBuilder;
 
-    Clause[][Constant] _storage;
+    Clause[] _storage;
 
-    bool _hasError;
-    dstring _errorMessage;
+    alias UF = UnionFind!(
+        Variant,
+        (Variant a, Variant b) => !a.isVariable ? -1 : !b.isVariable ? 1 : 0
+    );
+
+    DList!dstring _messageList;
 
 public:
     this() {
-
+        clear();
     }
 
     void execute(dstring src) {
+        clearMessage();
         Clause[] clauseList = toClauseList(src);
-        if (hasError) return;
-        clauseList.each!(clause => executeClause(clause));
+        if (clauseList !is null) {
+            clauseList.each!(clause => executeClause(clause));
+        }
+    }
+
+    bool emptyMessage() {
+        return _messageList.empty;
+    }
+
+    void showMessage() in {
+        assert(!emptyMessage);
+    } body {
+        writeln(_messageList.front);
+        _messageList.removeFront;
     }
 
     void clear() {
         _lexer.clear;
         _parser.clear;
         _clauseBuilder.clear;
-        _storage = null;
-        _hasError = false;
-        _errorMessage = "";
-    }
-
-    bool hasError() {
-        return _hasError;
-    }
-
-    dstring errorMessage() in {
-        assert(hasError);
-    } body {
-        return _errorMessage;
+        _storage = [];
+        clearMessage();
     }
 
 private:
@@ -66,7 +77,7 @@ private:
                 if (src is null) return null;
                 converter.run(src);
                 if (converter.hasError) {
-                    setErrorMessage(converter.errorMessage);
+                    addMessage(converter.errorMessage);
                     return null;
                 }
                 return converter.get;
@@ -80,6 +91,7 @@ private:
     }
 
     void executeClause(Clause clause) {
+        writeln("execute: ", clause); //
         clause.castSwitch!(
             (Fact fact)   => executeFact(fact),
             (Rule rule)   => executeRule(rule),
@@ -88,49 +100,153 @@ private:
     }
 
     void executeFact(Fact fact) {
-        storeClause(fact, findConstant(fact.first));
+        _storage ~= fact;
     }
 
     void executeRule(Rule rule) {
-        storeClause(rule, findConstant(rule.first) ~ findConstant(rule.second));
+        _storage ~= rule;
     }
 
     void executeQuery(Query query) {
+        Variant first, second;
+        UF unionFind = buildUnionFind(query, first, second);
         if (query.first.isDetermined) {
-            // 正しいかどうか
+            addMessage(first.pipe!isTrue(unionFind).to!string ~ ".");
         } else {
-            // 存在するかどうか & ユニフィケーション
-        }
-    }
+            addMessage(first.pipe!isTrue(unionFind).to!string ~ ".");
 
-    void storeClause(Clause clause, Constant[] constantList) {
-        foreach(constant; constantList) {
-            if (constant !in _storage) {
-                _storage[constant] = [];
+            // temporary code
+            string[] rec(Variant v) {
+                if (v.isVariable) {
+                    Variant root = unionFind.root(v);
+                    return [[
+                        v.term.to!string,
+                        "=",
+                        {
+                            Term po(Variant var) {
+                                return new Term(
+                                    var.term.token,
+                                    var.children.map!(
+                                        c => c.isVariable ? unionFind.root(c).pipe!po : c.term
+                                    ).array
+                                );
+                            }
+
+                            return root.pipe!po.to!string;
+                        }()
+                    ].join(" ")];
+                } else {
+                    return v.children.map!rec.join.array;
+                }
             }
-            _storage[constant] ~= clause;
+
+            addMessage(first.pipe!rec.join(", ") ~ ".");
         }
     }
 
-    Constant[] findConstant(Term term) {
-        return term.token.pipe!((token) {
-            if (token.instanceOf!Constant) {
-                return [cast(Constant) token];
+    bool isTrue(Variant variant, ref UF unionFind) {
+        const Term term = variant.term;
+        if (term.token == Operator.comma) {
+            // conjunction
+            return variant.children.front.pipe!isTrue(unionFind) && variant.children.back.pipe!isTrue(unionFind);
+        } else if (term.token == Operator.semicolon) {
+            // disjunction
+            return variant.children.front.pipe!isTrue(unionFind) || variant.children.back.pipe!isTrue(unionFind);
+        } else {
+            foreach(clause; _storage) {
+                Variant first, second;
+                UF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
+                bool flag = clause.castSwitch!(
+                    (Fact fact)   => match(variant, first, newUnionFind),
+                    (Rule rule)   => match(variant, first, newUnionFind) && second.pipe!isTrue(newUnionFind)
+                );
+                if (flag) {
+                    unionFind = newUnionFind;
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    bool match(Variant left, Variant right, UF unionFind) {
+
+        if (!left.isVariable && !right.isVariable) {
+            return left.term.token == right.term.token && left.children.length==right.children.length && zip(left.children, right.children).all!(a => match(a[0], a[1], unionFind));
+        } else {
+            Variant l = unionFind.root(left);
+            Variant r = unionFind.root(right);
+            if (unionFind.same(l, r)) {
+                return true;
+            } else if (!l.isVariable && !r.isVariable) {
+                return match(l, r, unionFind);
             } else {
-                return new Constant[0];
+                unionFind.unite(l, r);
+                return true;
             }
-        }) ~ term.children.map!(t => findConstant(t)).join.array;
+        }
     }
 
-    void setErrorMessage(dstring message) {
-        _errorMessage = message;
-        _hasError = true;
+    UF buildUnionFind(Clause clause, ref Variant first, ref Variant second) {
+        static int idGen = 0;
+        static int idGen_underscore = 0;
+        const int id = ++idGen;
+
+        UF uf = new UF;
+
+        Variant rec(Term term) {
+            Variant v = new Variant(
+                term.token.isUnderscore ? ++idGen_underscore :
+                term.isVariable         ? id
+                                        : -1,
+                term,
+                term.children.map!(c => rec(c)).array
+            );
+            uf.add(v);
+            return v;
+        }
+
+        clause.castSwitch!(
+            (Fact fact) {
+                first = rec(fact.first);
+            },
+            (Rule rule) {
+                first = rec(rule.first);
+                second = rec(rule.second);
+            },
+            (Query query) {
+                first = rec(query.first);
+            }
+        );
+
+        return uf;
     }
 
-    unittest {
-        dstring src = "hoge(aaa). po(X) :- hoge(X). ?- po(aaa).";
+    void addMessage(T)(T message) {
+        _messageList.insertBack(message.to!dstring);
+    }
+
+    void clearMessage() {
+        _messageList.clear;
+    }
+
+    invariant {
+        assert(_storage.all!(clause => clause.instanceOf!Fact || clause.instanceOf!Rule));
+    }
+
+    /*unittest {
+        writeln(__FILE__, ": test");
+
+        dstring src1 = "hoge(aaa). po(X, Y) :- hoge(X), hoge(Y).";
+        dstring src2 = "?- po(aaa)."; // => true
+        dstring src3 = "?- po(X, Y)."; // => false
 
         Engine engine = new Engine;
-    }
+        engine.execute(src1);
+        engine.execute(src2);
+        while(!engine.emptyMessage) engine.showMessage;
+        engine.execute(src3);
+        while(!engine.emptyMessage) engine.showMessage;
+    }*/
 
 }

@@ -1,7 +1,7 @@
 module dprolog.data.Term;
 
 import dprolog.data.Token,
-       dprolog.util;
+       dprolog.util.util;
 
 import std.stdio,
        std.conv,

@@ -4,7 +4,7 @@ import dprolog.data.Token,
        dprolog.data.AST,
        dprolog.converter.Converter,
        dprolog.converter.Lexer,
-       dprolog.util;
+       dprolog.util.util;
 
 import std.stdio,
        std.conv,

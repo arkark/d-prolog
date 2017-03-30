@@ -25,6 +25,10 @@ abstract class Token {
         this.column = column;
     }
 
+    bool isUnderscore() {
+        return lexeme == "_";
+    }
+
     override hash_t toHash() {
         hash_t hash = 0u;
         foreach(c; lexeme) {
