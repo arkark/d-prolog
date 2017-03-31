@@ -205,8 +205,12 @@ private:
                 back = new Term(cast(Token) Operator.pipe, [back, empty]);
             }
             return new Term(cast(Token) Operator.pipe, [front, back]);
-        } else {
+        } else if (ast.token == Atom.emptyAtom) {
             return ast.pipe!toTerm;
+        } else {
+            Term front = ast.pipe!toTerm;
+            Term back  = new Term(cast(Token) Atom.emptyAtom, []);
+            return new Term(cast(Token) Operator.pipe, [front, back]);
         }
     }
 
