@@ -15,7 +15,7 @@ class Fact : Clause {
         this.first = first;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Fact(\"" ~ first.to!string ~ ".\")";
     }
 
@@ -33,7 +33,7 @@ class Rule : Clause {
         this.second = second;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Rule(\"" ~ first.to!string ~ " :- " ~ second.to!string ~ ".\")";
     }
 
@@ -49,7 +49,7 @@ class Query : Clause {
         this.first = first;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Query(\"?- " ~ first.to!string ~ ".\")";
     }
 }

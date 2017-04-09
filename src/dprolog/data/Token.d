@@ -37,6 +37,10 @@ abstract class Token {
         return hash;
     }
 
+    override string toString() const {
+        return "Token(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    }
+
 }
 
 interface Constant {}
@@ -52,7 +56,7 @@ class Atom : Token, Constant {
         return that && this.lexeme==that.lexeme;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Atom(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
@@ -83,7 +87,7 @@ class Number : Token, Constant {
         return that && this.lexeme==that.lexeme;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Number(value: " ~ value.to!string ~ ")";
     }
 
@@ -100,7 +104,7 @@ class Variable : Token {
         return that && this.lexeme==that.lexeme;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Variable(\"" ~ lexeme.to!string ~ "\")";
     }
 }
@@ -116,7 +120,7 @@ class Functor : Atom {
         return that && this.lexeme==that.lexeme;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Functor(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
@@ -140,7 +144,7 @@ class Operator : Atom {
         return that && this.lexeme==that.lexeme && this.precedence==that.precedence && this.type==that.type;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Operator(lexeme: \"" ~ lexeme.to!string ~ "\", precedence: " ~precedence.to!string~ ", type: " ~type~  ")";
     }
 
@@ -218,7 +222,7 @@ class LParen : Token {
         return true;
     }
 
-    override string toString() {
+    override string toString() const {
         return "LParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
@@ -234,7 +238,7 @@ class RParen : Token {
         return true;
     }
 
-    override string toString() {
+    override string toString() const {
         return "RParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
@@ -250,7 +254,7 @@ class LBracket : Token {
         return true;
     }
 
-    override string toString() {
+    override string toString() const {
         return "LBracket(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
@@ -266,7 +270,7 @@ class RBracket : Token {
         return true;
     }
 
-    override string toString() {
+    override string toString() const {
         return "RBracket(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 
@@ -282,7 +286,7 @@ class Period : Token {
         return true;
     }
 
-    override string toString() {
+    override string toString() const {
         return "Period(lexeme: \"" ~ lexeme.to!string ~ "\")";
     }
 

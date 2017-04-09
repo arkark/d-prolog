@@ -21,23 +21,23 @@ class Term {
         this.isCompound = token==Operator.comma || token==Operator.semicolon;
     }
 
-    bool isAtom() @property {
+    bool isAtom() @property const {
         return token.instanceOf!Atom && !token.instanceOf!Functor && !token.instanceOf!Operator;
     }
 
-    bool isNumber() @property {
+    bool isNumber() @property const {
         return token.instanceOf!Number;
     }
 
-    bool isVariable() @property {
+    bool isVariable() @property const {
         return token.instanceOf!Variable;
     }
 
-    bool isStructure() @property {
+    bool isStructure() @property const {
         return token.instanceOf!Functor || token.instanceOf!Operator;
     }
 
-    override string toString() {
+    override string toString() const {
         if (isCompound) {
             return "( " ~ children.front.to!string ~ " " ~ token.lexeme.to!string ~ " " ~ children.back.to!string ~ " )";
         } else if (isStructure) {

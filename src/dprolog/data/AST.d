@@ -19,11 +19,11 @@ class AST {
         this.children = [];
     }
 
-    override string toString() {
+    override string toString() const {
         return toString(0);
     }
 
-    protected string toString(int tabCount) {
+    protected string toString(int tabCount) const {
         string tab = "\t".repeat(tabCount).join;
         return [
             tab ~ "AST(token: ",
@@ -43,11 +43,11 @@ class ASTRoot : AST {
         super(null, tokenList);
     }
 
-    override string toString() {
+    override string toString() const {
         return toString(0);
     }
 
-    protected override string toString(int tabCount) {
+    protected override string toString(int tabCount) const {
         string tab = "\t".repeat(tabCount).join;
         return [
             tab ~ "ASTRoot(children: [",

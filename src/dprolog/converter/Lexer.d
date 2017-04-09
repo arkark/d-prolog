@@ -240,7 +240,7 @@ private:
             );
         }
 
-        string toString() {
+        string toString() const {
             return "Node(value: \"" ~value.to!string~ "\", line: " ~line.to!string~ ", column: " ~column.to!string~ ")";
         }
 

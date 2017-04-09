@@ -31,7 +31,7 @@ class Variant {
         return that && this.id==that.id && this.term.token==that.term.token && this.children.length==that.children.length && zip(this.children, that.children).all!(a => a[0] == a[1]);
     }
 
-    override string toString() {
+    override string toString() const {
         return "Variant(id: " ~ id.to!string ~ ", term: " ~ term.toString ~ ")";
     }
 
