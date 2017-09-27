@@ -24,6 +24,7 @@ void main() {
     while(true) {
         writeln;
         write("Input: ");
+        stdout.flush();
         string query = readln.chomp;
         if (query == "halt.") {
             break;
