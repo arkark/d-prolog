@@ -3,23 +3,25 @@ import dprolog.Engine;
 
 import std.stdio,
        std.conv,
-       std.string;
+       std.string,
+       std.file,
+       std.getopt;
 
-void main() {
+void main(string[] args) {
+
+    string filePath;
+    auto opt = getopt(args, "file", &filePath);
 
     Engine engine = new Engine;
 
-    /*dstring src1 = "hoge(aaa). po(X, Y) :- hoge(X), hoge(Y).";
-    dstring src2 = "?- po(aaa)."; // => true
-    dstring src3 = "?- po(X, Y)."; // => false*/
-
-    /*dstring src = "
-    append([],L,L).
-    append([H|T],L,[H|R]):- append(T,L,R).
-    ";
-
-    engine.execute(src);
-    while(!engine.emptyMessage) engine.showMessage;*/
+    // read a file
+    if (!filePath.empty) {
+        if (filePath.exists) {
+            engine.execute(filePath.readText.to!dstring);
+        } else {
+            writeln("Warning: file '", filePath, "' cannot be read");
+        }
+    }
 
     while(true) {
         writeln;
