@@ -12,6 +12,7 @@ import std.stdio,
        std.array,
        std.range,
        std.concurrency,
+       std.traits,
        std.container : DList;
 
 // Parser: Token[] -> ASTRoot
@@ -206,7 +207,17 @@ private:
                     isPostfix ? Operator.Notation.Postfix :
                                 Operator.Notation.Infix
                 );
-                if (op !is null) token = op;
+                if (op is null) {
+                    foreach(notation; EnumMembers!(Operator.Notation)) {
+                        if (Operator.getOperator(cast(Atom)token, notation) !is null) {
+                            // AtomにOperatorが使われている
+                            setErrorMessage(tokens);
+                            break;
+                        }
+                    }
+                } else {
+                    token = op;
+                }
             }
         }
     }
