@@ -70,7 +70,7 @@ private:
 
     void parseProgram(Token[] tokens, AST parent) {
         while(!tokens.empty) {
-            int cnt = tokens.countUntil!(t => t.instanceOf!Period);
+            long cnt = tokens.countUntil!(t => t.instanceOf!Period);
             if (cnt == -1) {
                 setErrorMessage(tokens);
                 return;
@@ -95,7 +95,7 @@ private:
             parseTerm(tokens, parent);
         } else {
             AST ast = new AST(op, tokens);
-            int cnt = tokens.countUntil!(t => t is op);
+            long cnt = tokens.countUntil!(t => t is op);
             if (op.notation != Operator.Notation.Prefix) parseTermList(tokens[0..cnt], ast);
             if (op.notation != Operator.Notation.Postfix) parseTermList(tokens[cnt+1..$], ast);
             parent.children ~= ast;
@@ -233,7 +233,7 @@ private:
 
     /* ---------- Unit Tests ---------- */
 
-    static void testAST(TAry...)(ASTRoot root, int[] inds...) {
+    static void testAST(TAry...)(ASTRoot root, long[] inds...) {
         AST ast = root;
         foreach(i; inds) {
             assert(ast.children.length > i);

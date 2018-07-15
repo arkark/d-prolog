@@ -356,7 +356,7 @@ private:
 
         Term first = (cast(Fact) clauseList.front).first;
 
-        bool validate(Term term, int n)  {
+        bool validate(Term term, long n)  {
             return n==0 ? (() =>
                 term.isAtom && term.token == Atom.emptyAtom
             )() : (() =>

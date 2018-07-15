@@ -7,11 +7,11 @@ import std.conv,
        std.algorithm;
 
 class Variant {
-    private const int id;
+    private const long id;
     Term term;
     Variant[] children;
 
-    this(int id, Term term, Variant[] children) {
+    this(long id, Term term, Variant[] children) {
         this.id = id;
         this.term = term;
         this.children = children;

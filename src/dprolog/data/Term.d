@@ -96,7 +96,7 @@ class Term {
         assert(comT.isCompound);
 
         import std.range, std.array, std.algorithm, std.functional;
-        bool function(Term, int) validate = (term, index) => term.adjoin!(
+        bool function(Term, long) validate = (term, index) => term.adjoin!(
             //          0,               1,                 2,                  3
             t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure
         ).array.enumerate.all!(a => a.value == (a.index == index));

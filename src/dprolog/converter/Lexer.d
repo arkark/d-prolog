@@ -103,7 +103,7 @@ private:
         Node nowNode = lookaheader.front;
         bool existToken = tokenGen.validate(nowNode.value);
         if (tokenGen.validateHead(nowNode.value.to!dchar)) {
-            nowNode = Node("", int.max, int.max);
+            nowNode = Node("", long.max, long.max);
             while(!lookaheader.empty) {
                 Node tmpNode = nowNode ~ lookaheader.front;
                 if (tokenGen.validate(tmpNode.value)) {
@@ -123,7 +123,7 @@ private:
     }
 
     void setErrorMessage(Node node) {
-        int num = 20;
+        long num = 20;
         dstring str = node.value.pipe!(
             lexeme => lexeme.length>num ? lexeme.take(num).to!dstring ~ " ... " : lexeme
         );
@@ -227,8 +227,8 @@ private:
 
     struct Node {
         dstring value;
-        int line;
-        int column;
+        long line;
+        long column;
 
         Node opBinary(string op)(Node that) if (op == "~") {
             return Node(

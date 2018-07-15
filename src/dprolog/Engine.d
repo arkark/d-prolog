@@ -188,9 +188,9 @@ private:
     }
 
     UF buildUnionFind(Clause clause, ref Variant first, ref Variant second) {
-        static int idGen = 0;
-        static int idGen_underscore = 0;
-        const int id = ++idGen;
+        static long idGen = 0;
+        static long idGen_underscore = 0;
+        const long id = ++idGen;
 
         UF uf = new UF;
 

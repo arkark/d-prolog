@@ -23,7 +23,7 @@ class AST {
         return toString(0);
     }
 
-    protected string toString(int tabCount) const {
+    protected string toString(long tabCount) const {
         string tab = "\t".repeat(tabCount).join;
         return [
             tab ~ "AST(token: ",
@@ -47,7 +47,7 @@ class ASTRoot : AST {
         return toString(0);
     }
 
-    protected override string toString(int tabCount) const {
+    protected override string toString(long tabCount) const {
         string tab = "\t".repeat(tabCount).join;
         return [
             tab ~ "ASTRoot(children: [",

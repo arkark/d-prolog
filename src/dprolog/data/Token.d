@@ -16,10 +16,10 @@ abstract class Token {
 
     static immutable dstring specialCharacters = ":?&;,|=<>+-*/\\";
 
-    immutable int line;
-    immutable int column;
+    immutable long line;
+    immutable long column;
     immutable dstring lexeme;
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         this.lexeme = lexeme;
         this.line = line;
         this.column = column;
@@ -47,7 +47,7 @@ interface Constant {}
 
 class Atom : Token, Constant {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 
@@ -66,10 +66,10 @@ class Atom : Token, Constant {
 
 class Number : Token, Constant {
 
-    private immutable int value;
-    this(dstring lexeme, int line, int column) {
+    private immutable long value;
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
-        this.value = lexeme.to!int;
+        this.value = lexeme.to!long;
     }
 
     Number opUary(string op)()
@@ -95,7 +95,7 @@ class Number : Token, Constant {
 
 class Variable : Token {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 
@@ -128,7 +128,7 @@ class Functor : Atom {
 
 class Operator : Atom {
 
-    immutable int precedence;
+    immutable long precedence;
     immutable string type;
     Notation notation() @property {
         switch(type) {
@@ -164,13 +164,13 @@ class Operator : Atom {
         }
     }
 
-    private this(immutable Operator op, int line, int column) {
+    private this(immutable Operator op, long line, long column) {
         super(op.lexeme, line, column);
         this.precedence = op.precedence;
         this.type = op.type;
     }
 
-    private this(dstring lexeme, int precedence, string type)  {
+    private this(dstring lexeme, long precedence, string type)  {
         super(lexeme, -1, -1);
         this.precedence = precedence;
         this.type = type;
@@ -214,7 +214,7 @@ class Operator : Atom {
 
 class LParen : Token {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 
@@ -230,7 +230,7 @@ class LParen : Token {
 
 class RParen : Token {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 
@@ -246,7 +246,7 @@ class RParen : Token {
 
 class LBracket : Token {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 
@@ -262,7 +262,7 @@ class LBracket : Token {
 
 class RBracket : Token {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 
@@ -278,7 +278,7 @@ class RBracket : Token {
 
 class Period : Token {
 
-    this(dstring lexeme, int line, int column) {
+    this(dstring lexeme, long line, long column) {
         super(lexeme, line, column);
     }
 

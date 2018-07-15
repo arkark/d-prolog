@@ -94,10 +94,10 @@ private:
 
     class Node {
         T value;
-        int rank = 0;
+        long rank = 0;
         Node parent;
 
-        this(T value, int rank = 0, Node parent = null) {
+        this(T value, long rank = 0, Node parent = null) {
             this.value  = value;
             this.rank   = rank;
             this.parent = parent;
@@ -115,7 +115,7 @@ private:
 unittest {
     writeln(__FILE__, ": test");
 
-    auto uf1 = new UnionFind!(int, (a, b) => a - b);
+    auto uf1 = new UnionFind!(long, (a, b) => a - b);
 
     assert(uf1.storage.length == 0);
 
