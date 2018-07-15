@@ -4,10 +4,10 @@ module dprolog.converter.Converter;
 
 interface Converter(S, T) {
 
-    void run(S src);
-    T get();
-    void clear();
-    bool hasError() @property;
-    dstring errorMessage() @property;
+  void run(S src);
+  T get();
+  void clear();
+  bool hasError() @property;
+  dstring errorMessage() @property;
 
 }

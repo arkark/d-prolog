@@ -9,47 +9,47 @@ import std.conv;
 abstract class Clause {}
 
 class Fact : Clause {
-    Term first;
+  Term first;
 
-    this(Term first) {
-        this.first = first;
-    }
+  this(Term first) {
+    this.first = first;
+  }
 
-    override string toString() const {
-        return "Fact(\"" ~ first.to!string ~ ".\")";
-    }
+  override string toString() const {
+    return "Fact(\"" ~ first.to!string ~ ".\")";
+  }
 
-    invariant {
-        assert(!first.isCompound);
-    }
+  invariant {
+    assert(!first.isCompound);
+  }
 }
 
 class Rule : Clause {
-    Term first;
-    Term second;
+  Term first;
+  Term second;
 
-    this(Term first, Term second) {
-        this.first  = first;
-        this.second = second;
-    }
+  this(Term first, Term second) {
+    this.first  = first;
+    this.second = second;
+  }
 
-    override string toString() const {
-        return "Rule(\"" ~ first.to!string ~ " :- " ~ second.to!string ~ ".\")";
-    }
+  override string toString() const {
+    return "Rule(\"" ~ first.to!string ~ " :- " ~ second.to!string ~ ".\")";
+  }
 
-    invariant {
-        assert(!first.isCompound);
-    }
+  invariant {
+    assert(!first.isCompound);
+  }
 }
 
 class Query : Clause {
-    Term first;
+  Term first;
 
-    this(Term first) {
-        this.first = first;
-    }
+  this(Term first) {
+    this.first = first;
+  }
 
-    override string toString() const {
-        return "Query(\"?- " ~ first.to!string ~ ".\")";
-    }
+  override string toString() const {
+    return "Query(\"?- " ~ first.to!string ~ ".\")";
+  }
 }
