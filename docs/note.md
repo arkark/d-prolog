@@ -30,7 +30,7 @@
 <structure>     ::= <functor> <left paren> <term> ("," <term>)* <right paren> | <term> <operator> <term> | <operator> <term> | <term> <operator> | <list>
 <functor>       ::= <atom>
 <operator>      ::= <atom>
-<list>          ::= <variable> | <left bracket> [<term> ("," <term>)* ["|" <list>]] <right bracket>
+<list>          ::= <left bracket> [<term> ("," <term>)* ["|" <list>]] <right bracket>
 ```
 
 ## System Operators
