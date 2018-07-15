@@ -373,7 +373,7 @@ private:
         testError("hoge(()).", true);
         testError("hoge((X).", true);
         testError("[].", false);
-        testError("[|].", false); // "|" がOperatorではなくAtomとしてパースされる
+        testError("[|].", true);
         testError("[a|].", true);
         testError("[|a].", true);
         testError("+1+2+3.", false);
