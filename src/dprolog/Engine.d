@@ -56,7 +56,7 @@ public:
 
   void showMessage() in {
     assert(!emptyMessage);
-  } body {
+  } do {
     writeln(_messageList.front);
     _messageList.removeFront;
   }

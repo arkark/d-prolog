@@ -39,7 +39,7 @@ public:
 
   ASTRoot get() in {
     assert(_isParsed);
-  } body {
+  } do {
     return _resultAST;
   }
 
@@ -56,7 +56,7 @@ public:
 
   dstring errorMessage() @property in {
     assert(hasError);
-  } body {
+  } do {
     return _errorMessage;
   }
 
@@ -224,7 +224,7 @@ private:
 
   void setErrorMessage(Token[] tokens) in {
     assert(!tokens.empty);
-  } body {
+  } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
     _errorMessage = "ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".";
     _hasError = true;

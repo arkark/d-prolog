@@ -39,7 +39,7 @@ public:
 
   Token[] get() in {
     assert(_isTokenized);
-  } body {
+  } do {
     return _resultTokens.array;
   }
 
@@ -56,7 +56,7 @@ public:
 
   dstring errorMessage() @property in {
     assert(hasError);
-  } body {
+  } do {
     return _errorMessage;
   }
 
@@ -99,7 +99,7 @@ private:
 
   Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in {
     assert(!lookaheader.empty);
-  } body {
+  } do {
     Node nowNode = lookaheader.front;
     bool existToken = tokenGen.validate(nowNode.value);
     if (tokenGen.validateHead(nowNode.value.to!dchar)) {

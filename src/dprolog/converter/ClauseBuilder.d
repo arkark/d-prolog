@@ -41,7 +41,7 @@ public:
 
   Clause[] get() in {
     assert(_isBuilded);
-  } body {
+  } do {
     return _resultClauses.array;
   }
 
@@ -58,7 +58,7 @@ public:
 
   dstring errorMessage() in {
     assert(hasError);
-  } body {
+  } do {
     return _errorMessage;
   }
 
@@ -216,7 +216,7 @@ private:
 
   void setErrorMessage(Token[] tokens) in {
     assert(!tokens.empty);
-  } body {
+  } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
     _errorMessage = "SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"";
     _hasError = true;
