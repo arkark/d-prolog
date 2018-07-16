@@ -1,10 +1,10 @@
 module dprolog.data.Clause;
 
-import dprolog.data.Token,
-       dprolog.data.Term,
-       dprolog.util.UnionFind;
+import dprolog.data.Token;
+import dprolog.data.Term;
+import dprolog.util.UnionFind;
 
-import std.conv;
+import std.format;
 
 abstract class Clause {}
 
@@ -16,7 +16,7 @@ class Fact : Clause {
   }
 
   override string toString() const {
-    return "Fact(\"" ~ first.to!string ~ ".\")";
+    return format!"Fact(\"%s.\")"(first);
   }
 
   invariant {
@@ -34,7 +34,7 @@ class Rule : Clause {
   }
 
   override string toString() const {
-    return "Rule(\"" ~ first.to!string ~ " :- " ~ second.to!string ~ ".\")";
+    return format!"Rule(\"%s :- %s.\")"(first, second);
   }
 
   invariant {
@@ -50,6 +50,6 @@ class Query : Clause {
   }
 
   override string toString() const {
-    return "Query(\"?- " ~ first.to!string ~ ".\")";
+    return format!"Query(\"?- %s.\")"(first);
   }
 }

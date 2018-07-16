@@ -1,11 +1,11 @@
 module dprolog.util.UnionFind;
 
-import std.stdio,
-       std.conv,
-       std.array,
-       std.typecons,
-       std.algorithm,
-       std.functional;
+import std.stdio;
+import std.format;
+import std.array;
+import std.typecons;
+import std.algorithm;
+import std.functional;
 
 class UnionFind(T, alias pred = (a, b) => 0) {
 
@@ -57,11 +57,11 @@ public:
   }
 
   override string toString() {
-    return "UnionFind(\n" ~
+    return format!"UnionFind(%-(\n\t%s,%)\n)"(
       storage.byKey.map!(
-        k => "\t" ~ k.to!string ~ " => " ~ root(k).to!string
-      ).join(",\n")
-    ~ "\n)";
+        k => format!"%s => %s"(k, root(k))
+      ).array
+    );
   }
 
 private:

@@ -1,20 +1,21 @@
 module dprolog.converter.Lexer;
 
-import dprolog.data.Token,
-       dprolog.converter.Converter,
-       dprolog.util.util;
+import dprolog.data.Token;
+import dprolog.converter.Converter;
+import dprolog.util.util;
 
-import std.stdio,
-       std.conv,
-       std.string,
-       std.ascii,
-       std.range,
-       std.array,
-       std.algorithm,
-       std.regex,
-       std.functional,
-       std.concurrency,
-       std.container : DList;
+import std.stdio;
+import std.conv;
+import std.string;
+import std.format;
+import std.ascii;
+import std.range;
+import std.array;
+import std.algorithm;
+import std.regex;
+import std.functional;
+import std.concurrency;
+import std.container : DList;
 
 // Lexer (lexical analyzer): dstring -> Token[]
 
@@ -241,7 +242,7 @@ private:
     }
 
     string toString() const {
-      return "Node(value: \"" ~value.to!string~ "\", line: " ~line.to!string~ ", column: " ~column.to!string~ ")";
+      return format!"Node(value: \"%s\", line: %s, column: %s)"(value, line, column);
     }
 
   }

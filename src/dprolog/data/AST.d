@@ -2,9 +2,9 @@ module dprolog.data.AST;
 
 import dprolog.data.Token;
 
-import std.conv,
-       std.range,
-       std.algorithm;
+import std.range;
+import std.format;
+import std.algorithm;
 
 // Abstract Syntax Tree
 
@@ -25,15 +25,14 @@ class AST {
 
   protected string toString(long tabCount) const {
     string tab = "\t".repeat(tabCount).join;
-    return [
-      tab ~ "AST(token: ",
-      token.to!string,
-      ", children: [",
+    return format!"%sAST(token: %s, chidlen: [%-(\n%s,%)\n%s])"(
+      tab,
+      token,
       children.map!(
-        c => "\n" ~ c.toString(tabCount + 1)
-      ).join(","),
-      "\n" ~ tab ~ "])"
-    ].join;
+        c => c.toString(tabCount + 1)
+      ),
+      tab
+    );
   }
 }
 
@@ -49,13 +48,13 @@ class ASTRoot : AST {
 
   protected override string toString(long tabCount) const {
     string tab = "\t".repeat(tabCount).join;
-    return [
-      tab ~ "ASTRoot(children: [",
+    return format!"%sASTRoot(children: [%-(\n%s,%)\n%s])"(
+      tab,
       children.map!(
-        c => "\n" ~ c.toString(tabCount + 1)
-      ).join(","),
-      "\n" ~ tab ~ "])"
-    ].join;
+        c => c.toString(tabCount + 1)
+      ),
+      tab
+    );
   }
 
 }

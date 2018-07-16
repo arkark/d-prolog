@@ -2,9 +2,9 @@ module dprolog.data.Variant;
 
 import dprolog.data.Term;
 
-import std.conv,
-       std.range,
-       std.algorithm;
+import std.format;
+import std.range;
+import std.algorithm;
 
 class Variant {
   private const long id;
@@ -32,7 +32,7 @@ class Variant {
   }
 
   override string toString() const {
-    return "Variant(id: " ~ id.to!string ~ ", term: " ~ term.toString ~ ")";
+    return format!"Variant(id: %s, term: %s)"(id, term);
   }
 
 }

@@ -1,21 +1,21 @@
 module dprolog.converter.ClauseBuilder;
 
-import dprolog.data.Token,
-       dprolog.data.AST,
-       dprolog.data.Clause,
-       dprolog.data.Term,
-       dprolog.converter.Converter,
-       dprolog.converter.Lexer,
-       dprolog.converter.Parser,
-       dprolog.util.util;
+import dprolog.data.Token;
+import dprolog.data.AST;
+import dprolog.data.Clause;
+import dprolog.data.Term;
+import dprolog.converter.Converter;
+import dprolog.converter.Lexer;
+import dprolog.converter.Parser;
+import dprolog.util.util;
 
-import std.stdio,
-       std.conv,
-       std.range,
-       std.array,
-       std.algorithm,
-       std.functional,
-       std.container : DList;
+import std.stdio;
+import std.conv;
+import std.range;
+import std.array;
+import std.algorithm;
+import std.functional;
+import std.container : DList;
 
 // ClauseBuilder: ASTRoot -> Clause[]
 

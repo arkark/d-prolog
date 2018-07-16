@@ -1,19 +1,19 @@
 module dprolog.converter.Parser;
 
-import dprolog.data.Token,
-       dprolog.data.AST,
-       dprolog.converter.Converter,
-       dprolog.converter.Lexer,
-       dprolog.util.util;
+import dprolog.data.Token;
+import dprolog.data.AST;
+import dprolog.converter.Converter;
+import dprolog.converter.Lexer;
+import dprolog.util.util;
 
-import std.stdio,
-       std.conv,
-       std.algorithm,
-       std.array,
-       std.range,
-       std.concurrency,
-       std.traits,
-       std.container : DList;
+import std.stdio;
+import std.conv;
+import std.algorithm;
+import std.array;
+import std.range;
+import std.concurrency;
+import std.traits;
+import std.container : DList;
 
 // Parser: Token[] -> ASTRoot
 

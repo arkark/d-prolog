@@ -1,11 +1,11 @@
 
 import dprolog.Engine;
 
-import std.stdio,
-       std.conv,
-       std.string,
-       std.file,
-       std.getopt;
+import std.stdio;
+import std.conv;
+import std.string;
+import std.file;
+import std.getopt;
 
 void main(string[] args) {
 

@@ -1,25 +1,25 @@
 
 module dprolog.Engine;
 
-import dprolog.data.Token,
-       dprolog.data.Term,
-       dprolog.data.Clause,
-       dprolog.data.Variant,
-       dprolog.converter.Converter,
-       dprolog.converter.Lexer,
-       dprolog.converter.Parser,
-       dprolog.converter.ClauseBuilder,
-       dprolog.util.util,
-       dprolog.util.UnionFind;
+import dprolog.data.Token;
+import dprolog.data.Term;
+import dprolog.data.Clause;
+import dprolog.data.Variant;
+import dprolog.converter.Converter;
+import dprolog.converter.Lexer;
+import dprolog.converter.Parser;
+import dprolog.converter.ClauseBuilder;
+import dprolog.util.util;
+import dprolog.util.UnionFind;
 
-import std.stdio,
-       std.conv,
-       std.range,
-       std.array,
-       std.algorithm,
-       std.typecons,
-       std.functional,
-       std.container : DList;
+import std.stdio;
+import std.conv;
+import std.range;
+import std.array;
+import std.algorithm;
+import std.typecons;
+import std.functional;
+import std.container : DList;
 
 class Engine {
 
@@ -156,11 +156,11 @@ private:
       foreach(clause; _storage) {
         Variant first, second;
         UF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
-        bool flag = clause.castSwitch!(
-          (Fact fact)   => match(variant, first, newUnionFind),
-          (Rule rule)   => match(variant, first, newUnionFind) && second.pipe!isTrue(newUnionFind)
+        bool isMatch = clause.castSwitch!(
+          (Fact fact) => match(variant, first, newUnionFind),
+          (Rule rule) => match(variant, first, newUnionFind) && second.pipe!isTrue(newUnionFind)
         );
-        if (flag) {
+        if (isMatch) {
           unionFind = newUnionFind;
           return true;
         }

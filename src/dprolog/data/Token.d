@@ -1,10 +1,11 @@
 module dprolog.data.Token;
 
-import std.conv,
-       std.range,
-       std.algorithm,
-       std.functional,
-       std.typecons;
+import std.conv;
+import std.format;
+import std.range;
+import std.algorithm;
+import std.functional;
+import std.typecons;
 
 /*
 
@@ -38,7 +39,7 @@ abstract class Token {
   }
 
   override string toString() const {
-    return "Token(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"Token(lexeme: \"%s\")"(lexeme);
   }
 
 }
@@ -57,7 +58,7 @@ class Atom : Token, Constant {
   }
 
   override string toString() const {
-    return "Atom(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"Atom(lexeme: \"%s\")"(lexeme);
   }
 
   static immutable Atom emptyAtom = cast(immutable) new Atom("", -1, -1); // 空リストに用いる
@@ -88,7 +89,7 @@ class Number : Token, Constant {
   }
 
   override string toString() const {
-    return "Number(value: " ~ value.to!string ~ ")";
+    return format!"Number(value: %s)"(value);
   }
 
 }
@@ -105,7 +106,7 @@ class Variable : Token {
   }
 
   override string toString() const {
-    return "Variable(\"" ~ lexeme.to!string ~ "\")";
+    return format!"Variable(lexeme: \"%s\")"(lexeme);
   }
 }
 
@@ -121,7 +122,7 @@ class Functor : Atom {
   }
 
   override string toString() const {
-    return "Functor(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"Functor(lexeme: \"%s\")"(lexeme);
   }
 
 }
@@ -145,7 +146,7 @@ class Operator : Atom {
   }
 
   override string toString() const {
-    return "Operator(lexeme: \"" ~ lexeme.to!string ~ "\", precedence: " ~precedence.to!string~ ", type: " ~type~  ")";
+    return format!"Operator(lexeme: \"%s\", precedence: %s, type: %s)"(lexeme, precedence, type);
   }
 
   static Operator getOperator(Atom atom, Notation notation) {
@@ -223,7 +224,7 @@ class LParen : Token {
   }
 
   override string toString() const {
-    return "LParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"LParen(lexeme: \"%s\")"(lexeme);
   }
 
 }
@@ -239,7 +240,7 @@ class RParen : Token {
   }
 
   override string toString() const {
-    return "RParen(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"RParen(lexeme: \"%s\")"(lexeme);
   }
 
 }
@@ -255,7 +256,7 @@ class LBracket : Token {
   }
 
   override string toString() const {
-    return "LBracket(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"LBracket(lexeme: \"%s\")"(lexeme);
   }
 
 }
@@ -271,7 +272,7 @@ class RBracket : Token {
   }
 
   override string toString() const {
-    return "RBracket(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"RBracket(lexeme: \"%s\")"(lexeme);
   }
 
 }
@@ -287,7 +288,7 @@ class Period : Token {
   }
 
   override string toString() const {
-    return "Period(lexeme: \"" ~ lexeme.to!string ~ "\")";
+    return format!"Period(lexeme: \"%s\")"(lexeme);
   }
 
 }

@@ -1,12 +1,12 @@
 module dprolog.data.Term;
 
-import dprolog.data.Token,
-       dprolog.util.util;
+import dprolog.data.Token;
+import dprolog.util.util;
 
-import std.stdio,
-       std.conv,
-       std.algorithm,
-       std.range;
+import std.stdio;
+import std.format;
+import std.algorithm;
+import std.range;
 
 class Term {
   Token token;
@@ -39,11 +39,11 @@ class Term {
 
   override string toString() const {
     if (isCompound) {
-      return "( " ~ children.front.to!string ~ " " ~ token.lexeme.to!string ~ " " ~ children.back.to!string ~ " )";
+      return format!"( %s %s %s )"(children.front, token.lexeme, children.back);
     } else if (isStructure) {
-      return token.lexeme.to!string ~ "( " ~ children.map!(c => c.to!string).join(", ") ~ " )";
+      return format!"%s( %-(%s, %) )"(token.lexeme, children);
     } else {
-      return token.lexeme.to!string;
+      return format!"%s"(token.lexeme);
     }
   }
 
