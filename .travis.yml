@@ -1,0 +1,6 @@
+language: d
+d:
+  - dmd
+script:
+  - dub test
+  - dub build
