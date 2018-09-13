@@ -26,10 +26,10 @@ void main(string[] args) {
 
   while(!engine.isHalt) {
     writeln;
-    write("Input: ");
+    write("?- ");
     stdout.flush();
     string query = readln.chomp;
-    engine.execute(query.to!dstring);
+    engine.execute("?- "d ~ query.to!dstring);
     while(!engine.emptyMessage) engine.showMessage;
   }
 }
