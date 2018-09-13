@@ -9,9 +9,15 @@ import std.getopt;
 void main(string[] args) {
 
   string filePath;
-  auto opt = getopt(args, "file", &filePath);
+  bool verbose;
+  auto opt = getopt(
+    args,
+    "file", &filePath,
+    "verbose", &verbose
+  );
 
   Engine engine = new Engine;
+  engine.setVerbose(verbose);
 
   // read a file
   if (!filePath.empty) {

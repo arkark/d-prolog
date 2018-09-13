@@ -14,6 +14,7 @@ import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 
 import std.stdio;
+import std.format;
 import std.conv;
 import std.range;
 import std.array;
@@ -42,6 +43,7 @@ private:
   DList!dstring _messageList;
 
   bool _isHalt = false;
+  bool _verboseMode = false;
 
 public:
   this() {
@@ -93,6 +95,10 @@ public:
     return _isHalt;
   }
 
+  void setVerbose(bool verbose) {
+    _verboseMode = verbose;
+  }
+
   void readFile(dstring filePath) {
     _reader.read(filePath);
   }
@@ -122,7 +128,9 @@ private:
   }
 
   void executeClause(Clause clause) {
-    writeln("execute: ", clause); //
+    if (_verboseMode) {
+      addMessage(format!"execute: %s"(clause));
+    }
     clause.castSwitch!(
       (Fact fact)   => executeFact(fact),
       (Rule rule)   => executeRule(rule),
