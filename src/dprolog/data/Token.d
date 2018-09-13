@@ -1,6 +1,6 @@
 module dprolog.data.Token;
 
-import dprolog.util.util;
+import dprolog.util.functions;
 
 import std.conv;
 import std.format;

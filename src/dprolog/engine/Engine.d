@@ -8,7 +8,7 @@ import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
-import dprolog.util.util;
+import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.engine.BuiltIn;
 

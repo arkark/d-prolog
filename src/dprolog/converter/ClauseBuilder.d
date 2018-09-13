@@ -7,7 +7,7 @@ import dprolog.data.Term;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
-import dprolog.util.util;
+import dprolog.util.functions;
 
 import std.stdio;
 import std.conv;

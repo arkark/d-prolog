@@ -1,6 +1,6 @@
 module dprolog.engine.BuiltIn;
 
-import dprolog.util.util;
+import dprolog.util.functions;
 import dprolog.engine.Engine;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
