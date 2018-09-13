@@ -1,5 +1,5 @@
 
-import dprolog.Engine;
+import dprolog.engine.Engine;
 
 import std.stdio;
 import std.conv;
@@ -23,16 +23,12 @@ void main(string[] args) {
     }
   }
 
-  while(true) {
+  while(!engine.isHalt) {
     writeln;
     write("Input: ");
     stdout.flush();
     string query = readln.chomp;
-    if (query == "halt.") {
-      break;
-    } else {
-      engine.execute(query.to!dstring);
-      while(!engine.emptyMessage) engine.showMessage;
-    }
+    engine.execute(query.to!dstring);
+    while(!engine.emptyMessage) engine.showMessage;
   }
 }

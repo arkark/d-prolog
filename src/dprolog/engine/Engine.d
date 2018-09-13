@@ -1,5 +1,4 @@
-
-module dprolog.Engine;
+module dprolog.engine.Engine;
 
 import dprolog.data.Token;
 import dprolog.data.Term;
@@ -11,6 +10,7 @@ import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
 import dprolog.util.util;
 import dprolog.util.UnionFind;
+import dprolog.engine.BuiltIn;
 
 import std.stdio;
 import std.conv;
@@ -24,9 +24,11 @@ import std.container : DList;
 class Engine {
 
 private:
-  Lexer _lexer                 = new Lexer;
-  Parser _parser               = new Parser;
-  ClauseBuilder _clauseBuilder = new ClauseBuilder;
+  Lexer _lexer;
+  Parser _parser;
+  ClauseBuilder _clauseBuilder;
+
+  BuildIn _builtIn;
 
   Clause[] _storage;
 
@@ -37,16 +39,27 @@ private:
 
   DList!dstring _messageList;
 
+  bool _isHalt = false;
+
 public:
   this() {
+    _lexer = new Lexer;
+    _parser = new Parser;
+    _clauseBuilder = new ClauseBuilder;
+    _builtIn = new BuildIn(this);
     clear();
   }
 
-  void execute(dstring src) {
+  void execute(dstring src) in {
+    assert(!isHalt);
+  } do {
     clearMessage();
     Clause[] clauseList = toClauseList(src);
     if (clauseList !is null) {
-      clauseList.each!(clause => executeClause(clause));
+      foreach(clause; clauseList) {
+        if (isHalt) break;
+        executeClause(clause);
+      }
     }
   }
 
@@ -69,8 +82,19 @@ public:
     clearMessage();
   }
 
-private:
+  void halt() {
+    _isHalt = true;
+  }
 
+  bool isHalt() @property {
+    return _isHalt;
+  }
+
+  void addMessage(T)(T message) {
+    _messageList.insertBack(message.to!dstring);
+  }
+
+private:
   Clause[] toClauseList(dstring src) {
     auto convert(S, T)(Converter!(S, T) converter) {
       return (S src) {
@@ -108,6 +132,11 @@ private:
   }
 
   void executeQuery(Query query) {
+    if (_builtIn.traverse(query.first)) {
+      // when matching a built-in pattern
+      return;
+    }
+
     Variant first, second;
     UF unionFind = buildUnionFind(query, first, second);
     if (query.first.isDetermined) {
@@ -220,10 +249,6 @@ private:
     );
 
     return uf;
-  }
-
-  void addMessage(T)(T message) {
-    _messageList.insertBack(message.to!dstring);
   }
 
   void clearMessage() {

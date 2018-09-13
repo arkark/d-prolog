@@ -1,5 +1,7 @@
 module dprolog.data.Token;
 
+import dprolog.util.util;
+
 import std.conv;
 import std.format;
 import std.range;
@@ -44,9 +46,7 @@ abstract class Token {
 
 }
 
-interface Constant {}
-
-class Atom : Token, Constant {
+class Atom : Token {
 
   this(dstring lexeme, long line, long column) {
     super(lexeme, line, column);
@@ -65,7 +65,7 @@ class Atom : Token, Constant {
 
 }
 
-class Number : Token, Constant {
+class Number : Token {
 
   private immutable long value;
   this(dstring lexeme, long line, long column) {
