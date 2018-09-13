@@ -22,6 +22,7 @@ void main(string[] args) {
   // read a file
   if (!filePath.empty) {
     engine.readFile(filePath.to!dstring);
+    while(!engine.emptyMessage) engine.showMessage;
   }
 
   while(!engine.isHalt) {
