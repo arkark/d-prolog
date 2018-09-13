@@ -48,20 +48,22 @@ private:
       "halt",
       term => _engine.halt()
     );
-    // auto test = buildPattern(
-    //   "test(X)",
-    //   (term) {
-    //     Term x = term.children[0];
-    //     _engine.addMessage(x.token);
-    //   },
-    //   [
-    //     "X" : (Term term) => term.isStructure
-    //   ]
-    // );
-
+    auto readFile = buildPattern(
+      "[FilePath]",
+      (term) {
+        dstring filePath = term.children[0].token.lexeme;
+        if (filePath.front == '\'') {
+          filePath = filePath[1..$-1];
+        }
+        _engine.readFile(filePath);
+      },
+      [
+        "FilePath": (Term term) => term.isAtom && term.children.empty
+      ]
+    );
     _patterns = [
       halt,
-      // test
+      readFile
     ];
   }
 

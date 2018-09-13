@@ -11,6 +11,7 @@ import dprolog.converter.ClauseBuilder;
 import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.engine.BuiltIn;
+import dprolog.engine.Reader;
 
 import std.stdio;
 import std.conv;
@@ -29,6 +30,7 @@ private:
   ClauseBuilder _clauseBuilder;
 
   BuildIn _builtIn;
+  Reader _reader;
 
   Clause[] _storage;
 
@@ -47,6 +49,7 @@ public:
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
     _builtIn = new BuildIn(this);
+    _reader = new Reader(this);
     clear();
   }
 
@@ -88,6 +91,10 @@ public:
 
   bool isHalt() @property {
     return _isHalt;
+  }
+
+  void readFile(dstring filePath) {
+    _reader.read(filePath);
   }
 
   void addMessage(T)(T message) {

@@ -4,7 +4,6 @@ import dprolog.engine.Engine;
 import std.stdio;
 import std.conv;
 import std.string;
-import std.file;
 import std.getopt;
 
 void main(string[] args) {
@@ -16,11 +15,7 @@ void main(string[] args) {
 
   // read a file
   if (!filePath.empty) {
-    if (filePath.exists) {
-      engine.execute(filePath.readText.to!dstring);
-    } else {
-      writeln("Warning: file '", filePath, "' cannot be read");
-    }
+    engine.readFile(filePath.to!dstring);
   }
 
   while(!engine.isHalt) {
