@@ -154,15 +154,16 @@ private:
 
     Variant first, second;
     UF unionFind = buildUnionFind(query, first, second);
+    UF[] result = unificate(first, unionFind);
     if (query.first.isDetermined) {
-      addMessage(first.pipe!isTrue(unionFind).to!string ~ ".");
+      addMessage((!result.empty).to!string ~ ".");
     } else {
-      addMessage(first.pipe!isTrue(unionFind).to!string ~ ".");
+      addMessage((!result.empty).to!string ~ ".");
 
       // temporary code
-      string[] rec(Variant v) {
+      string[] rec(Variant v, UF uf) {
         if (v.isVariable) {
-          Variant root = unionFind.root(v);
+          Variant root = uf.root(v);
           return [[
             v.term.to!string,
             "=",
@@ -171,7 +172,7 @@ private:
                 return new Term(
                   var.term.token,
                   var.children.map!(
-                    c => c.isVariable ? unionFind.root(c).pipe!po : c.term
+                    c => c.isVariable ? uf.root(c).pipe!po : c.term
                   ).array
                 );
               }
@@ -180,36 +181,43 @@ private:
             }()
           ].join(" ")];
         } else {
-          return v.children.map!rec.join.array;
+          return v.children.map!(u => rec(u, uf)).join.array;
         }
       }
 
-      addMessage(first.pipe!rec.join(", ") ~ ".");
+      foreach(i, uf; result) {
+        string end = i==result.length-1 ? "." : ";";
+        addMessage(rec(first, uf).join(", ") ~ end);
+      }
     }
   }
 
-  bool isTrue(Variant variant, ref UF unionFind) {
+  UF[] unificate(Variant variant, UF unionFind) {
     const Term term = variant.term;
     if (term.token == Operator.comma) {
       // conjunction
-      return variant.children.front.pipe!isTrue(unionFind) && variant.children.back.pipe!isTrue(unionFind);
+      UF[] ufs = unificate(variant.children.front, unionFind);
+      return ufs.map!(
+        uf => unificate(variant.children.back, uf)
+      ).join.array;
     } else if (term.token == Operator.semicolon) {
       // disjunction
-      return variant.children.front.pipe!isTrue(unionFind) || variant.children.back.pipe!isTrue(unionFind);
+      UF[] ufs1 = unificate(variant.children.front, unionFind);
+      UF[] ufs2 = unificate(variant.children.back, unionFind);
+      return ufs1 ~ ufs2;
     } else {
+      UF[] ufs;
       foreach(clause; _storage) {
         Variant first, second;
         UF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
-        bool isMatch = clause.castSwitch!(
-          (Fact fact) => match(variant, first, newUnionFind),
-          (Rule rule) => match(variant, first, newUnionFind) && second.pipe!isTrue(newUnionFind)
-        );
-        if (isMatch) {
-          unionFind = newUnionFind;
-          return true;
+        if (match(variant, first, newUnionFind)) {
+          ufs ~= clause.castSwitch!(
+            (Fact fact) => [newUnionFind],
+            (Rule rule) => unificate(second, newUnionFind)
+          );
         }
       }
-      return false;
+      return ufs;
     }
   }
 
