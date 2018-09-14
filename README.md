@@ -13,8 +13,14 @@ A simple Prolog implementation in Dlang.
 
 ## Build and Run
 
+with no option:
 ```console
 $ dub run
+```
+
+with some options:
+```console
+$ dub run -- --file=example/family.pro --verbose
 ```
 
 ## Tests
