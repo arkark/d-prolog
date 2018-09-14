@@ -7,9 +7,15 @@ import std.typecons;
 import std.algorithm;
 import std.functional;
 
-class UnionFind(T, alias pred = (a, b) => 0) {
+class UnionFind(T, alias less = (a, b) => 0)
+if (is(typeof(binaryFun!less(T.init, T.init)) : long)) {
+
+/*
+  S := {x | same(x, a)} ⇒ ∀x ∈ S-{a}, less(a, x)<0 ⇒ ∀x ∈ S, root(x) == a
+ */
 
 private:
+  alias lessFun = binaryFun!less;
   Node[T] storage;
 
 public:
@@ -70,7 +76,7 @@ private:
     y = find(y);
     if (same(x, y)) return;
 
-    if (pred(x.value, y.value)<0 || (pred(x.value, y.value)==0 && x.rank>y.rank)) {
+    if (lessFun(x.value, y.value)<0 || (lessFun(x.value, y.value)==0 && x.rank>y.rank)) {
       x.rank = max(x.rank, y.rank + 1);
       storage[y.value].parent = x;
     } else {
@@ -125,6 +131,7 @@ unittest {
 
   assert(uf1.storage.length == 3);
   assert(uf1.same(1, 2) && !uf1.same(2, 3) && !uf1.same(3, 1));
+  assert(uf1.root(1) == 1 && uf1.root(2) == 1 && uf1.root(3) == 3);
 
   assert(uf2.storage.length == 0);
 
