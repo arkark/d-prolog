@@ -1,6 +1,6 @@
 male(bob).
 male(tom).
-make(jim).
+male(jim).
 female(pam).
 female(liz).
 female(ann).
