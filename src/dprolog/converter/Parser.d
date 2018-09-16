@@ -216,6 +216,10 @@ private:
             }
           }
         } else {
+          if ((isPrefix || isPostfix) && tokens.length < 2) {
+            setErrorMessage(tokens);
+            break;
+          }
           token = op;
         }
       }
@@ -364,9 +368,12 @@ private:
     testError("", false);
     testError(".....", false);
     testError("().", true);
+    testError("+.", true);
+    testError("*.", true);
     testError("hoge(X). po", true);
     testError("hoge(X).", false);
     testError("?- a :- b.", true);
+    testError("?- .", true);
     testError("aa :- bb :- cc.", true);
     testError("aa :- (bb :- cc).", false);
     testError("hoge(aa aa).", true);
