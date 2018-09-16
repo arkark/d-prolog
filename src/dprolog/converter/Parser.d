@@ -210,7 +210,7 @@ private:
         if (op is null) {
           foreach(notation; EnumMembers!(Operator.Notation)) {
             if (Operator.getOperator(cast(Atom)token, notation) !is null) {
-              // AtomにOperatorが使われている
+              // when an operator is used as a non-operator
               setErrorMessage(tokens);
               break;
             }
