@@ -2,10 +2,8 @@ language: d
 d:
   - dmd
 script:
-  - dub test
   - dub build
-
-script:
   - dub test --build=unittest-cov
+
 after_success:
   - bash <(curl -s https://codecov.io/bash) -s "src-*.lst"
