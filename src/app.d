@@ -6,6 +6,8 @@ import std.conv;
 import std.string;
 import std.getopt;
 
+import arsd.terminal;
+
 void main(string[] args) {
 
   string filePath;
@@ -25,12 +27,21 @@ void main(string[] args) {
     while(!engine.emptyMessage) engine.showMessage;
   }
 
+  auto terminal = Terminal(ConsoleOutputType.cellular);
+
   while(!engine.isHalt) {
-    writeln;
-    write("?- ");
-    stdout.flush();
-    string query = readln.chomp;
-    engine.execute("?- "d ~ query.to!dstring);
-    while(!engine.emptyMessage) engine.showMessage;
+    terminal.writeln;
+    terminal.write("?- ");
+    terminal.flush();
+    try {
+      string query = terminal.getline();
+      terminal.flush();
+      engine.execute("?- "d ~ query.to!dstring);
+      while(!engine.emptyMessage) engine.showMessage;
+    } catch(UserInterruptionException e) {
+      break;
+    } catch(HangupException e) {
+      break;
+    }
   }
 }
