@@ -99,8 +99,10 @@ class Term {
     import std.range, std.array, std.algorithm, std.functional;
     bool validate(Term term, long index) {
       return term.adjoin!(
-        //          0,               1,                 2,                  3
-        t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure
+        /* case: 0 */ t => t.isAtom,
+        /* case: 1 */ t => t.isNumber,
+        /* case: 2 */ t => t.isVariable,
+        /* case: 3 */ t => t.isStructure
       ).array.enumerate.all!(a => a.value == (a.index == index));
     }
 
