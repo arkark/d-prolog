@@ -187,12 +187,16 @@ private:
       Term front = ast.children.front.pipe!toList;
       if (hasError) return null;
       if (front.token == Operator.pipe) {
-        Term parent = front;
-        while(parent.children.back.token == Operator.pipe) {
-          parent = parent.children.back;
+        Term buildList(Term parent) {
+          assert(parent.token == Operator.pipe);
+          if (parent.children.back.token != Operator.pipe) {
+            assert(parent.children.back.token == Atom.emptyAtom);
+            return new Term(parent.token, [parent.children.front, back]);
+          } else {
+            return new Term(parent.token, [parent.children.front, buildList(parent.children.back)]);
+          }
         }
-        parent.children.back = back;
-        return front;
+        return buildList(front);
       } else {
         return new Term(ast.token, [front, back]);
       }

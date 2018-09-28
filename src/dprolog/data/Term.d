@@ -55,6 +55,7 @@ class Term {
     );
     assert(token != Operator.rulifier);
     assert(token != Operator.querifier);
+    assert(isDetermined == ((token.instanceOf!Atom && children.all!(c => c.isDetermined)) || token.instanceOf!Number));
   }
 
 
@@ -96,10 +97,12 @@ class Term {
     assert(comT.isCompound);
 
     import std.range, std.array, std.algorithm, std.functional;
-    bool function(Term, long) validate = (term, index) => term.adjoin!(
-      //          0,               1,                 2,                  3
-      t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure
-    ).array.enumerate.all!(a => a.value == (a.index == index));
+    bool validate(Term term, long index) {
+      return term.adjoin!(
+        //          0,               1,                 2,                  3
+        t => t.isAtom, t => t.isNumber, t => t.isVariable, t => t.isStructure
+      ).array.enumerate.all!(a => a.value == (a.index == index));
+    }
 
     assert(validate(atomT, 0));
     assert(validate(numT, 1));
