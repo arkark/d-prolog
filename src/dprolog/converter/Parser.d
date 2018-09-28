@@ -5,6 +5,7 @@ import dprolog.data.AST;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.util.functions;
+import dprolog.util.Maybe;
 
 import std.stdio;
 import std.conv;
@@ -89,16 +90,18 @@ private:
   }
 
   void parseTermList(Token[] tokens, AST parent) {
-    Operator op = getHighestOperator(tokens);
+    Maybe!Operator opM = findHighestOperator(tokens);
     if (hasError) return;
-    if (op is null) {
+    if (opM.isNone) {
       parseTerm(tokens, parent);
     } else {
-      AST ast = new AST(op, tokens);
-      long cnt = tokens.countUntil!(t => t is op);
-      if (op.notation != Operator.Notation.Prefix) parseTermList(tokens[0..cnt], ast);
-      if (op.notation != Operator.Notation.Postfix) parseTermList(tokens[cnt+1..$], ast);
-      parent.children ~= ast;
+      opM.apply!((op) {
+        AST ast = new AST(op, tokens);
+        long cnt = tokens.countUntil!(t => t is op);
+        if (op.notation != Operator.Notation.Prefix) parseTermList(tokens[0..cnt], ast);
+        if (op.notation != Operator.Notation.Postfix) parseTermList(tokens[cnt+1..$], ast);
+        parent.children ~= ast;
+      }, true);
     }
   }
 
@@ -153,7 +156,7 @@ private:
     parent.children ~= ast;
   }
 
-  Operator getHighestOperator(Token[] tokens) {
+  Maybe!Operator findHighestOperator(Token[] tokens) {
     auto gen = new Generator!Operator({
       auto parenStack = DList!Token();
       foreach(token; tokens) {
@@ -184,7 +187,7 @@ private:
         }
       }
     });
-    return gen.empty ? null : gen.fold!((a, b) {
+    return gen.empty ? None!Operator : gen.fold!((a, b) {
       if (a.precedence>b.precedence) return a;
       if (a.precedence<b.precedence) return b;
 
@@ -193,7 +196,7 @@ private:
 
       setErrorMessage(tokens);
       return b;
-    });
+    }).Just;
   }
 
   void specifyOperators(Token[] tokens) {
@@ -201,21 +204,22 @@ private:
       if (token.instanceOf!Atom) {
         bool isPrefix  = i==0               || tokens[i-1].instanceOf!LParen || tokens[i-1].instanceOf!LBracket;
         bool isPostfix = i==tokens.length-1 || tokens[i+1].instanceOf!RParen || tokens[i+1].instanceOf!RBracket;
-        Operator op =  Operator.getOperator(
+        Maybe!Operator opM =  Operator.getOperator(
           cast(Atom) token,
           isPrefix  ? Operator.Notation.Prefix  :
           isPostfix ? Operator.Notation.Postfix :
                       Operator.Notation.Infix
         );
-        if (op is null) {
+        if (opM.isNone) {
           foreach(notation; EnumMembers!(Operator.Notation)) {
-            if (Operator.getOperator(cast(Atom)token, notation) !is null) {
+            if (Operator.getOperator(cast(Atom)token, notation).isJust) {
               // when an operator is used as a non-operator
               setErrorMessage(tokens);
               break;
             }
           }
         } else {
+          auto op = opM.get;
           if ((isPrefix || isPostfix) && tokens.length < 2) {
             setErrorMessage(tokens);
             break;

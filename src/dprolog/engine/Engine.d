@@ -10,6 +10,7 @@ import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
 import dprolog.util.functions;
 import dprolog.util.UnionFind;
+import dprolog.util.Maybe;
 import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 
@@ -59,13 +60,12 @@ public:
     assert(!isHalt);
   } do {
     clearMessage();
-    Clause[] clauseList = toClauseList(src);
-    if (clauseList !is null) {
+    toClauseList(src).apply!((clauseList) {
       foreach(clause; clauseList) {
         if (isHalt) break;
         executeClause(clause);
       }
-    }
+    });
   }
 
   bool emptyMessage() {
@@ -108,21 +108,22 @@ public:
   }
 
 private:
-  Clause[] toClauseList(dstring src) {
+  Maybe!(Clause[]) toClauseList(dstring src) {
     auto convert(S, T)(Converter!(S, T) converter) {
       return (S src) {
-        if (src is null) return null;
         converter.run(src);
         if (converter.hasError) {
           addMessage(converter.errorMessage);
-          return null;
+          return None!T;
         }
-        return converter.get;
+        return converter.get.Just;
       };
     }
-    return src.pipe!(
-      a => convert(_lexer)(a),
-      a => convert(_parser)(a),
+    return Just(src).bind!(
+      a => convert(_lexer)(a)
+    ).bind!(
+      a => convert(_parser)(a)
+    ).bind!(
       a => convert(_clauseBuilder)(a)
     );
   }

@@ -1,6 +1,7 @@
 module dprolog.data.Token;
 
 import dprolog.util.functions;
+import dprolog.util.Maybe;
 
 import std.conv;
 import std.format;
@@ -149,12 +150,12 @@ class Operator : Atom {
     return format!"Operator(lexeme: \"%s\", precedence: %s, type: %s)"(lexeme, precedence, type);
   }
 
-  static Operator getOperator(Atom atom, Notation notation) {
+  static Maybe!Operator getOperator(Atom atom, Notation notation) {
     string[] types = getTypes(notation);
     auto ary = systemOperatorList.find!(
       op => op.lexeme==atom.lexeme && types.canFind(op.type)
     );
-    return ary.empty ? null : new Operator(ary.front, atom.line, atom.column);
+    return ary.empty ? None!Operator : Just(new Operator(ary.front, atom.line, atom.column));
   }
 
   static private string[] getTypes(Notation notation) {

@@ -3,6 +3,7 @@ module dprolog.converter.Lexer;
 import dprolog.data.Token;
 import dprolog.converter.Converter;
 import dprolog.util.functions;
+import dprolog.util.Maybe;
 
 import std.stdio;
 import std.conv;
@@ -67,10 +68,9 @@ private:
     auto lookaheader = getLookaheader(src);
     while(!lookaheader.empty) {
       TokenGen tokenGen = getTokenGen(lookaheader);
-      Token token = getToken(lookaheader, tokenGen);
-      if (token !is null) {
-        _resultTokens.insertBack(token);
-      }
+      getToken(lookaheader, tokenGen).apply!(
+        token => _resultTokens.insertBack(token)
+      );
     }
     _isTokenized = true;
   }
@@ -92,8 +92,8 @@ private:
     return genR.empty ? ErrorGen : genR.front;
   }
 
-  Token getToken(Generator!Node lookaheader, TokenGen tokenGen) {
-    if (lookaheader.empty) return null;
+  Maybe!Token getToken(Generator!Node lookaheader, TokenGen tokenGen) {
+    if (lookaheader.empty) return None!Token;
     Node node = getTokenNode(lookaheader, tokenGen);
     return tokenGen.getToken(node);
   }
@@ -151,7 +151,7 @@ private:
   struct TokenGen {
     immutable bool function(dchar) validateHead;
     immutable bool function(dstring) validate;
-    immutable Token function(Node) getToken;
+    immutable Maybe!Token function(Node) getToken;
   }
 
   static TokenGen AtomGen = TokenGen(
@@ -161,7 +161,7 @@ private:
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
-    (Node node)      => new Atom(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new Atom(node.value, node.line, node.column))
   );
 
   static TokenGen NumberGen = TokenGen(
@@ -171,7 +171,7 @@ private:
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
-    (Node node)      => new Number(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new Number(node.value, node.line, node.column))
   );
 
   static TokenGen VariableGen = TokenGen(
@@ -181,49 +181,49 @@ private:
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
-    (Node node)      => new Variable(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new Variable(node.value, node.line, node.column))
   );
 
   static TokenGen LParenGen = TokenGen(
     (dchar head)     => head=='(',
     (dstring lexeme) => lexeme=="(",
-    (Node node)      => new LParen(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new LParen(node.value, node.line, node.column))
   );
 
   static TokenGen RParenGen = TokenGen(
     (dchar head)     => head==')',
     (dstring lexeme) => lexeme==")",
-    (Node node)      => new RParen(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new RParen(node.value, node.line, node.column))
   );
 
   static TokenGen LBracketGen = TokenGen(
     (dchar head)     => head=='[',
     (dstring lexeme) => lexeme=="[",
-    (Node node)      => new LBracket(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new LBracket(node.value, node.line, node.column))
   );
 
   static TokenGen RBracketGen = TokenGen(
     (dchar head)     => head==']',
     (dstring lexeme) => lexeme=="]",
-    (Node node)      => new RBracket(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new RBracket(node.value, node.line, node.column))
   );
 
   static TokenGen PeriodGen = TokenGen(
     (dchar head)     => head=='.',
     (dstring lexeme) => lexeme==".",
-    (Node node)      => new Period(node.value, node.line, node.column)
+    (Node node)      => Just!Token(new Period(node.value, node.line, node.column))
   );
 
   static TokenGen EmptyGen = TokenGen(
     (dchar head)     => head.isWhite,
     (dstring lexeme) => lexeme.length==1 && lexeme.front.isWhite,
-    (Node node)      => null
+    (Node node)      => None!Token
   );
 
   static TokenGen ErrorGen = TokenGen(
     (dchar head)     => false,
     (dstring lexeme) => false,
-    (Node node)      => null
+    (Node node)      => None!Token
   );
 
   struct Node {
@@ -383,14 +383,14 @@ private:
 
     auto lexer = new Lexer;
     auto lookaheader = lexer.getLookaheader("hoge(10, X).");
-    assert(lexer.getToken(lookaheader, AtomGen).instanceOf!Atom);
-    assert(lexer.getToken(lookaheader, LParenGen).instanceOf!LParen);
-    assert(lexer.getToken(lookaheader, NumberGen).instanceOf!Number);
-    assert(lexer.getToken(lookaheader, AtomGen).instanceOf!Atom);
-    assert(lexer.getToken(lookaheader, EmptyGen) is null);
-    assert(lexer.getToken(lookaheader, VariableGen).instanceOf!Variable);
-    assert(lexer.getToken(lookaheader, RParenGen).instanceOf!RParen);
-    assert(lexer.getToken(lookaheader, PeriodGen).instanceOf!Period);
+    assert(lexer.getToken(lookaheader, AtomGen).fmap!(t => t.instanceOf!Atom) == Just(true));
+    assert(lexer.getToken(lookaheader, LParenGen).fmap!(t => t.instanceOf!LParen) == Just(true));
+    assert(lexer.getToken(lookaheader, NumberGen).fmap!(t => t.instanceOf!Number) == Just(true));
+    assert(lexer.getToken(lookaheader, AtomGen).fmap!(t => t.instanceOf!Atom) == Just(true));
+    assert(lexer.getToken(lookaheader, EmptyGen).isNone);
+    assert(lexer.getToken(lookaheader, VariableGen).fmap!(t => t.instanceOf!Variable) == Just(true));
+    assert(lexer.getToken(lookaheader, RParenGen).fmap!(t => t.instanceOf!RParen) == Just(true));
+    assert(lexer.getToken(lookaheader, PeriodGen).fmap!(t => t.instanceOf!Period) == Just(true));
     assert(lookaheader.empty);
 
     assert(!lexer._hasError);
