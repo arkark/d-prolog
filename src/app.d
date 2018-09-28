@@ -27,7 +27,7 @@ void main(string[] args) {
     while(!engine.emptyMessage) engine.showMessage;
   }
 
-  auto terminal = Terminal(ConsoleOutputType.cellular);
+  auto terminal = Terminal(ConsoleOutputType.linear);
 
   while(!engine.isHalt) {
     terminal.writeln;
