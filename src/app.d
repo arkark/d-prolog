@@ -16,7 +16,7 @@ void main(string[] args) {
   );
 
   Engine engine = new Engine;
-  engine.setVerbose(verbose);
+  engine.verboseMode = verbose;
 
   // read a file
   if (!filePath.empty) {
