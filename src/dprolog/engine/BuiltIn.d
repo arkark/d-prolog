@@ -44,10 +44,13 @@ public:
 
 private:
   void setPatterns() {
+    // halt
     auto halt = buildPattern(
       "halt",
       term => _engine.halt()
     );
+
+    // read file
     auto readFile = buildPattern(
       "[FilePath]",
       (term) {
@@ -61,9 +64,35 @@ private:
         "FilePath": (Term term) => term.isAtom && term.children.empty
       ]
     );
+
+    // query mode
+    auto queryMode = buildPattern(
+      "query_mode",
+      (term) {
+        if (_engine.queryMode) {
+          _engine.addMessage("Warning: Query Mode has already been activated.");
+        } else {
+          _engine.queryMode = true;
+        }
+      }
+    );
+    // non-query mode
+    auto nonQueryMode = buildPattern(
+      "non_query_mode",
+      (term) {
+        if (!_engine.queryMode) {
+          _engine.addMessage("Warning: Non-Query Mode has already been activated.");
+        } else {
+          _engine.queryMode = false;
+        }
+      }
+    );
+
     _patterns = [
       halt,
-      readFile
+      readFile,
+      queryMode,
+      nonQueryMode
     ];
   }
 

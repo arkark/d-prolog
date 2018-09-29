@@ -1,12 +1,9 @@
 
 import dprolog.engine.Engine;
 
-import std.stdio;
 import std.conv;
 import std.string;
 import std.getopt;
-
-import arsd.terminal;
 
 void main(string[] args) {
 
@@ -27,21 +24,8 @@ void main(string[] args) {
     while(!engine.emptyMessage) engine.showMessage;
   }
 
-  auto terminal = Terminal(ConsoleOutputType.linear);
-
   while(!engine.isHalt) {
-    terminal.writeln;
-    terminal.write("?- ");
-    terminal.flush();
-    try {
-      string query = terminal.getline();
-      terminal.flush();
-      engine.execute("?- "d ~ query.to!dstring);
-      while(!engine.emptyMessage) engine.showMessage;
-    } catch(UserInterruptionException e) {
-      break;
-    } catch(HangupException e) {
-      break;
-    }
+    engine.next();
   }
+  destroy(engine);
 }

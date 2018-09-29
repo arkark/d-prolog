@@ -14,7 +14,6 @@ import dprolog.util.Maybe;
 import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 
-import std.stdio;
 import std.format;
 import std.conv;
 import std.range;
@@ -23,6 +22,8 @@ import std.algorithm;
 import std.typecons;
 import std.functional;
 import std.container : DList;
+
+import arsd.terminal;
 
 class Engine {
 
@@ -33,6 +34,8 @@ private:
 
   BuildIn _builtIn;
   Reader _reader;
+
+  Terminal _terminal;
 
   Clause[] _storage;
 
@@ -45,6 +48,7 @@ private:
 
   bool _isHalt = false;
   bool _verboseMode = false;
+  public bool queryMode = true;
 
 public:
   this() {
@@ -53,7 +57,27 @@ public:
     _clauseBuilder = new ClauseBuilder;
     _builtIn = new BuildIn(this);
     _reader = new Reader(this);
+    _terminal = Terminal(ConsoleOutputType.linear);
     clear();
+  }
+
+  void next() in {
+    assert(!isHalt);
+  } do {
+    dstring querifier = Operator.querifier.lexeme ~ " ";
+    if (queryMode) _terminal.write(querifier);
+    _terminal.flush();
+    try {
+      string clause = _terminal.getline();
+      _terminal.flush();
+      execute((queryMode ? querifier : ""d) ~ clause.to!dstring);
+      while(!emptyMessage) showMessage;
+      _terminal.writeln;
+    } catch(UserInterruptionException e) {
+      halt();
+    } catch(HangupException e) {
+      halt();
+    }
   }
 
   void execute(dstring src) in {
@@ -75,7 +99,7 @@ public:
   void showMessage() in {
     assert(!emptyMessage);
   } do {
-    writeln(_messageList.front);
+    _terminal.writeln(_messageList.front);
     _messageList.removeFront;
   }
 
@@ -140,6 +164,10 @@ private:
   }
 
   void executeFact(Fact fact) {
+    if (_builtIn.traverse(fact.first)) {
+      // when matching a built-in pattern
+      return;
+    }
     _storage ~= fact;
   }
 
