@@ -47,7 +47,11 @@ class Term {
         return format!"%s(%-(%s, %))"(token.lexeme, children);
       }
     } else {
-      return format!"%s"(token.lexeme);
+      if (token == Atom.emptyAtom) {
+        return "[]";
+      } else {
+        return format!"%s"(token.lexeme);
+      }
     }
   }
   private string toListString() const in {
