@@ -41,9 +41,25 @@ class Term {
     if (isCompound) {
       return format!"( %s %s %s )"(children.front, token.lexeme, children.back);
     } else if (isStructure) {
-      return format!"%s( %-(%s, %) )"(token.lexeme, children);
+      if (token == Operator.pipe) {
+        return format!"[%s]"(toListString());
+      } else {
+        return format!"%s(%-(%s, %))"(token.lexeme, children);
+      }
     } else {
       return format!"%s"(token.lexeme);
+    }
+  }
+  private string toListString() const in {
+    assert(token == Operator.pipe);
+    assert(children.length == 2);
+  } do {
+    if (children.back.token == Atom.emptyAtom) {
+      return format!"%s"(children.front);
+    } else if (children.back.token == Operator.pipe) {
+      return format!"%s, %s"(children.front, children.back.toListString());
+    } else {
+      return format!"%s%s%s"(children.front, token.lexeme, children.back);
     }
   }
 
