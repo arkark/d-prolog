@@ -11,8 +11,8 @@ void main(string[] args) {
   bool verbose;
   auto opt = getopt(
     args,
-    "file", &filePath,
-    "verbose", &verbose
+    "file|f", &filePath,
+    "verbose|v", &verbose
   );
 
   Engine engine = new Engine;
