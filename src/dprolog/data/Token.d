@@ -182,11 +182,14 @@ class Operator : Atom {
     Prefix, Infix, Postfix
   }
 
-  static immutable Operator rulifier    = cast(immutable) new Operator(":-", 1200, "xfx");
-  static immutable Operator querifier   = cast(immutable) new Operator("?-", 1200, "fx");
-  static immutable Operator semicolon = cast(immutable) new Operator(";", 1100, "xfy");
-  static immutable Operator comma = cast(immutable) new Operator(",", 1000, "xfy");
-  static immutable Operator pipe        = cast(immutable) new Operator("|", 1100, "xfy");
+  static immutable {
+    Operator rulifier = cast(immutable) new Operator(":-", 1200, "xfx");
+    Operator querifier = cast(immutable) new Operator("?-", 1200, "fx");
+    Operator semicolon = cast(immutable) new Operator(";", 1100, "xfy");
+    Operator comma = cast(immutable) new Operator(",", 1000, "xfy");
+    Operator pipe = cast(immutable) new Operator("|", 1100, "xfy");
+    Operator equal = cast(immutable) new Operator("=", 700, "xfx");
+  }
 
   static private immutable immutable(Operator)[] systemOperatorList = [
     rulifier,
@@ -194,7 +197,7 @@ class Operator : Atom {
     semicolon,
     pipe,
     comma,
-    cast(immutable) new Operator("=", 700, "xfx"),
+    equal,
     cast(immutable) new Operator("==", 700, "xfx"),
     cast(immutable) new Operator("<", 700, "xfx"),
     cast(immutable) new Operator("=<", 700, "xfx"),

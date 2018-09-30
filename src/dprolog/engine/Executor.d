@@ -166,6 +166,14 @@ private:
       UF[] ufs1 = unificate(variant.children.front, unionFind);
       UF[] ufs2 = unificate(variant.children.back, unionFind);
       return ufs1 ~ ufs2;
+    } else if (term.token == Operator.equal) {
+      // unification
+      UF newUnionFind = unionFind.clone;
+      if (match(variant.children.front, variant.children.back, newUnionFind)) {
+        return [newUnionFind];
+      } else {
+        return [];
+      }
     } else {
       UF[] ufs;
       foreach(clause; _storage) {
