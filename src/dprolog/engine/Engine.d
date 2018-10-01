@@ -1,6 +1,6 @@
 module dprolog.engine.Engine;
 
-import dprolog.data.Token;
+import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;

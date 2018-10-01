@@ -1,6 +1,6 @@
 module dprolog.engine.Executor;
 
-import dprolog.data.Token;
+import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.data.Clause;
 import dprolog.data.Variant;

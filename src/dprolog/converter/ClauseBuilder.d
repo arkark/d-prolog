@@ -1,6 +1,6 @@
 module dprolog.converter.ClauseBuilder;
 
-import dprolog.data.Token;
+import dprolog.data.token;
 import dprolog.data.AST;
 import dprolog.data.Clause;
 import dprolog.data.Term;

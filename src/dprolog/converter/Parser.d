@@ -1,6 +1,6 @@
 module dprolog.converter.Parser;
 
-import dprolog.data.Token;
+import dprolog.data.token;
 import dprolog.data.AST;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;

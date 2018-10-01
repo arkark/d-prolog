@@ -1,6 +1,6 @@
 module dprolog.converter.Lexer;
 
-import dprolog.data.Token;
+import dprolog.data.token;
 import dprolog.converter.Converter;
 import dprolog.util.functions;
 import dprolog.util.Maybe;

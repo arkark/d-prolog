@@ -1,6 +1,6 @@
 module dprolog.data.Clause;
 
-import dprolog.data.Token;
+import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.util.UnionFind;
 
