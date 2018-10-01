@@ -1,5 +1,7 @@
 module dprolog.converter.Converter;
 
+import dprolog.engine.Messenger;
+
 // Converter: S => T
 
 interface Converter(S, T) {
@@ -8,6 +10,6 @@ interface Converter(S, T) {
   T get();
   void clear();
   bool hasError() @property;
-  dstring errorMessage() @property;
+  Message errorMessage() @property;
 
 }

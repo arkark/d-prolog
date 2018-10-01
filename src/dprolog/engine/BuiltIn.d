@@ -2,6 +2,7 @@ module dprolog.engine.BuiltIn;
 
 import dprolog.util.functions;
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
 import dprolog.data.Term;
@@ -70,7 +71,7 @@ private:
       "query_mode",
       (term) {
         if (_engine.queryMode) {
-          _engine.addMessage("Warning: Query Mode has already been activated.");
+          _engine.addMessage(Message("Warning: Query Mode has already been activated."));
         } else {
           _engine.queryMode = true;
         }
@@ -81,7 +82,7 @@ private:
       "non_query_mode",
       (term) {
         if (!_engine.queryMode) {
-          _engine.addMessage("Warning: Non-Query Mode has already been activated.");
+          _engine.addMessage(Message("Warning: Non-Query Mode has already been activated."));
         } else {
           _engine.queryMode = false;
         }

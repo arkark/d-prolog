@@ -12,6 +12,7 @@ import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.util.Maybe;
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
 
 import std.format;
 import std.conv;
@@ -86,7 +87,7 @@ private:
 
   void executeClause(Clause clause) {
     if (_engine.verboseMode) {
-      _engine.addMessage(format!"execute: %s"(clause));
+      _engine.addMessage(Message(format!"execute: %s"(clause)));
     }
     clause.castSwitch!(
       (Fact fact)   => executeFact(fact),
@@ -117,9 +118,9 @@ private:
     UF unionFind = buildUnionFind(query, first, second);
     UF[] result = unificate(first, unionFind);
     if (query.first.isDetermined) {
-      _engine.addMessage((!result.empty).to!string ~ ".");
+      _engine.addMessage(Message((!result.empty).to!string ~ "."));
     } else {
-      _engine.addMessage((!result.empty).to!string ~ ".");
+      _engine.addMessage(Message((!result.empty).to!string ~ "."));
 
       // temporary code
       string[] rec(Variant v, UF uf) {
@@ -148,7 +149,7 @@ private:
 
       foreach(i, uf; result) {
         string end = i==result.length-1 ? "." : ";";
-        _engine.addMessage(rec(first, uf).join(", ") ~ end);
+        _engine.addMessage(Message(rec(first, uf).join(", ") ~ end));
       }
     }
   }

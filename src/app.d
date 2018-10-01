@@ -1,5 +1,6 @@
 
 import dprolog.engine.Engine;
+import dprolog.engine.Terminal;
 
 import std.stdio;
 import std.format;
@@ -42,13 +43,13 @@ void main(string[] args) {
   // read a file
   if (!filePath.empty) {
     engine.readFile(filePath.to!dstring);
-    while(!engine.emptyMessage) engine.showMessage;
+    engine.showAllMessage();
   }
 
   while(!engine.isHalt) {
     engine.next();
   }
-  destroy(engine);
+  destroy(Terminal);
 }
 
 struct Option {

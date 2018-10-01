@@ -6,6 +6,7 @@ import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.util.functions;
 import dprolog.util.Maybe;
+import dprolog.engine.Messenger;
 
 import std.stdio;
 import std.conv;
@@ -25,7 +26,7 @@ private:
   ASTRoot _resultAST;
 
   bool _hasError;
-  dstring _errorMessage;
+  Message _errorMessage;
 
 public:
 
@@ -48,14 +49,13 @@ public:
     _isParsed = false;
     _resultAST = null;
     _hasError = false;
-    _errorMessage = "";
   }
 
   bool hasError() @property {
     return _hasError;
   }
 
-  dstring errorMessage() @property in {
+  Message errorMessage() @property in {
     assert(hasError);
   } do {
     return _errorMessage;
@@ -234,7 +234,7 @@ private:
     assert(!tokens.empty);
   } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = "ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".";
+    _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".");
     _hasError = true;
   }
 

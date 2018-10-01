@@ -4,6 +4,7 @@ import dprolog.data.token;
 import dprolog.converter.Converter;
 import dprolog.util.functions;
 import dprolog.util.Maybe;
+import dprolog.engine.Messenger;
 
 import std.stdio;
 import std.conv;
@@ -27,7 +28,7 @@ private:
   DList!Token _resultTokens;
 
   bool _hasError;
-  dstring _errorMessage;
+  Message _errorMessage;
 
 public:
   this() {
@@ -49,14 +50,13 @@ public:
     _isTokenized = false;
     _resultTokens.clear;
     _hasError = false;
-    _errorMessage = "";
   }
 
   bool hasError() @property {
     return _hasError;
   }
 
-  dstring errorMessage() @property in {
+  Message errorMessage() @property in {
     assert(hasError);
   } do {
     return _errorMessage;
@@ -128,7 +128,7 @@ private:
     dstring str = node.value.pipe!(
       lexeme => lexeme.length>num ? lexeme.take(num).to!dstring ~ " ... " : lexeme
     );
-    _errorMessage = "TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".";
+    _errorMessage = Message("TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".");
     _hasError = true;
   }
 

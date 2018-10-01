@@ -5,11 +5,10 @@ import dprolog.data.Term;
 import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 import dprolog.engine.Executor;
+import dprolog.engine.Messenger;
+import dprolog.engine.Terminal;
 
 import std.conv;
-import std.container : DList;
-
-import arsd.terminal;
 
 class Engine {
 
@@ -17,10 +16,7 @@ private:
   BuildIn _builtIn;
   Reader _reader;
   Executor _executor;
-
-  Terminal _terminal;
-
-  DList!dstring _messageList;
+  Messenger _messenger;
 
   bool _isHalt = false;
   public bool verboseMode = false;
@@ -31,22 +27,19 @@ public:
     _builtIn = new BuildIn(this);
     _reader = new Reader(this);
     _executor = new Executor(this);
-    _terminal = Terminal(ConsoleOutputType.linear);
-    clear();
+    _messenger = new Messenger;
   }
 
   void next() in {
     assert(!isHalt);
   } do {
     dstring querifier = Operator.querifier.lexeme ~ " ";
-    if (queryMode) _terminal.write(querifier);
-    _terminal.flush();
+    if (queryMode) Terminal.write(querifier);
     try {
-      string clause = _terminal.getline();
-      _terminal.flush();
+      string clause = Terminal.getline();
       execute((queryMode ? querifier : ""d) ~ clause.to!dstring);
-      while(!emptyMessage) showMessage;
-      _terminal.writeln;
+      showAllMessage();
+      Terminal.writeln;
     } catch(UserInterruptionException e) {
       halt();
     } catch(HangupException e) {
@@ -57,23 +50,8 @@ public:
   void execute(dstring src) in {
     assert(!isHalt);
   } do {
-    clearMessage();
+    _messenger.clear();
     _executor.execute(src);
-  }
-
-  bool emptyMessage() {
-    return _messageList.empty;
-  }
-
-  void showMessage() in {
-    assert(!emptyMessage);
-  } do {
-    _terminal.writeln(_messageList.front);
-    _messageList.removeFront;
-  }
-
-  void clear() {
-    clearMessage();
   }
 
   void halt() {
@@ -92,13 +70,12 @@ public:
     return _builtIn.traverse(term);
   }
 
-  void addMessage(T)(T message) {
-    _messageList.insertBack(message.to!dstring);
+  void showAllMessage() {
+    _messenger.showAll();
   }
 
-private:
-  void clearMessage() {
-    _messageList.clear;
+  void addMessage(Message msg) {
+    _messenger.add(msg);
   }
 
 }
