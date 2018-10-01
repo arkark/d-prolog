@@ -25,8 +25,7 @@ private:
   bool _isParsed;
   ASTRoot _resultAST;
 
-  bool _hasError;
-  Message _errorMessage;
+  Maybe!Message _errorMessage;
 
 public:
 
@@ -48,17 +47,17 @@ public:
   void clear() {
     _isParsed = false;
     _resultAST = null;
-    _hasError = false;
+    _errorMessage = None!Message;
   }
 
   bool hasError() @property {
-    return _hasError;
+    return _errorMessage.isJust;
   }
 
   Message errorMessage() @property in {
     assert(hasError);
   } do {
-    return _errorMessage;
+    return _errorMessage.get;
   }
 
 private:
@@ -234,8 +233,7 @@ private:
     assert(!tokens.empty);
   } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".");
-    _hasError = true;
+    _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".").Just;
   }
 
 

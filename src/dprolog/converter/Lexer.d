@@ -27,8 +27,7 @@ private:
   bool _isTokenized;
   DList!Token _resultTokens;
 
-  bool _hasError;
-  Message _errorMessage;
+  Maybe!Message _errorMessage;
 
 public:
   this() {
@@ -49,17 +48,17 @@ public:
   void clear() {
     _isTokenized = false;
     _resultTokens.clear;
-    _hasError = false;
+    _errorMessage = None!Message;
   }
 
   bool hasError() @property {
-    return _hasError;
+    return _errorMessage.isJust;
   }
 
   Message errorMessage() @property in {
     assert(hasError);
   } do {
-    return _errorMessage;
+    return _errorMessage.get;
   }
 
 private:
@@ -128,8 +127,7 @@ private:
     dstring str = node.value.pipe!(
       lexeme => lexeme.length>num ? lexeme.take(num).to!dstring ~ " ... " : lexeme
     );
-    _errorMessage = Message("TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".");
-    _hasError = true;
+    _errorMessage = Message("TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".").Just;
   }
 
   Generator!Node getLookaheader(immutable dstring src) {
@@ -353,8 +351,8 @@ private:
     lookaheader.drop(1);
     assert(lookaheader.empty);
 
-    assert(!lexer._hasError);
-    assert(lexer._errorMessage.empty);
+    assert(!lexer.hasError);
+    assert(lexer._errorMessage.isNone);
   }
 
   // test getTokenNode
@@ -373,8 +371,8 @@ private:
     assert(lexer.getTokenNode(lookaheader, PeriodGen)   == Node(".", 1, 12));
     assert(lookaheader.empty);
 
-    assert(!lexer._hasError);
-    assert(lexer._errorMessage.empty);
+    assert(!lexer.hasError);
+    assert(lexer._errorMessage.isNone);
   }
 
   // test getToken
@@ -393,8 +391,8 @@ private:
     assert(lexer.getToken(lookaheader, PeriodGen).fmap!(t => t.instanceOf!Period) == Just(true));
     assert(lookaheader.empty);
 
-    assert(!lexer._hasError);
-    assert(lexer._errorMessage.empty);
+    assert(!lexer.hasError);
+    assert(lexer._errorMessage.isNone);
   }
 
   // test tokenize

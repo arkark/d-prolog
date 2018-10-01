@@ -9,6 +9,7 @@ import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.util.functions;
+import dprolog.util.Maybe;
 
 import std.stdio;
 import std.conv;
@@ -26,8 +27,7 @@ private:
   bool _isBuilded;
   DList!Clause _resultClauses;
 
-  bool _hasError;
-  Message _errorMessage;
+  Maybe!Message _errorMessage;
 
 public:
 
@@ -49,17 +49,17 @@ public:
   void clear() {
     _isBuilded = false;
     _resultClauses.clear();
-    _hasError = false;
+    _errorMessage = None!Message;
   }
 
   bool hasError() {
-    return _hasError;
+    return _errorMessage.isJust;
   }
 
   Message errorMessage() in {
     assert(hasError);
   } do {
-    return _errorMessage;
+    return _errorMessage.get;
   }
 
 private:
@@ -222,8 +222,7 @@ private:
     assert(!tokens.empty);
   } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = Message("SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"");
-    _hasError = true;
+    _errorMessage = Message("SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"").Just;
   }
 
 
