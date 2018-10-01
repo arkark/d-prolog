@@ -1,10 +1,10 @@
 module dprolog.converter.Lexer;
 
 import dprolog.data.token;
+import dprolog.data.Message;
 import dprolog.converter.Converter;
 import dprolog.util.functions;
 import dprolog.util.Maybe;
-import dprolog.engine.Messenger;
 
 import std.stdio;
 import std.conv;

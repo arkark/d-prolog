@@ -2,10 +2,10 @@ module dprolog.engine.BuiltIn;
 
 import dprolog.util.functions;
 import dprolog.engine.Engine;
-import dprolog.engine.Messenger;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
 import dprolog.data.Term;
+import dprolog.data.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;

@@ -1,9 +1,9 @@
 module dprolog.engine.Messenger;
 
-import std.conv;
-import std.container : DList;
-
+import dprolog.data.Message;
 import dprolog.engine.Terminal;
+
+import std.container : DList;
 
 class Messenger {
 
@@ -40,14 +40,4 @@ public:
     _messageList.clear();
   }
 
-}
-
-struct Message {
-  dstring text;
-  this(dstring text) {
-    this.text = text;
-  }
-  this(string text) {
-    this.text = text.to!dstring;
-  }
 }

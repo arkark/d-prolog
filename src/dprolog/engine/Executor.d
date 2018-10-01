@@ -4,6 +4,7 @@ import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.data.Clause;
 import dprolog.data.Variant;
+import dprolog.data.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
@@ -12,7 +13,6 @@ import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.util.Maybe;
 import dprolog.engine.Engine;
-import dprolog.engine.Messenger;
 
 import std.format;
 import std.conv;

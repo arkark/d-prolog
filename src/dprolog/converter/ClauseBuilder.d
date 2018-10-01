@@ -4,11 +4,11 @@ import dprolog.data.token;
 import dprolog.data.AST;
 import dprolog.data.Clause;
 import dprolog.data.Term;
+import dprolog.data.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.util.functions;
-import dprolog.engine.Messenger;
 
 import std.stdio;
 import std.conv;
