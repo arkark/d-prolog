@@ -170,8 +170,8 @@ private:
           assert(b.children.length == 1);
           Term back = b.children.front.pipe!toList;
           if (hasError) return null;
-          if (back.token != Operator.pipe && back.token != Atom.emptyAtom) {
-            Term empty = new Term(cast(Token) Atom.emptyAtom, []);
+          if (back.token != Operator.pipe && back.token != Atom.emptyList) {
+            Term empty = new Term(cast(Token) Atom.emptyList, []);
             back = new Term(cast(Token) Operator.pipe, [back, empty]);
           }
           return back;
@@ -190,7 +190,7 @@ private:
         Term buildList(Term parent) {
           assert(parent.token == Operator.pipe);
           if (parent.children.back.token != Operator.pipe) {
-            assert(parent.children.back.token == Atom.emptyAtom);
+            assert(parent.children.back.token == Atom.emptyList);
             return new Term(parent.token, [parent.children.front, back]);
           } else {
             return new Term(parent.token, [parent.children.front, buildList(parent.children.back)]);
@@ -205,15 +205,15 @@ private:
       Term front = ast.children.front.pipe!toTerm;
       Term back  = ast.children.back.pipe!toList;
       if (back.token != Operator.pipe) {
-        Term empty = new Term(cast(Token) Atom.emptyAtom, []);
+        Term empty = new Term(cast(Token) Atom.emptyList, []);
         back = new Term(cast(Token) Operator.pipe, [back, empty]);
       }
       return new Term(cast(Token) Operator.pipe, [front, back]);
-    } else if (ast.token == Atom.emptyAtom) {
+    } else if (ast.token == Atom.emptyList) {
       return ast.pipe!toTerm;
     } else {
       Term front = ast.pipe!toTerm;
-      Term back  = new Term(cast(Token) Atom.emptyAtom, []);
+      Term back  = new Term(cast(Token) Atom.emptyList, []);
       return new Term(cast(Token) Operator.pipe, [front, back]);
     }
   }
@@ -362,7 +362,7 @@ private:
 
     bool validate(Term term, long n)  {
       return n==0 ? (() =>
-        term.isAtom && term.token == Atom.emptyAtom
+        term.isAtom && term.token == Atom.emptyList
       )() : (() =>
         term.isStructure &&
         term.token == Operator.pipe &&

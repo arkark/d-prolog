@@ -149,7 +149,7 @@ private:
     AST ast = new AST(tokens.front, tokens[0..1]);
     if (tokens.length == 2) {
       // 空リスト
-      ast.children ~= new AST(cast(Token) Atom.emptyAtom, []);
+      ast.children ~= new AST(cast(Token) Atom.emptyList, []);
     } else {
       parseTermList(tokens[1..$-1], ast);
     }

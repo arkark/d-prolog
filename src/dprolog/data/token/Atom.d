@@ -19,6 +19,6 @@ class Atom : Token {
     return format!"Atom(lexeme: \"%s\")"(lexeme);
   }
 
-  static immutable Atom emptyAtom = cast(immutable) new Atom("", -1, -1); // 空リストに用いる
+  static immutable Atom emptyList = cast(immutable) new Atom("", -1, -1); // for using an empty list
 
 }

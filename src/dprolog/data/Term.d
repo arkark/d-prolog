@@ -47,7 +47,7 @@ class Term {
         return format!"%s(%-(%s, %))"(token.lexeme, children);
       }
     } else {
-      if (token == Atom.emptyAtom) {
+      if (token == Atom.emptyList) {
         return "[]";
       } else {
         return format!"%s"(token.lexeme);
@@ -58,7 +58,7 @@ class Term {
     assert(token == Operator.pipe);
     assert(children.length == 2);
   } do {
-    if (children.back.token == Atom.emptyAtom) {
+    if (children.back.token == Atom.emptyList) {
       return format!"%s"(children.front);
     } else if (children.back.token == Operator.pipe) {
       return format!"%s, %s"(children.front, children.back.toListString());
