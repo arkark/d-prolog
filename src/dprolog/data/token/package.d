@@ -6,7 +6,7 @@ public {
   import dprolog.data.token.Number;
   import dprolog.data.token.Variable;
   import dprolog.data.token.Functor;
-  import dprolog.data.token.Operator;
+  import dprolog.data.token.operator;
   import dprolog.data.token.LParen;
   import dprolog.data.token.RParen;
   import dprolog.data.token.LBracket;

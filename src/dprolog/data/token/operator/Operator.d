@@ -1,12 +1,12 @@
-module dprolog.data.token.Operator;
+module dprolog.data.token.operator.Operator;
 
 import dprolog.data.token;
 import dprolog.util.Maybe;
 
-import std.functional;
 import std.format;
 import std.algorithm;
 import std.range;
+import std.functional;
 
 class Operator : Atom {
 
@@ -46,7 +46,7 @@ class Operator : Atom {
     }
   }
 
-  private this(dstring lexeme, long precedence, string type, long line = -1, long column = -1)  {
+  protected this(dstring lexeme, long precedence, string type, long line = -1, long column = -1)  {
     super(lexeme, line, column);
     this.precedence = precedence;
     this.type = type;
@@ -77,20 +77,20 @@ class Operator : Atom {
     comma,
     equal,
     cast(immutable) new Operator("==", 700, "xfx"),
-    cast(immutable) new Operator("<", 700, "xfx"),
-    cast(immutable) new Operator("=<", 700, "xfx"),
-    cast(immutable) new Operator(">", 700, "xfx"),
-    cast(immutable) new Operator(">=", 700, "xfx"),
-    cast(immutable) new Operator("=:=", 700, "xfx"),
-    cast(immutable) new Operator("=\\=", 700, "xfx"),
     cast(immutable) new Operator("is", 700, "xfx"),
-    cast(immutable) new Operator("+", 500, "yfx"),
-    cast(immutable) new Operator("-", 500, "yfx"),
-    cast(immutable) new Operator("*", 400, "yfx"),
-    cast(immutable) new Operator("div", 400, "yfx"),
-    cast(immutable) new Operator("mod", 400, "yfx"),
-    cast(immutable) new Operator("+", 200, "fy"),
-    cast(immutable) new Operator("-", 200, "fy")
+    cast(immutable) makeComparisonOperator!"a < b"("<", 700, "xfx"),
+    cast(immutable) makeComparisonOperator!"a <= b"("=<", 700, "xfx"),
+    cast(immutable) makeComparisonOperator!"a > b"(">", 700, "xfx"),
+    cast(immutable) makeComparisonOperator!"a >= b"(">=", 700, "xfx"),
+    cast(immutable) makeComparisonOperator!"a == b"("=:=", 700, "xfx"),
+    cast(immutable) makeComparisonOperator!"a != b"("=\\=", 700, "xfx"),
+    cast(immutable) makeBinaryOperator!"a + b"("+", 500, "yfx"),
+    cast(immutable) makeBinaryOperator!"a - b"("-", 500, "yfx"),
+    cast(immutable) makeBinaryOperator!"a * b"("*", 400, "yfx"),
+    cast(immutable) makeBinaryOperator!"a / b"("div", 400, "yfx"),
+    cast(immutable) makeBinaryOperator!"a % b"("mod", 400, "yfx"),
+    cast(immutable) makeUnaryOperator!"+a"("+", 200, "fy"),
+    cast(immutable) makeUnaryOperator!"-a"("-", 200, "fy")
   ];
 
 }
