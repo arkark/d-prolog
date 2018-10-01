@@ -9,7 +9,7 @@ abstract class UnaryOperator : Operator {
   private this(dstring lexeme, long precedence, string type, long line, long column)  {
     super(lexeme, precedence, type, line, column);
   }
-  long compute(long x);
+  long calc(long x);
 }
 
 UnaryOperator makeUnaryOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)
@@ -18,7 +18,7 @@ if (is(typeof(unaryFun!fun(long.init)) == long)) {
     this(dstring lexeme, long precedence, string type, long line, long column) {
       super(lexeme, precedence, type, line, column);
     }
-    override long compute(long x) {
+    override long calc(long x) {
       return unaryFun!fun(x);
     }
     override protected Operator make(long line, long column) const {
@@ -33,7 +33,7 @@ unittest {
   UnaryOperator plusOp = makeUnaryOperator!"+a"("+", 200, "fy");
   UnaryOperator multOp = makeUnaryOperator!"-a"("-", 200, "fy");
 
-  assert(plusOp.compute(10) == +10);
-  assert(multOp.compute(10) == -10);
-  assert(multOp.compute(multOp.compute(10)) == -(-10));
+  assert(plusOp.calc(10) == +10);
+  assert(multOp.calc(10) == -10);
+  assert(multOp.calc(multOp.calc(10)) == -(-10));
 }

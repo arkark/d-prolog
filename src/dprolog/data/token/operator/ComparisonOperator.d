@@ -9,7 +9,7 @@ abstract class ComparisonOperator : Operator {
   private this(dstring lexeme, long precedence, string type, long line, long column)  {
     super(lexeme, precedence, type, line, column);
   }
-  bool compute(long x, long y);
+  bool calc(long x, long y);
 }
 
 ComparisonOperator makeComparisonOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)
@@ -18,7 +18,7 @@ if (is(typeof(binaryFun!fun(long.init, long.init)) == bool)) {
     this(dstring lexeme, long precedence, string type, long line, long column) {
       super(lexeme, precedence, type, line, column);
     }
-    override bool compute(long x, long y) {
+    override bool calc(long x, long y) {
       return binaryFun!fun(x, y);
     }
     override protected Operator make(long line, long column) const {
@@ -34,11 +34,11 @@ unittest {
   ComparisonOperator eqOp = makeComparisonOperator!"a == b"("=:=", 700, "xfx");
   ComparisonOperator neqOp = makeComparisonOperator!"a != b"("=\\=", 700, "xfx");
 
-  assert(lessOp.compute(1, 10) == (1 < 10));
-  assert(lessOp.compute(10, 1) == (10 < 1));
-  assert(lessOp.compute(1, 1) == (1 < 1));
-  assert(eqOp.compute(1, 1) == (1 == 1));
-  assert(eqOp.compute(1, -1) == (1 == -1));
-  assert(neqOp.compute(1, 1) == (1 != 1));
-  assert(neqOp.compute(1, -1) == (1 != -1));
+  assert(lessOp.calc(1, 10) == (1 < 10));
+  assert(lessOp.calc(10, 1) == (10 < 1));
+  assert(lessOp.calc(1, 1) == (1 < 1));
+  assert(eqOp.calc(1, 1) == (1 == 1));
+  assert(eqOp.calc(1, -1) == (1 == -1));
+  assert(neqOp.calc(1, 1) == (1 != 1));
+  assert(neqOp.calc(1, -1) == (1 != -1));
 }
