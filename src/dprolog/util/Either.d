@@ -3,6 +3,7 @@ module dprolog.util.Either;
 import std.stdio;
 import std.format;
 import std.functional;
+import std.traits;
 
 struct Either(L, R) {
 
@@ -67,6 +68,17 @@ public:
       return this.left == that.left;
     } else {
       return this.right == that.right;
+    }
+  }
+
+  bool opEquals(T)(T that)
+  if (!isInstanceOf!(TemplateOf!Either, T)) {
+    static if (is(T : L)) {
+      return isLeft && left == that;
+    } else if (is(T : R)) {
+      return isRight && right == that;
+    } else {
+      return false;
     }
   }
 
@@ -181,27 +193,27 @@ unittest {
   }
 
   int[] as = [1, 2, 3];
-  assert(find(as, 3) == Right(3));
-  assert(find(as, 4) == Left(format!"%s is not found"(4)));
+  assert(find(as, 3) == 3);
+  assert(find(as, 4) == format!"%s is not found"(4));
 
-  assert(find(as, 3).fmap!"a*a" == Right(3*3));
-  assert(find(as, 4).fmap!"a*a" == Left(format!"%s is not found"(4)));
+  assert(find(as, 3).fmap!"a*a" == 3*3);
+  assert(find(as, 4).fmap!"a*a" == format!"%s is not found"(4));
 
-  assert(Left("nothing").fmap!"a*a" == Left("nothing"));
+  assert(Left("nothing").fmap!"a*a" == "nothing");
 
   assert(
     as.Right.bind!(
       xs => find(xs, 3)
-    ) == Right(3)
+    ) == 3
   );
   assert(
     as.Right.bind!(
       xs => find(xs, 4)
-    ) == Left(format!"%s is not found"(4))
+    ) == format!"%s is not found"(4)
   );
   assert(
     Left("nothing").bind!(
       xs => find(xs, 3)
-    ) == Left("nothing")
+    ) == "nothing"
   );
 }
