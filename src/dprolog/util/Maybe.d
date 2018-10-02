@@ -1,6 +1,7 @@
 module dprolog.util.Maybe;
 
 import std.stdio;
+import std.format;
 import std.functional;
 
 struct Maybe(T) {
@@ -34,6 +35,14 @@ public:
     this.value = value;
     this._isJust = true;
     return this;
+  }
+
+  string toString() {
+    if (isJust) {
+      return format!"Maybe!%s(%s)"(typeid(T), value);
+    } else {
+      return format!"Maybe!%s(None)"(typeid(T));
+    }
   }
 
 }
