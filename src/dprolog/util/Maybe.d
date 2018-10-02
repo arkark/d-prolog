@@ -31,7 +31,11 @@ public:
     return value;
   }
 
-  Maybe!T opAssign(T value) {
+  Maybe!T opAssign(T value) in {
+    static if (is(typeof(value is null))) {
+      assert(value !is null);
+    }
+  } do {
     this.value = value;
     this._isJust = true;
     return this;
