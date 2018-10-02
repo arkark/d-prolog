@@ -3,6 +3,7 @@ module dprolog.util.Maybe;
 import std.stdio;
 import std.format;
 import std.functional;
+import std.traits;
 
 struct Maybe(T) {
 
@@ -25,9 +26,7 @@ public:
     return !_isJust;
   }
 
-  @property T get() in {
-    assert(isJust);
-  } do {
+  @property T get() in(isJust) do {
     return value;
   }
 
@@ -41,6 +40,25 @@ public:
     return this;
   }
 
+  bool opEquals(T2)(Maybe!T2 that) {
+    alias T1 = T;
+    if (this.isJust != that.isJust) return false;
+    if (this.isJust) {
+      return this.get == that.get;
+    } else {
+      return true;
+    }
+  }
+
+  bool opEquals(S)(S that)
+  if (!isInstanceOf!(TemplateOf!Maybe, S)) {
+    static if (is(S : T)) {
+      return isJust && this.get == value;
+    } else {
+      return false;
+    }
+  }
+
   string toString() {
     if (isJust) {
       return format!"Maybe!%s(%s)"(typeid(T), value);
@@ -49,6 +67,12 @@ public:
     }
   }
 
+}
+
+private struct Dummy {
+  bool opEquals(O)(O o) {
+    return false;
+  }
 }
 
 Maybe!T Just(T)(T value) in {
@@ -63,10 +87,29 @@ Maybe!T None(T)() {
   return Maybe!T();
 }
 
+Maybe!Dummy None() {
+  return None!Dummy;
+}
+
 // fmap :: Maybe!T -> (T -> S) -> Maybe!S
-Maybe!S fmap(alias fun, T, S = typeof(unaryFun!fun(T.init)))(Maybe!T m)
-if(is(typeof(unaryFun!fun(T.init)) : S)) {
-  return m.isNone ? None!S : Just!S(unaryFun!fun(m.get));
+template fmap(alias fun, T) {
+  static if (!is(T == Dummy)) {
+    static assert(is(typeof(unaryFun!fun(T.init))));
+    alias S = typeof(unaryFun!fun(T.init));
+  } else {
+    alias S = T;
+  }
+  Maybe!S fmap(Maybe!T m) {
+    if (m.isNone) {
+      return None!S;
+    } else {
+      static if (!is(T == Dummy)) {
+        return Just!S(unaryFun!fun(m.get));
+      } else {
+        assert(false);
+      }
+    }
+  }
 }
 
 // fmap :: bool -> (lazy T) -> Maybe!T
@@ -75,9 +118,24 @@ Maybe!T fmap(T)(bool isTrue, lazy T value) {
 }
 
 // bind :: Maybe!T -> (T -> Maybe!S) -> Maybe!S
-Maybe!S bind(alias fun, T, _ : Maybe!S = typeof(unaryFun!fun(T.init)), S)(Maybe!T m)
-if(is(typeof(unaryFun!fun(T.init)) == Maybe!S)) {
-  return m.isNone ? None!S : unaryFun!fun(m.get);
+template bind(alias fun, T) {
+  static if (!is(T == Dummy)) {
+    static assert(isInstanceOf!(Maybe, typeof(unaryFun!fun(T.init))));
+    alias S = TemplateArgsOf!(typeof(unaryFun!fun(T.init)))[0];
+  } else {
+    alias S = T;
+  }
+  Maybe!S bind(Maybe!T m) {
+    if (m.isNone) {
+      return None!S;
+    } else {
+      static if (!is(T == Dummy)) {
+        return unaryFun!fun(m.get);
+      } else {
+        assert(false);
+      }
+    }
+  }
 }
 
 void apply(alias fun, bool enforce = false, T)(Maybe!T m)
@@ -101,25 +159,27 @@ unittest {
   }
 
   int[] as = [1, 2, 3];
-  assert(find(as, 3) == Just(3));
-  assert(find(as, 4) == None!int);
+  assert(find(as, 3) == 3);
+  assert(find(as, 4) == None);
 
-  assert(find(as, 3).fmap!"a*a" == Just(3*3));
-  assert(find(as, 4).fmap!"a*a" == None!int);
+  assert(find(as, 3).fmap!"a*a" == 3*3);
+  assert(find(as, 4).fmap!"a*a" == None);
+
+  assert(None.fmap!"a*a" == None);
 
   assert(
     as.Just.bind!(
       xs => find(xs, 3)
-    ) == Just(3)
+    ) == 3
   );
   assert(
     as.Just.bind!(
       xs => find(xs, 4)
-    ) == None!int
+    ) == None
   );
   assert(
-    None!(int[]).bind!(
+    None.bind!(
       xs => find(xs, 3)
-    ) == None!int
+    ) == None
   );
 }

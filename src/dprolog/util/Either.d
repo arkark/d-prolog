@@ -108,6 +108,12 @@ Either!(L, R) Left(L, R)(L left) in {
   return Either!(L, R)(left);
 }
 
+private struct Dummy {
+  bool opEquals(O)(O o) {
+    return false;
+  }
+}
+
 Either!(Dummy, R) Right(R)(R right) in {
   static if (is(typeof(right is null))) {
     assert(right !is null);
@@ -124,11 +130,6 @@ Either!(L, R) Right(L, R)(R right) in {
   return Either!(L, R)(right);
 }
 
-private struct Dummy {
-  bool opEquals(O)(O o) {
-    return false;
-  }
-}
 
 // fmap :: Either!(L, R1) -> (R1 -> R2) -> Either!(L, R2)
 template fmap(alias fun, L, R1) {
@@ -154,10 +155,10 @@ template fmap(alias fun, L, R1) {
 // bind :: Either!(L, R1) -> (R1 -> Either!(L, R2)) -> Either!(L, R2)
 template bind(alias fun, L, R1) {
   static if (!is(R1 == Dummy)) {
-    static assert(is(typeof(unaryFun!fun(R1.init))));
+    static assert(isInstanceOf!(Either, typeof(unaryFun!fun(R1.init))));
     alias E2 = typeof(unaryFun!fun(R1.init));
-    alias L2 = typeof(E2.init.left);
-    alias R2 = typeof(E2.init.right);
+    alias L2 = TemplateArgsOf!E2[0];
+    alias R2 = TemplateArgsOf!E2[1];
     static assert(is(L == L2) || is(L == Dummy));
   } else {
     alias R2 = R1;
