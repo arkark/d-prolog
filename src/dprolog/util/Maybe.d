@@ -1,5 +1,6 @@
 module dprolog.util.Maybe;
 
+import std.stdio;
 import std.functional;
 
 struct Maybe(T) {
@@ -66,7 +67,6 @@ if(is(typeof(unaryFun!fun(T.init)) == Maybe!S)) {
   return m.isNone ? None!S : unaryFun!fun(m.get);
 }
 
-
 void apply(alias fun, bool enforce = false, T)(Maybe!T m)
 if(is(typeof(unaryFun!fun(T.init)))) {
   if (m.isNone) {
@@ -74,4 +74,39 @@ if(is(typeof(unaryFun!fun(T.init)))) {
   } else {
     fun(m.get);
   }
+}
+
+unittest {
+  writeln(__FILE__, ": test Maybe");
+
+  Maybe!T find(T)(T[] xs, T value) {
+    import std.algorithm : find;
+    import std.range;
+    auto res = xs.find(value);
+    if (res.empty) return None!T;
+    return Just(res.front);
+  }
+
+  int[] as = [1, 2, 3];
+  assert(find(as, 3) == Just(3));
+  assert(find(as, 4) == None!int);
+
+  assert(find(as, 3).fmap!"a*a" == Just(3*3));
+  assert(find(as, 4).fmap!"a*a" == None!int);
+
+  assert(
+    as.Just.bind!(
+      xs => find(xs, 3)
+    ) == Just(3)
+  );
+  assert(
+    as.Just.bind!(
+      xs => find(xs, 4)
+    ) == None!int
+  );
+  assert(
+    None!(int[]).bind!(
+      xs => find(xs, 3)
+    ) == None!int
+  );
 }
