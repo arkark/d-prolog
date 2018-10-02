@@ -186,7 +186,7 @@ private:
         }
       }
     });
-    return gen.empty ? None!Operator : gen.fold!((a, b) {
+    return (!gen.empty).fmap(gen.fold!((a, b) {
       if (a.precedence>b.precedence) return a;
       if (a.precedence<b.precedence) return b;
 
@@ -195,7 +195,7 @@ private:
 
       setErrorMessage(tokens);
       return b;
-    }).Just;
+    }));
   }
 
   void specifyOperators(Token[] tokens) {
@@ -233,7 +233,7 @@ private:
     assert(!tokens.empty);
   } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".").Just;
+    _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".");
   }
 
 

@@ -29,6 +29,12 @@ public:
     return value;
   }
 
+  Maybe!T opAssign(T value) {
+    this.value = value;
+    this._isJust = true;
+    return this;
+  }
+
 }
 
 Maybe!T Just(T)(T value) in {
@@ -49,11 +55,17 @@ if(is(typeof(unaryFun!fun(T.init)) : S)) {
   return m.isNone ? None!S : Just!S(unaryFun!fun(m.get));
 }
 
+// fmap :: bool -> (lazy T) -> Maybe!T
+Maybe!T fmap(T)(bool isTrue, lazy T value) {
+  return isTrue ? Just(value) : None!T;
+}
+
 // bind :: Maybe!T -> (T -> Maybe!S) -> Maybe!S
 Maybe!S bind(alias fun, T, _ : Maybe!S = typeof(unaryFun!fun(T.init)), S)(Maybe!T m)
 if(is(typeof(unaryFun!fun(T.init)) == Maybe!S)) {
   return m.isNone ? None!S : unaryFun!fun(m.get);
 }
+
 
 void apply(alias fun, bool enforce = false, T)(Maybe!T m)
 if(is(typeof(unaryFun!fun(T.init)))) {

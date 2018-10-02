@@ -127,7 +127,7 @@ private:
     dstring str = node.value.pipe!(
       lexeme => lexeme.length>num ? lexeme.take(num).to!dstring ~ " ... " : lexeme
     );
-    _errorMessage = Message("TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".").Just;
+    _errorMessage = Message("TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".");
   }
 
   Generator!Node getLookaheader(immutable dstring src) {

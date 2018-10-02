@@ -222,7 +222,7 @@ private:
     assert(!tokens.empty);
   } do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = Message("SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"").Just;
+    _errorMessage = Message("SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"");
   }
 
 
