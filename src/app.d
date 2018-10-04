@@ -60,10 +60,10 @@ struct Option {
   auto params(T)(ref T value) {
     return tuple(format!"%s|%s"(longOpt, shortOpt), description, &value);
   }
-  string shortString() @property {
+  @property string shortString() {
     return format!"-%s"(shortOpt);
   }
-  string longString() @property {
+  @property string longString() {
     return format!"--%s%s"(longOpt, requiredValue ? "=VALUE" : "");
   }
 }

@@ -21,19 +21,19 @@ class Term {
     this.isCompound = token==Operator.comma || token==Operator.semicolon;
   }
 
-  bool isAtom() @property const {
+  @property bool isAtom() const {
     return token.instanceOf!Atom && !token.instanceOf!Functor && !token.instanceOf!Operator;
   }
 
-  bool isNumber() @property const {
+  @property bool isNumber() const {
     return token.instanceOf!Number;
   }
 
-  bool isVariable() @property const {
+  @property bool isVariable() const {
     return token.instanceOf!Variable;
   }
 
-  bool isStructure() @property const {
+  @property bool isStructure() const {
     return token.instanceOf!Functor || token.instanceOf!Operator;
   }
 

@@ -40,9 +40,7 @@ public:
     build(astRoot);
   }
 
-  Clause[] get() in {
-    assert(_isBuilded);
-  } do {
+  Clause[] get() in(_isBuilded) do {
     return _resultClauses.array;
   }
 
@@ -56,9 +54,7 @@ public:
     return _errorMessage.isJust;
   }
 
-  Message errorMessage() in {
-    assert(hasError);
-  } do {
+  Message errorMessage() in(hasError) do {
     return _errorMessage.get;
   }
 
@@ -218,9 +214,7 @@ private:
     }
   }
 
-  void setErrorMessage(Token[] tokens) in {
-    assert(!tokens.empty);
-  } do {
+  void setErrorMessage(Token[] tokens) in(!tokens.empty) do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
     _errorMessage = Message("SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"");
   }

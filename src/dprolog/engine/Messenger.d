@@ -15,7 +15,7 @@ public:
     clear();
   }
 
-  bool empty() @property {
+  @property bool empty() {
     return _messageList.empty;
   }
 
@@ -23,9 +23,7 @@ public:
     _messageList.insertBack(msg);
   }
 
-  void show() in {
-    assert(!empty);
-  } do {
+  void show() in(!empty) do {
     Terminal.writeln(_messageList.front.text);
     _messageList.removeFront;
   }

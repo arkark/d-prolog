@@ -12,7 +12,7 @@ class Operator : Atom {
 
   immutable long precedence;
   immutable string type;
-  Notation notation() @property {
+  @property Notation notation() {
     switch(type) {
       case "fx" : case "fy" :             return Notation.Prefix;
       case "xfx": case "xfy": case "yfx": return Notation.Infix;

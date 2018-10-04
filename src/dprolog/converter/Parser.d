@@ -38,9 +38,7 @@ public:
     parse(tokens);
   }
 
-  ASTRoot get() in {
-    assert(_isParsed);
-  } do {
+  ASTRoot get() in(_isParsed) do {
     return _resultAST;
   }
 
@@ -50,13 +48,11 @@ public:
     _errorMessage = None!Message;
   }
 
-  bool hasError() @property {
+  @property bool hasError() {
     return _errorMessage.isJust;
   }
 
-  Message errorMessage() @property in {
-    assert(hasError);
-  } do {
+  @property Message errorMessage() in(hasError) do {
     return _errorMessage.get;
   }
 
@@ -229,9 +225,7 @@ private:
     }
   }
 
-  void setErrorMessage(Token[] tokens) in {
-    assert(!tokens.empty);
-  } do {
+  void setErrorMessage(Token[] tokens) in(!tokens.empty) do {
     dstring str = tokens.map!(t => t.lexeme).join(" ");
     _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".");
   }

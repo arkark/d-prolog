@@ -39,9 +39,7 @@ public:
     tokenize(src);
   }
 
-  Token[] get() in {
-    assert(_isTokenized);
-  } do {
+  Token[] get() in(_isTokenized) do {
     return _resultTokens.array;
   }
 
@@ -51,13 +49,11 @@ public:
     _errorMessage = None!Message;
   }
 
-  bool hasError() @property {
+  @property bool hasError() {
     return _errorMessage.isJust;
   }
 
-  Message errorMessage() @property in {
-    assert(hasError);
-  } do {
+  @property Message errorMessage() in(hasError) do {
     return _errorMessage.get;
   }
 
@@ -97,9 +93,7 @@ private:
     return tokenGen.getToken(node);
   }
 
-  Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in {
-    assert(!lookaheader.empty);
-  } do {
+  Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in(!lookaheader.empty) do {
     Node nowNode = lookaheader.front;
     bool existToken = tokenGen.validate(nowNode.value);
     if (tokenGen.validateHead(nowNode.value.to!dchar)) {

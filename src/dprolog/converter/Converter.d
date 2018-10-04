@@ -9,7 +9,7 @@ interface Converter(S, T) {
   void run(S src);
   T get();
   void clear();
-  bool hasError() @property;
-  Message errorMessage() @property;
+  @property bool hasError();
+  @property Message errorMessage();
 
 }

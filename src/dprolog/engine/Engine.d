@@ -31,9 +31,7 @@ public:
     _messenger = new Messenger;
   }
 
-  void next() in {
-    assert(!isHalt);
-  } do {
+  void next() in(!isHalt) do {
     dstring querifier = Operator.querifier.lexeme ~ " ";
     if (queryMode) Terminal.write(querifier);
     try {
@@ -48,9 +46,7 @@ public:
     }
   }
 
-  void execute(dstring src) in {
-    assert(!isHalt);
-  } do {
+  void execute(dstring src) in(!isHalt) do {
     _messenger.clear();
     _executor.execute(src);
   }
@@ -59,7 +55,7 @@ public:
     _isHalt = true;
   }
 
-  bool isHalt() @property {
+  @property bool isHalt() {
     return _isHalt;
   }
 

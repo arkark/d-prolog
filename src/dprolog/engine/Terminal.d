@@ -6,7 +6,7 @@ public {
   import arsd.terminal : UserInterruptionException, HangupException;
 }
 
-Terminal_ Terminal() @property {
+@property Terminal_ Terminal() {
   static Terminal_ instance;
   if(!instance) {
     instance = new Terminal_();

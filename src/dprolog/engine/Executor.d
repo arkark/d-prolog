@@ -46,9 +46,7 @@ public:
     clear();
   }
 
-  void execute(dstring src) in {
-    assert(!_engine.isHalt);
-  } do {
+  void execute(dstring src) in(!_engine.isHalt) do {
     toClauseList(src).apply!((clauseList) {
       foreach(clause; clauseList) {
         if (_engine.isHalt) break;
