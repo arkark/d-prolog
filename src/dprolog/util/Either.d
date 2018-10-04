@@ -182,8 +182,33 @@ template bind(alias fun, L, R1) {
   }
 }
 
+template apply(alias leftFun, alias rightFun, L, R) {
+  static if (!is(L == Dummy)) {
+    static assert(is(typeof(unaryFun!leftFun(L.init))));
+  }
+  static if (!is(R == Dummy)) {
+    static assert(is(typeof(unaryFun!rightFun(R.init))));
+  }
+
+  void apply(Either!(L, R) e) {
+    if (e.isLeft) {
+      static if (!is(L == Dummy)) {
+        unaryFun!leftFun(e.left);
+      } else {
+        assert(false);
+      }
+    } else {
+      static if (!is(R == Dummy)) {
+        unaryFun!rightFun(e.right);
+      } else {
+        assert(false);
+      }
+    }
+  }
+}
+
 unittest {
-  writeln(__FILE__, ": test Either");
+  writeln(__FILE__, ": test Either 1");
 
   Either!(string, T) find(T)(T[] xs, T value) {
     import std.algorithm : find;
@@ -217,4 +242,22 @@ unittest {
       xs => find(xs, 3)
     ) == "nothing"
   );
+}
+
+unittest {
+  writeln(__FILE__, ": test Either 2");
+
+  long x;
+  Right(3).apply!(
+    left => assert(false),
+    right => x = right
+  );
+  assert(x == 3);
+
+  string str;
+  Left("yeah!").apply!(
+    left => str = left,
+    right => assert(false)
+  );
+  assert(str == "yeah!");
 }
