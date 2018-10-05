@@ -6,6 +6,8 @@
 
 A simple Prolog implementation in Dlang.
 
+[![](demo/family.gif)](https://asciinema.org/a/204818)
+
 ## Requirements
 
 - [DMD](https://dlang.org/)
