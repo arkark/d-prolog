@@ -9,16 +9,16 @@ abstract class BinaryOperator : Operator {
   private this(dstring lexeme, long precedence, string type, long line, long column)  {
     super(lexeme, precedence, type, line, column);
   }
-  long calc(long x, long y);
+  Number calc(Number x, Number y);
 }
 
 BinaryOperator makeBinaryOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)
-if (is(typeof(binaryFun!fun(long.init, long.init)) == long)) {
+if (is(typeof(binaryFun!fun(Number.init, Number.init)) == Number)) {
   return new class(lexeme, precedence, type, line, column) BinaryOperator {
     this(dstring lexeme, long precedence, string type, long line, long column) {
       super(lexeme, precedence, type, line, column);
     }
-    override long calc(long x, long y) {
+    override Number calc(Number x, Number y) {
       return binaryFun!fun(x, y);
     }
     override protected Operator make(long line, long column) const {
@@ -33,6 +33,10 @@ unittest {
   BinaryOperator plusOp = makeBinaryOperator!"a + b"("+", 500, "yfx");
   BinaryOperator multOp = makeBinaryOperator!"a * b"("*", 500, "yfx");
 
-  assert(plusOp.calc(121, 12) == 121 + 12);
-  assert(multOp.calc(921, 19) == 921 * 19);
+  Number num(long value) {
+    return new Number(value);
+  }
+
+  assert(plusOp.calc(num(121), num(12)) == num(121 + 12));
+  assert(multOp.calc(num(921), num(19)) == num(921 * 19));
 }

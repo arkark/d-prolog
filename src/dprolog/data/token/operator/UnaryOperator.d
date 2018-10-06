@@ -9,16 +9,16 @@ abstract class UnaryOperator : Operator {
   private this(dstring lexeme, long precedence, string type, long line, long column)  {
     super(lexeme, precedence, type, line, column);
   }
-  long calc(long x);
+  Number calc(Number x);
 }
 
 UnaryOperator makeUnaryOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)
-if (is(typeof(unaryFun!fun(long.init)) == long)) {
+if (is(typeof(unaryFun!fun(Number.init)) == Number)) {
   return new class(lexeme, precedence, type, line, column) UnaryOperator {
     this(dstring lexeme, long precedence, string type, long line, long column) {
       super(lexeme, precedence, type, line, column);
     }
-    override long calc(long x) {
+    override Number calc(Number x) {
       return unaryFun!fun(x);
     }
     override protected Operator make(long line, long column) const {
@@ -31,9 +31,13 @@ unittest {
   writeln(__FILE__, ": test UnaryOperator");
 
   UnaryOperator plusOp = makeUnaryOperator!"+a"("+", 200, "fy");
-  UnaryOperator multOp = makeUnaryOperator!"-a"("-", 200, "fy");
+  UnaryOperator subOp = makeUnaryOperator!"-a"("-", 200, "fy");
 
-  assert(plusOp.calc(10) == +10);
-  assert(multOp.calc(10) == -10);
-  assert(multOp.calc(multOp.calc(10)) == -(-10));
+  Number num(long value) {
+    return new Number(value);
+  }
+
+  assert(plusOp.calc(num(10)) == num(+10));
+  assert(subOp.calc(num(10)) == num(-10));
+  assert(subOp.calc(subOp.calc(num(10))) == num(-(-10)));
 }
