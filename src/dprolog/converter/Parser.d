@@ -308,8 +308,8 @@ private:
     ASTRoot root = parser.get();
     Parser.testAST!(Period)(root);
     Parser.testAST!(Operator)(root, 0);
-    Parser.testAST!(Variable, Operator)(root, 0, 0);
-    Parser.testAST!(Operator, Operator)(root, 0, 0, 1);
+    Parser.testAST!(Variable, BinaryOperator)(root, 0, 0);
+    Parser.testAST!(BinaryOperator, BinaryOperator)(root, 0, 0, 1);
     Parser.testAST!(Number, Number)(root, 0, 0, 1, 0);
     Parser.testAST!(Variable, Number)(root, 0, 0, 1, 1);
 
@@ -318,6 +318,23 @@ private:
 
   unittest {
     writeln(__FILE__, ": test parse 5");
+
+    auto lexer = new Lexer;
+    auto parser = new Parser;
+    lexer.run("X is + 1.");
+    parser.run(lexer.get());
+    assert(!parser.hasError);
+    ASTRoot root = parser.get();
+    Parser.testAST!(Period)(root);
+    Parser.testAST!(Operator)(root, 0);
+    Parser.testAST!(Variable, UnaryOperator)(root, 0, 0);
+    Parser.testAST!(Number)(root, 0, 0, 1);
+
+    // root.writeln;
+  }
+
+  unittest {
+    writeln(__FILE__, ": test parse 6");
 
     auto lexer = new Lexer;
     auto parser = new Parser;
