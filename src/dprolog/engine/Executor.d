@@ -12,6 +12,7 @@ import dprolog.converter.ClauseBuilder;
 import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.util.Maybe;
+import dprolog.util.Either;
 import dprolog.engine.Engine;
 import dprolog.engine.Evaluator;
 import dprolog.engine.UnificationUF;
@@ -193,6 +194,20 @@ private:
           (Number x) => x == y ? [unionFind] : [],
           (Object _) => new UnificationUF[0]
         );
+      }
+    } else if (term.token.instanceOf!ComparisonOperator) {
+      // arithmetic comparison
+      auto op = cast(ComparisonOperator) term.token;
+      auto result = _evaluator.calc(variant.children.front, unionFind).bind!(
+        x => _evaluator.calc(variant.children.back, unionFind).fmap!(
+          y => op.calc(x, y)
+        )
+      );
+      if (result.isLeft) {
+        _engine.addMessage(result.left);
+        return [];
+      } else {
+        return result.right ? [unionFind] : [];
       }
     } else {
       UnificationUF[] ufs;
