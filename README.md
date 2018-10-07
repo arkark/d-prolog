@@ -63,13 +63,13 @@ ref: [4.25 Operators | SWI Prolog](http://www.swi-prolog.org/pldoc/man?section=o
 
 ### Requirements
 
-- [DMD](https://dlang.org/): the compiler for D programming language
-- [DUB](http://code.dlang.org/): the package manager for D programming language
+- [DMD](https://dlang.org/): a compiler for D programming language
+- [DUB](http://code.dlang.org/): a package manager for D programming language
 
 ### Build
 
 ```console
-dub build
+$ dub build
 ```
 The destination path of the output binary is `./build`.
 
@@ -86,6 +86,7 @@ $ dub run -- -f example/family.pro -v
 ```
 
 ##### Options:
+
 - `-f`, `--file=VALUE`:  Read `VALUE` as a user initialization file
 - `-v`, `--verbose`:  Print diagnostic output
 - `-h`, `--help`:  Show help information
