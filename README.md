@@ -96,6 +96,10 @@ $ dub run -- -f example/family.pro -v
 $ dub test
 ```
 
+### Remaining Tasks
+
+Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
+
 ## License
 
 [MIT](https://github.com/ArkArk/d-prolog/blob/master/LICENSE)
