@@ -174,6 +174,13 @@ private:
       } else {
         return [];
       }
+    } else if (term.token == Operator.equalEqual) {
+      // equality comparison
+      if (unionFind.same(variant.children.front, variant.children.back)) {
+        return [unionFind];
+      } else {
+        return [];
+      }
     } else if (term.token == Operator.eval) {
       // arithmetic evaluation
       auto result = _evaluator.calc(variant.children.back, unionFind);
