@@ -3,6 +3,7 @@ module dprolog.data.token.operator.UnaryOperator;
 import dprolog.data.token;
 
 import std.stdio;
+import std.format;
 import std.functional;
 
 abstract class UnaryOperator : Operator {
@@ -10,6 +11,9 @@ abstract class UnaryOperator : Operator {
     super(lexeme, precedence, type, line, column);
   }
   Number calc(Number x);
+  override string toString() const {
+    return format!"UnaryOperator(lexeme: \"%s\", precedence: %s, type: %s)"(lexeme, precedence, type);
+  }
 }
 
 UnaryOperator makeUnaryOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)

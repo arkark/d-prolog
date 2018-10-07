@@ -67,6 +67,7 @@ class Operator : Atom {
     Operator comma = cast(immutable) new Operator(",", 1000, "xfy");
     Operator pipe = cast(immutable) new Operator("|", 1100, "xfy");
     Operator equal = cast(immutable) new Operator("=", 700, "xfx");
+    Operator eval = cast(immutable) new Operator("is", 700, "xfx");
   }
 
   static private immutable immutable(Operator)[] systemOperatorList = [
@@ -77,7 +78,7 @@ class Operator : Atom {
     comma,
     equal,
     cast(immutable) new Operator("==", 700, "xfx"),
-    cast(immutable) new Operator("is", 700, "xfx"),
+    eval,
     cast(immutable) makeComparisonOperator!"a < b"("<", 700, "xfx"),
     cast(immutable) makeComparisonOperator!"a <= b"("=<", 700, "xfx"),
     cast(immutable) makeComparisonOperator!"a > b"(">", 700, "xfx"),

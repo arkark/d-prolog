@@ -3,6 +3,7 @@ module dprolog.data.token.operator.BinaryOperator;
 import dprolog.data.token;
 
 import std.stdio;
+import std.format;
 import std.functional;
 
 abstract class BinaryOperator : Operator {
@@ -10,6 +11,9 @@ abstract class BinaryOperator : Operator {
     super(lexeme, precedence, type, line, column);
   }
   Number calc(Number x, Number y);
+  override string toString() const {
+    return format!"BinaryOperator(lexeme: \"%s\", precedence: %s, type: %s)"(lexeme, precedence, type);
+  }
 }
 
 BinaryOperator makeBinaryOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)

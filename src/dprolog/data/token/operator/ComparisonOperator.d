@@ -3,6 +3,7 @@ module dprolog.data.token.operator.ComparisonOperator;
 import dprolog.data.token;
 
 import std.stdio;
+import std.format;
 import std.functional;
 
 abstract class ComparisonOperator : Operator {
@@ -10,6 +11,9 @@ abstract class ComparisonOperator : Operator {
     super(lexeme, precedence, type, line, column);
   }
   bool calc(Number x, Number y);
+  override string toString() const {
+    return format!"ComparisonOperator(lexeme: \"%s\", precedence: %s, type: %s)"(lexeme, precedence, type);
+  }
 }
 
 ComparisonOperator makeComparisonOperator(alias fun)(dstring lexeme, long precedence, string type, long line = -1, long column = -1)

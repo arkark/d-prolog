@@ -13,6 +13,8 @@ import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.util.Maybe;
 import dprolog.engine.Engine;
+import dprolog.engine.Evaluator;
+import dprolog.engine.UnificationUF;
 
 import std.format;
 import std.conv;
@@ -30,12 +32,9 @@ private:
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
-  Clause[] _storage;
+  Evaluator _evaluator;
 
-  alias UF = UnionFind!(
-    Variant,
-    (Variant a, Variant b) => !a.isVariable ? -1 : !b.isVariable ? 1 : 0
-  );
+  Clause[] _storage;
 
 public:
   this(Engine engine) {
@@ -43,6 +42,7 @@ public:
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
+    _evaluator = new Evaluator;
     clear();
   }
 
@@ -113,15 +113,15 @@ private:
     }
 
     Variant first, second;
-    UF unionFind = buildUnionFind(query, first, second);
-    UF[] result = unificate(first, unionFind);
+    UnificationUF unionFind = buildUnionFind(query, first, second);
+    UnificationUF[] result = unificate(first, unionFind);
     if (query.first.isDetermined) {
       _engine.addMessage(Message((!result.empty).to!string ~ "."));
     } else {
       _engine.addMessage(Message((!result.empty).to!string ~ "."));
 
       // temporary code
-      string[] rec(Variant v, UF uf) {
+      string[] rec(Variant v, UnificationUF uf) {
         if (v.isVariable) {
           Variant root = uf.root(v);
           return [[
@@ -152,32 +152,53 @@ private:
     }
   }
 
-  UF[] unificate(Variant variant, UF unionFind) {
+  UnificationUF[] unificate(Variant variant, UnificationUF unionFind) {
     const Term term = variant.term;
     if (term.token == Operator.comma) {
       // conjunction
-      UF[] ufs = unificate(variant.children.front, unionFind);
+      UnificationUF[] ufs = unificate(variant.children.front, unionFind);
       return ufs.map!(
         uf => unificate(variant.children.back, uf)
       ).join.array;
     } else if (term.token == Operator.semicolon) {
       // disjunction
-      UF[] ufs1 = unificate(variant.children.front, unionFind);
-      UF[] ufs2 = unificate(variant.children.back, unionFind);
+      UnificationUF[] ufs1 = unificate(variant.children.front, unionFind);
+      UnificationUF[] ufs2 = unificate(variant.children.back, unionFind);
       return ufs1 ~ ufs2;
     } else if (term.token == Operator.equal) {
       // unification
-      UF newUnionFind = unionFind.clone;
+      UnificationUF newUnionFind = unionFind.clone;
       if (match(variant.children.front, variant.children.back, newUnionFind)) {
         return [newUnionFind];
       } else {
         return [];
       }
+    } else if (term.token == Operator.eval) {
+      // arithmetic evaluation
+      auto result = _evaluator.calc(variant.children.back, unionFind);
+      if (result.isLeft) {
+        _engine.addMessage(result.left);
+        return [];
+      } else {
+        Number y = result.right;
+        Variant xVar = unionFind.root(variant.children.front);
+        return xVar.term.token.castSwitch!(
+          (Variable x) {
+            UnificationUF newUnionFind = unionFind.clone;
+            Variant yVar = new Variant(-1, new Term(y, []), []);
+            newUnionFind.add(yVar);
+            newUnionFind.unite(xVar, yVar);
+            return [newUnionFind];
+          },
+          (Number x) => x == y ? [unionFind] : [],
+          (Object _) => new UnificationUF[0]
+        );
+      }
     } else {
-      UF[] ufs;
+      UnificationUF[] ufs;
       foreach(clause; _storage) {
         Variant first, second;
-        UF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
+        UnificationUF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
         if (match(variant, first, newUnionFind)) {
           ufs ~= clause.castSwitch!(
             (Fact fact) => [newUnionFind],
@@ -189,7 +210,7 @@ private:
     }
   }
 
-  bool match(Variant left, Variant right, UF unionFind) {
+  bool match(Variant left, Variant right, UnificationUF unionFind) {
 
     if (!left.isVariable && !right.isVariable) {
       return left.term.token == right.term.token && left.children.length==right.children.length && zip(left.children, right.children).all!(a => match(a[0], a[1], unionFind));
@@ -207,12 +228,12 @@ private:
     }
   }
 
-  UF buildUnionFind(Clause clause, ref Variant first, ref Variant second) {
+  UnificationUF buildUnionFind(Clause clause, ref Variant first, ref Variant second) {
     static long idGen = 0;
     static long idGen_underscore = 0;
     const long id = ++idGen;
 
-    UF uf = new UF;
+    UnificationUF uf = new UnificationUF;
 
     Variant rec(Term term) {
       Variant v = new Variant(
