@@ -80,7 +80,6 @@ private:
   }
 
   void parseClause(Token[] tokens, AST parent) {
-    specifyOperators(tokens);
     parseTermList(tokens, parent);
   }
 
@@ -152,6 +151,7 @@ private:
   }
 
   Maybe!Operator findHighestOperator(Token[] tokens) {
+    specifyOperators(tokens);
     auto gen = new Generator!Operator({
       auto parenStack = DList!Token();
       foreach(token; tokens) {
