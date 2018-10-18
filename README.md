@@ -1,4 +1,4 @@
-D-Prolog [WIP]
+D-Prolog
 ===
 
 [![Build Status](https://travis-ci.com/ArkArk/d-prolog.svg?branch=master)](https://travis-ci.com/ArkArk/d-prolog)
