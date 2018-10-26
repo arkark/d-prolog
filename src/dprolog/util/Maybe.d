@@ -30,11 +30,7 @@ public:
     return value;
   }
 
-  Maybe!T opAssign(T value) in {
-    static if (is(typeof(value is null))) {
-      assert(value !is null);
-    }
-  } do {
+  Maybe!T opAssign(T value) in (!isNull(value)) do {
     this.value = value;
     this._isJust = true;
     return this;
@@ -75,11 +71,21 @@ private struct Dummy {
   }
 }
 
-Maybe!T Just(T)(T value) in {
+private bool isNull(T)(T value) {
   static if (is(typeof(value is null))) {
-    assert(value !is null);
+    return (
+      isPointer!T ||
+      is(T == class) ||
+      is(T == interface) ||
+      is(T == function) ||
+      is(T == delegate)
+    ) && value is null;
+  } else {
+    return false;
   }
-} do {
+}
+
+Maybe!T Just(T)(T value) in (!isNull(value)) do {
   return Maybe!T(value);
 }
 
