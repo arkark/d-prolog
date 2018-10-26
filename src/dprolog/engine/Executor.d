@@ -96,10 +96,6 @@ private:
   }
 
   void executeFact(Fact fact) {
-    if (_engine.traverseBuiltIn(fact.first)) {
-      // when matching a built-in pattern
-      return;
-    }
     _storage ~= fact;
   }
 

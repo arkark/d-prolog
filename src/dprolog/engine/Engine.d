@@ -21,7 +21,6 @@ private:
 
   bool _isHalt = false;
   public bool verboseMode = false;
-  public bool queryMode = true;
 
 public:
   this() {
@@ -33,10 +32,10 @@ public:
 
   void next() in(!isHalt) do {
     dstring querifier = Operator.querifier.lexeme ~ " ";
-    if (queryMode) Terminal.write(querifier);
+    Terminal.write(querifier);
     try {
       string clause = Terminal.getline();
-      execute((queryMode ? querifier : ""d) ~ clause.to!dstring);
+      execute(querifier ~ clause.to!dstring);
       showAllMessage();
       Terminal.writeln;
     } catch(UserInterruptionException e) {
