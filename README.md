@@ -63,8 +63,20 @@ ref: [4.25 Operators | SWI Prolog](http://www.swi-prolog.org/pldoc/man?section=o
 
 ### Requirements
 
-- [DMD](https://dlang.org/): a compiler for D programming language
+- [DMD](https://dlang.org/download.html#dmd): a compiler for D programming language
 - [DUB](http://code.dlang.org/): a package manager for D programming language
+- [Linenoise](https://github.com/antirez/linenoise)
+
+#### Install Linenoise
+
+```console
+$ git clone https://github.com/antirez/linenoise.git
+$ cd linenoise
+$ gcc -c -o linenoise.o linenoise.c
+$ ar rcs liblinenoise.a linenoise.o
+```
+
+and move `liblinenoise.a` to `dprolog/lib/` or somewhere D can find it (e.g. `/usr/lib/`).
 
 ### Build
 
