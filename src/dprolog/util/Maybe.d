@@ -98,22 +98,31 @@ Maybe!Dummy None() {
 }
 
 // fmap :: Maybe!T -> (T -> S) -> Maybe!S
-template fmap(alias fun, T) {
-  static if (!is(T == Dummy)) {
-    static assert(is(typeof(unaryFun!fun(T.init))));
-    alias S = typeof(unaryFun!fun(T.init));
-  } else {
-    alias S = T;
-  }
-  Maybe!S fmap(Maybe!T m) {
-    if (m.isNone) {
-      return None!S;
+// fmap :: bool -> (() -> S) -> Maybe!S
+template fmap(alias fun) {
+  template fmap(T) {
+    static if (!is(T == Dummy)) {
+      static assert(is(typeof(unaryFun!fun(T.init))));
+      alias S = typeof(unaryFun!fun(T.init));
     } else {
-      static if (!is(T == Dummy)) {
-        return Just!S(unaryFun!fun(m.get));
+      alias S = T;
+    }
+    Maybe!S fmap(Maybe!T m) {
+      if (m.isNone) {
+        return None!S;
       } else {
-        assert(false);
+        static if (!is(T == Dummy)) {
+          return Just!S(unaryFun!fun(m.get));
+        } else {
+          assert(false);
+        }
       }
+    }
+  }
+  static if (is(typeof(fun()))) {
+    alias S = typeof(fun());
+    Maybe!S fmap(bool isTrue) {
+      return isTrue ? Just(fun()) : None!S;
     }
   }
 }
@@ -121,16 +130,6 @@ template fmap(alias fun, T) {
 // fmap :: bool -> (lazy T) -> Maybe!T
 Maybe!T fmap(T)(bool isTrue, lazy T value) {
   return isTrue ? Just(value) : None!T;
-}
-
-// fmap :: bool -> (() -> T) -> Maybe!T
-template fmap(alias fun) {
-  static if (is(typeof(fun()))) {
-    alias T = typeof(fun());
-    Maybe!T fmap(bool isTrue) {
-      return isTrue ? Just(fun()) : None!T;
-    }
-  }
 }
 
 // bind :: Maybe!T -> (T -> Maybe!S) -> Maybe!S
