@@ -123,6 +123,16 @@ Maybe!T fmap(T)(bool isTrue, lazy T value) {
   return isTrue ? Just(value) : None!T;
 }
 
+// fmap :: bool -> (() -> T) -> Maybe!T
+template fmap(alias fun) {
+  static if (is(typeof(fun()))) {
+    alias T = typeof(fun());
+    Maybe!T fmap(bool isTrue) {
+      return isTrue ? Just(fun()) : None!T;
+    }
+  }
+}
+
 // bind :: Maybe!T -> (T -> Maybe!S) -> Maybe!S
 template bind(alias fun, T) {
   static if (!is(T == Dummy)) {
