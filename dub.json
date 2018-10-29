@@ -6,6 +6,7 @@
   "targetName": "dprolog",
   "targetPath": "build",
   "dependencies": {
-    "arsd-official:terminal": "~>2.1.2"
-  }
+    "linenoise": "~>1.1.0"
+  },
+  "lflags": ["-Llib"]
 }

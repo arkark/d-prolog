@@ -7,8 +7,9 @@ import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 import dprolog.engine.Executor;
 import dprolog.engine.Messenger;
-import dprolog.engine.Terminal;
+import dprolog.core.Linenoise;
 
+import std.stdio;
 import std.conv;
 
 class Engine {
@@ -33,15 +34,14 @@ public:
 
   void next() in(!isHalt) do {
     dstring querifier = Operator.querifier.lexeme ~ " ";
-    if (queryMode) Terminal.write(querifier);
-    try {
-      string clause = Terminal.getline();
-      execute((queryMode ? querifier : ""d) ~ clause.to!dstring);
+    auto line = Linenoise.nextLine(queryMode ? querifier.to!string : "");
+    if (line.isJust) {
+      Linenoise.addHistory(line.get);
+      dstring clause = line.get.to!dstring;
+      execute((queryMode ? querifier : ""d) ~ clause);
       showAllMessage();
-      Terminal.writeln;
-    } catch(UserInterruptionException e) {
-      halt();
-    } catch(HangupException e) {
+      writeln;
+    } else {
       halt();
     }
   }
