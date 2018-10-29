@@ -1,6 +1,5 @@
 
 import dprolog.engine.Engine;
-import dprolog.engine.Terminal;
 
 import std.stdio;
 import std.format;
@@ -49,7 +48,6 @@ void main(string[] args) {
   while(!engine.isHalt) {
     engine.next();
   }
-  destroy(Terminal);
 }
 
 struct Option {
