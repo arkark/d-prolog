@@ -375,14 +375,14 @@ private:
 
     auto lexer = new Lexer;
     auto lookaheader = lexer.getLookaheader("hoge(10, X).");
-    assert(lexer.getToken(lookaheader, AtomGen).fmap!(t => t.instanceOf!Atom) == Just(true));
-    assert(lexer.getToken(lookaheader, LParenGen).fmap!(t => t.instanceOf!LParen) == Just(true));
-    assert(lexer.getToken(lookaheader, NumberGen).fmap!(t => t.instanceOf!Number) == Just(true));
-    assert(lexer.getToken(lookaheader, AtomGen).fmap!(t => t.instanceOf!Atom) == Just(true));
+    assert(lexer.getToken(lookaheader, AtomGen).fmap!(t => t.instanceOf!Atom) == true);
+    assert(lexer.getToken(lookaheader, LParenGen).fmap!(t => t.instanceOf!LParen) == true);
+    assert(lexer.getToken(lookaheader, NumberGen).fmap!(t => t.instanceOf!Number) == true);
+    assert(lexer.getToken(lookaheader, AtomGen).fmap!(t => t.instanceOf!Atom) == true);
     assert(lexer.getToken(lookaheader, EmptyGen).isNone);
-    assert(lexer.getToken(lookaheader, VariableGen).fmap!(t => t.instanceOf!Variable) == Just(true));
-    assert(lexer.getToken(lookaheader, RParenGen).fmap!(t => t.instanceOf!RParen) == Just(true));
-    assert(lexer.getToken(lookaheader, PeriodGen).fmap!(t => t.instanceOf!Period) == Just(true));
+    assert(lexer.getToken(lookaheader, VariableGen).fmap!(t => t.instanceOf!Variable) == true);
+    assert(lexer.getToken(lookaheader, RParenGen).fmap!(t => t.instanceOf!RParen) == true);
+    assert(lexer.getToken(lookaheader, PeriodGen).fmap!(t => t.instanceOf!Period) == true);
     assert(lookaheader.empty);
 
     assert(!lexer.hasError);

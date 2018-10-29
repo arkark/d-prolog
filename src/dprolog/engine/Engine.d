@@ -33,12 +33,12 @@ public:
   }
 
   void next() in(!isHalt) do {
-    dstring querifier = Operator.querifier.lexeme ~ " ";
-    auto line = Linenoise.nextLine(queryMode ? querifier.to!string : "");
+    dstring queryfier = Operator.queryfier.lexeme ~ " ";
+    auto line = Linenoise.nextLine(queryMode ? queryfier.to!string : "");
     if (line.isJust) {
       Linenoise.addHistory(line.get);
       dstring clause = line.get.to!dstring;
-      execute((queryMode ? querifier : ""d) ~ clause);
+      execute((queryMode ? queryfier : ""d) ~ clause);
       showAllMessage();
       writeln;
     } else {
