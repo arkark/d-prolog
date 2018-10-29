@@ -6,3 +6,5 @@ __dummy.html
 *.exe
 __test__*__
 build/*
+lib/*
+!lib/.gitkeep

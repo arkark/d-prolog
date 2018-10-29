@@ -1,6 +1,7 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"arsd-official": "2.1.2"
+		"arsd-official": "2.1.2",
+		"linenoise": "1.1.0+1.0.0"
 	}
 }
