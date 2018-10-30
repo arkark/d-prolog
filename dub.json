@@ -1,7 +1,7 @@
 {
   "name": "d-prolog",
   "authors": ["Ark"],
-  "description": "A simple Prolog implementation in Dlang.",
+  "description": "A Prolog implementation in Dlang.",
   "homepage": "https://github.com/ArkArk/d-prolog",
   "targetName": "dprolog",
   "targetPath": "build",
