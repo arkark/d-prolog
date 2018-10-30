@@ -9,6 +9,113 @@ A Prolog implementation in D language.
 
 [![](demo/family.gif)](https://asciinema.org/a/204818)
 
+## Getting Started
+
+### Start D-Prolog
+
+```console
+$ dprolog
+?-
+```
+
+with an initialization file:
+```console
+$ dprolog -f family.pro
+?-
+```
+```prolog
+?- male(X).
+true.
+X = bob;
+X = tom;
+X = jim.
+```
+
+### Options
+
+- `-f`, `--file=VALUE`:  Read `VALUE` as a user initialization file
+- `-v`, `--verbose`:  Print diagnostic output
+- `-h`, `--help`:  Show help information
+
+### Load a file while running
+
+Input a query `?- [<file path>].` while running as follows:
+```prolog
+?- [`family.pro`].
+```
+```prolog
+?- [`/path/to/file.pro`].
+```
+
+### Add rules from console
+
+If you input a query `?- [user].`, you can add rules from console:
+```prolog
+?- [user].
+|: hoge(poyo).
+|:
+```
+Input `ctrl+c` or `ctrl+d` to exit from the adding rules mode.
+
+```prolog
+?- hoge(X).
+true.
+X = poyo.
+```
+
+### Stop D-Prolog
+```prolog
+?- halt.
+```
+
+## Development
+
+### Requirements
+
+- [DMD](https://dlang.org/download.html#dmd): a compiler for D programming language
+- [DUB](http://code.dlang.org/): a package manager for D programming language
+- [Linenoise](https://github.com/antirez/linenoise)
+
+#### Install Linenoise
+
+```console
+$ git clone https://github.com/antirez/linenoise.git
+$ cd linenoise
+$ gcc -c -o linenoise.o linenoise.c
+$ ar rcs liblinenoise.a linenoise.o
+```
+
+and move `liblinenoise.a` to `dprolog/lib/` or somewhere D can find it (e.g. `/usr/lib/`).
+
+### Build
+
+```console
+$ dub build
+```
+The destination path of the output binary is `./build`.
+
+### Run
+
+with no option:
+```console
+$ dub run
+```
+
+with some options:
+```console
+$ dub run -- -f example/family.pro -v
+```
+
+### Tests
+
+```console
+$ dub test
+```
+
+### Remaining Tasks
+
+Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
+
 ## Specification
 
 ### Tokens
@@ -57,61 +164,8 @@ A Prolog implementation in D language.
 | 400 | yfx | `*`, `div`, `mod` |
 | 200 | fy | `+`, `-` |
 
-ref: [4.25 Operators | SWI Prolog](http://www.swi-prolog.org/pldoc/man?section=operators)
-
-## Development
-
-### Requirements
-
-- [DMD](https://dlang.org/download.html#dmd): a compiler for D programming language
-- [DUB](http://code.dlang.org/): a package manager for D programming language
-- [Linenoise](https://github.com/antirez/linenoise)
-
-#### Install Linenoise
-
-```console
-$ git clone https://github.com/antirez/linenoise.git
-$ cd linenoise
-$ gcc -c -o linenoise.o linenoise.c
-$ ar rcs liblinenoise.a linenoise.o
-```
-
-and move `liblinenoise.a` to `dprolog/lib/` or somewhere D can find it (e.g. `/usr/lib/`).
-
-### Build
-
-```console
-$ dub build
-```
-The destination path of the output binary is `./build`.
-
-### Run
-
-with no option:
-```console
-$ dub run
-```
-
-with some options:
-```console
-$ dub run -- -f example/family.pro -v
-```
-
-##### Options:
-
-- `-f`, `--file=VALUE`:  Read `VALUE` as a user initialization file
-- `-v`, `--verbose`:  Print diagnostic output
-- `-h`, `--help`:  Show help information
-
-### Tests
-
-```console
-$ dub test
-```
-
-### Remaining Tasks
-
-Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
+- `+`, `-`, `*`, `div`, `mod`: arithmetic functions
+- `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: arithmetic comparison predocates
 
 ## License
 
