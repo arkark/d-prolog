@@ -2,6 +2,7 @@ module dprolog.engine.BuiltIn;
 
 import dprolog.util.functions;
 import dprolog.engine.Engine;
+import dprolog.engine.Consulter;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
 import dprolog.data.Term;
@@ -21,7 +22,10 @@ private:
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
+  Consulter _consulter;
+
   Engine _engine;
+
   Pattern[] _patterns;
 
 public:
@@ -30,6 +34,7 @@ public:
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
+    _consulter = new Consulter(engine);
     setPatterns();
   }
 
@@ -51,6 +56,12 @@ private:
       term => _engine.halt()
     );
 
+    // add rules
+    auto addRules = buildPattern(
+      "[user]",
+      term => _consulter.exec()
+    );
+
     // read file
     auto readFile = buildPattern(
       "[FilePath]",
@@ -68,6 +79,7 @@ private:
 
     _patterns = [
       halt,
+      addRules,
       readFile,
     ];
   }
