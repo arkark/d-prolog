@@ -47,9 +47,9 @@ Input a query `?- [<file path>].` while running as follows:
 ?- [`/path/to/file.pro`].
 ```
 
-### Add rules from console
+### Add rules from the console
 
-If you input a query `?- [user].`, you can add rules from console:
+Input a query `?- [user].`, and you will be able to add rules from the console:
 ```prolog
 ?- [user].
 |: hoge(poyo).
@@ -133,7 +133,7 @@ Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
 <special>       ::= ":" | "?" | "&" | ";" | "," | "|" | "=" | "<" | ">" | "+" | "-" | "*" | "/" | "\"
 ```
 
-- `<number>` is 64-bit integer.
+- `<number>` is a 64-bit integer.
 
 ### Syntax
 
