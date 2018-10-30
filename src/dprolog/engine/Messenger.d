@@ -1,8 +1,8 @@
 module dprolog.engine.Messenger;
 
 import dprolog.data.Message;
-import dprolog.engine.Terminal;
 
+import std.stdio;
 import std.container : DList;
 
 class Messenger {
@@ -24,7 +24,7 @@ public:
   }
 
   void show() in(!empty) do {
-    Terminal.writeln(_messageList.front.text);
+    _messageList.front.text.writeln;
     _messageList.removeFront;
   }
 

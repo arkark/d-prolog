@@ -74,7 +74,7 @@ class Term {
       (token.instanceOf!Variable && children.empty)
     );
     assert(token != Operator.rulifier);
-    assert(token != Operator.querifier);
+    assert(token != Operator.queryfier);
     assert(isDetermined == ((token.instanceOf!Atom && children.all!(c => c.isDetermined)) || token.instanceOf!Number));
   }
 

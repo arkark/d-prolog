@@ -30,11 +30,7 @@ public:
     return value;
   }
 
-  Maybe!T opAssign(T value) in {
-    static if (is(typeof(value is null))) {
-      assert(value !is null);
-    }
-  } do {
+  Maybe!T opAssign(T value) in (!isNull(value)) do {
     this.value = value;
     this._isJust = true;
     return this;
@@ -75,11 +71,21 @@ private struct Dummy {
   }
 }
 
-Maybe!T Just(T)(T value) in {
+private bool isNull(T)(T value) {
   static if (is(typeof(value is null))) {
-    assert(value !is null);
+    return (
+      isPointer!T ||
+      is(T == class) ||
+      is(T == interface) ||
+      is(T == function) ||
+      is(T == delegate)
+    ) && value is null;
+  } else {
+    return false;
   }
-} do {
+}
+
+Maybe!T Just(T)(T value) in (!isNull(value)) do {
   return Maybe!T(value);
 }
 
@@ -92,22 +98,31 @@ Maybe!Dummy None() {
 }
 
 // fmap :: Maybe!T -> (T -> S) -> Maybe!S
-template fmap(alias fun, T) {
-  static if (!is(T == Dummy)) {
-    static assert(is(typeof(unaryFun!fun(T.init))));
-    alias S = typeof(unaryFun!fun(T.init));
-  } else {
-    alias S = T;
-  }
-  Maybe!S fmap(Maybe!T m) {
-    if (m.isNone) {
-      return None!S;
+// fmap :: bool -> (() -> S) -> Maybe!S
+template fmap(alias fun) {
+  template fmap(T) {
+    static if (!is(T == Dummy)) {
+      static assert(is(typeof(unaryFun!fun(T.init))));
+      alias S = typeof(unaryFun!fun(T.init));
     } else {
-      static if (!is(T == Dummy)) {
-        return Just!S(unaryFun!fun(m.get));
+      alias S = T;
+    }
+    Maybe!S fmap(Maybe!T m) {
+      if (m.isNone) {
+        return None!S;
       } else {
-        assert(false);
+        static if (!is(T == Dummy)) {
+          return Just!S(unaryFun!fun(m.get));
+        } else {
+          assert(false);
+        }
       }
+    }
+  }
+  static if (is(typeof(fun()))) {
+    alias S = typeof(fun());
+    Maybe!S fmap(bool isTrue) {
+      return isTrue ? Just(fun()) : None!S;
     }
   }
 }

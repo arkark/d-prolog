@@ -88,7 +88,7 @@ private:
   }
 
   bool isQuery(AST ast) {
-    return ast.token == Operator.querifier;
+    return ast.token == Operator.queryfier;
   }
 
   Fact toFact(AST ast) {
@@ -127,7 +127,7 @@ private:
       // Operator
       if (
         ast.token == Operator.rulifier  ||
-        ast.token == Operator.querifier ||
+        ast.token == Operator.queryfier ||
         ast.token == Operator.pipe
       ) {
         setErrorMessage(ast.tokenList);

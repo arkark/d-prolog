@@ -62,7 +62,7 @@ class Operator : Atom {
 
   static immutable {
     Operator rulifier = cast(immutable) new Operator(":-", 1200, "xfx");
-    Operator querifier = cast(immutable) new Operator("?-", 1200, "fx");
+    Operator queryfier = cast(immutable) new Operator("?-", 1200, "fx");
     Operator semicolon = cast(immutable) new Operator(";", 1100, "xfy");
     Operator comma = cast(immutable) new Operator(",", 1000, "xfy");
     Operator pipe = cast(immutable) new Operator("|", 1100, "xfy");
@@ -73,7 +73,7 @@ class Operator : Atom {
 
   static private immutable immutable(Operator)[] systemOperatorList = [
     rulifier,
-    querifier,
+    queryfier,
     semicolon,
     pipe,
     comma,

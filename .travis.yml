@@ -2,6 +2,13 @@ language: d
 d:
   - dmd
 script:
+  - cd $HOME
+  - git clone https://github.com/antirez/linenoise.git
+  - cd linenoise
+  - gcc -c -o linenoise.o linenoise.c
+  - ar rcs liblinenoise.a linenoise.o
+  - mv liblinenoise.a $TRAVIS_BUILD_DIR/lib
+  - cd $TRAVIS_BUILD_DIR
   - dub build
   - dub test --build=unittest-cov
 
