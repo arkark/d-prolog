@@ -165,7 +165,7 @@ Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
 | 200 | fy | `+`, `-` |
 
 - `+`, `-`, `*`, `div`, `mod`: arithmetic functions
-- `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: arithmetic comparison predocates
+- `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: arithmetic comparison predicates
 
 ## License
 
