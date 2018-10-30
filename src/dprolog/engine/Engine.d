@@ -22,7 +22,6 @@ private:
 
   bool _isHalt = false;
   public bool verboseMode = false;
-  public bool queryMode = true;
 
 public:
   this() {
@@ -34,11 +33,11 @@ public:
 
   void next() in(!isHalt) do {
     dstring queryfier = Operator.queryfier.lexeme ~ " ";
-    auto line = Linenoise.nextLine(queryMode ? queryfier.to!string : "");
+    auto line = Linenoise.nextLine(queryfier.to!string);
     if (line.isJust) {
       Linenoise.addHistory(line.get);
       dstring clause = line.get.to!dstring;
-      execute((queryMode ? queryfier : ""d) ~ clause);
+      execute(queryfier ~ clause);
       showAllMessage();
       writeln;
     } else {
