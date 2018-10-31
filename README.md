@@ -85,7 +85,7 @@ $ gcc -c -o linenoise.o linenoise.c
 $ ar rcs liblinenoise.a linenoise.o
 ```
 
-and move `liblinenoise.a` to `dprolog/lib/` or somewhere D can find it (e.g. `/usr/lib/`).
+and move `liblinenoise.a` to `./lib/` or somewhere D can find it (e.g. `/usr/lib/`).
 
 ### Build
 
