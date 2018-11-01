@@ -23,6 +23,7 @@ import std.range;
 import std.array;
 import std.algorithm;
 import std.functional;
+import std.concurrency : Generator, yield;
 
 class Executor {
 
@@ -111,7 +112,9 @@ private:
 
     Variant first, second;
     UnificationUF unionFind = buildUnionFind(query, first, second);
-    UnificationUF[] result = unificate(first, unionFind);
+    UnificationUF[] result = new Generator!UnificationUF(
+      () => unificate(first, unionFind)
+    ).array;
     if (query.first.isDetermined) {
       _engine.addMessage(Message((!result.empty).to!string ~ "."));
     } else {
@@ -149,53 +152,52 @@ private:
     }
   }
 
-  UnificationUF[] unificate(Variant variant, UnificationUF unionFind) {
+  // fiber function
+  void unificate(Variant variant, UnificationUF unionFind) {
     const Term term = variant.term;
     if (term.token == Operator.comma) {
       // conjunction
-      UnificationUF[] ufs = unificate(variant.children.front, unionFind);
-      return ufs.map!(
+      new Generator!UnificationUF(
+        () => unificate(variant.children.front, unionFind)
+      ).array.each!(
         uf => unificate(variant.children.back, uf)
-      ).join.array;
+      );
     } else if (term.token == Operator.semicolon) {
       // disjunction
-      UnificationUF[] ufs1 = unificate(variant.children.front, unionFind);
-      UnificationUF[] ufs2 = unificate(variant.children.back, unionFind);
-      return ufs1 ~ ufs2;
+      unificate(variant.children.front, unionFind);
+      unificate(variant.children.back, unionFind);
     } else if (term.token == Operator.equal) {
       // unification
       UnificationUF newUnionFind = unionFind.clone;
       if (match(variant.children.front, variant.children.back, newUnionFind)) {
-        return [newUnionFind];
-      } else {
-        return [];
+        newUnionFind.yield;
       }
     } else if (term.token == Operator.equalEqual) {
       // equality comparison
       if (unionFind.same(variant.children.front, variant.children.back)) {
-        return [unionFind];
-      } else {
-        return [];
+        unionFind.yield;
       }
     } else if (term.token == Operator.eval) {
       // arithmetic evaluation
       auto result = _evaluator.calc(variant.children.back, unionFind);
       if (result.isLeft) {
         _engine.addMessage(result.left);
-        return [];
       } else {
         Number y = result.right;
         Variant xVar = unionFind.root(variant.children.front);
-        return xVar.term.token.castSwitch!(
+        xVar.term.token.castSwitch!(
           (Variable x) {
             UnificationUF newUnionFind = unionFind.clone;
             Variant yVar = new Variant(-1, new Term(y, []), []);
             newUnionFind.add(yVar);
             newUnionFind.unite(xVar, yVar);
-            return [newUnionFind];
+            newUnionFind.yield;
           },
-          (Number x) => x == y ? [unionFind] : [],
-          (Object _) => new UnificationUF[0]
+          (Number x) {
+            if (x == y) unionFind.yield;
+          },
+          (Object _) {
+          }
         );
       }
     } else if (term.token.instanceOf!ComparisonOperator) {
@@ -208,23 +210,20 @@ private:
       );
       if (result.isLeft) {
         _engine.addMessage(result.left);
-        return [];
       } else {
-        return result.right ? [unionFind] : [];
+        if (result.right) unionFind.yield;
       }
     } else {
-      UnificationUF[] ufs;
       foreach(clause; _storage) {
         Variant first, second;
         UnificationUF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
         if (match(variant, first, newUnionFind)) {
-          ufs ~= clause.castSwitch!(
-            (Fact fact) => [newUnionFind],
+          clause.castSwitch!(
+            (Fact fact) => newUnionFind.yield,
             (Rule rule) => unificate(second, newUnionFind)
           );
         }
       }
-      return ufs;
     }
   }
 
