@@ -25,7 +25,6 @@ $ dprolog -f family.pro
 ```
 ```prolog
 ?- male(X).
-true.
 X = bob;
 X = tom;
 X = jim.
@@ -59,7 +58,6 @@ Input `ctrl+c` or `ctrl+d` to exit from the adding rules mode.
 
 ```prolog
 ?- hoge(X).
-true.
 X = poyo.
 ```
 
