@@ -74,4 +74,12 @@ public:
     _messenger.add(msg);
   }
 
+  void writeMessage(Message msg) {
+    _messenger.write(msg);
+  }
+
+  void writelnMessage(Message msg) {
+    _messenger.writeln(msg);
+  }
+
 }
