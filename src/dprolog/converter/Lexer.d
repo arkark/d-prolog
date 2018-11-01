@@ -128,6 +128,7 @@ private:
     return new Generator!Node({
       foreach(line, str; src.splitLines) {
         foreach(column, ch; str) {
+          if (ch == '%') break; // a comment
           Node(ch.to!dstring, line+1, column+1).yield;
         }
       }
