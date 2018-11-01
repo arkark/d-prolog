@@ -19,6 +19,16 @@ public:
     return _messageList.empty;
   }
 
+  void write(Message msg) {
+    msg.text.write;
+    stdout.flush;
+  }
+
+  void writeln(Message msg) {
+    msg.text.writeln;
+    stdout.flush;
+  }
+
   void add(Message msg) {
     _messageList.insertBack(msg);
   }
@@ -26,6 +36,7 @@ public:
   void show() in(!empty) do {
     _messageList.front.text.writeln;
     _messageList.removeFront;
+    stdout.flush;
   }
 
   void showAll() {

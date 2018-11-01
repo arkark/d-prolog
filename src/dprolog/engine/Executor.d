@@ -16,6 +16,7 @@ import dprolog.util.Either;
 import dprolog.engine.Engine;
 import dprolog.engine.Evaluator;
 import dprolog.engine.UnificationUF;
+import dprolog.core.Linenoise;
 
 import std.format;
 import std.conv;
@@ -87,7 +88,7 @@ private:
 
   void executeClause(Clause clause) {
     if (_engine.verboseMode) {
-      _engine.addMessage(Message(format!"execute: %s"(clause)));
+      _engine.writelnMessage(Message(format!"execute: %s"(clause)));
     }
     clause.castSwitch!(
       (Fact fact)   => executeFact(fact),
@@ -112,13 +113,12 @@ private:
 
     Variant first, second;
     UnificationUF unionFind = buildUnionFind(query, first, second);
-    UnificationUF[] result = new Generator!UnificationUF(
+    auto result = new Generator!UnificationUF(
       () => unificate(first, unionFind)
-    ).array;
+    );
     if (query.first.isDetermined) {
-      _engine.addMessage(Message((!result.empty).to!string ~ "."));
+      _engine.writelnMessage(Message((!result.empty).to!string ~ "."));
     } else {
-      _engine.addMessage(Message((!result.empty).to!string ~ "."));
 
       // temporary code
       string[] rec(Variant v, UnificationUF uf) {
@@ -145,9 +145,21 @@ private:
         }
       }
 
-      foreach(i, uf; result) {
-        string end = i==result.length-1 ? "." : ";";
-        _engine.addMessage(Message(rec(first, uf).join(", ") ~ end));
+      while(!result.empty) {
+        auto uf = result.front;
+        result.popFront;
+        _engine.showAllMessage();
+        string answer = rec(first, uf).join(", ");
+        if (result.empty) {
+          _engine.writelnMessage(Message(answer ~ "."));
+        } else {
+          auto line = Linenoise.nextLine(answer ~ "; ");
+          if (line.isJust) {
+          } else {
+            _engine.writelnMessage(Message("% Execution Aborted"));
+            break;
+          }
+        }
       }
     }
   }
