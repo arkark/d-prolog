@@ -63,6 +63,15 @@ true.
 X = poyo.
 ```
 
+### Comments
+
+The %-style line comments is supported.
+
+```prolog
+?- X = 1. % This is a comment.
+X = 1.
+```
+
 ### Stop D-Prolog
 ```prolog
 ?- halt.
