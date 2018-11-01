@@ -145,21 +145,28 @@ private:
         }
       }
 
-      while(!result.empty) {
-        auto uf = result.front;
-        result.popFront;
+      if (result.empty) {
         _engine.showAllMessage();
-        string answer = rec(first, uf).join(", ");
-        if (result.empty) {
-          _engine.writelnMessage(Message(answer ~ "."));
-        } else {
-          auto line = Linenoise.nextLine(answer ~ "; ");
-          if (line.isJust) {
+        _engine.writelnMessage(Message("false."));
+      } else {
+
+        while(!result.empty) {
+          auto uf = result.front;
+          result.popFront;
+          _engine.showAllMessage();
+          string answer = rec(first, uf).join(", ");
+          if (result.empty) {
+            _engine.writelnMessage(Message(answer ~ "."));
           } else {
-            _engine.writelnMessage(Message("% Execution Aborted"));
-            break;
+            auto line = Linenoise.nextLine(answer ~ "; ");
+            if (line.isJust) {
+            } else {
+              _engine.writelnMessage(Message("% Execution Aborted"));
+              break;
+            }
           }
         }
+
       }
     }
   }
