@@ -120,28 +120,33 @@ private:
       _engine.writelnMessage(Message((!result.empty).to!string ~ "."));
     } else {
 
-      // temporary code
-      string[] rec(Variant v, UnificationUF uf) {
+      string[] rec(Variant v, UnificationUF uf, ref bool[string] exists) {
         if (v.isVariable) {
           Variant root = uf.root(v);
-          return [[
-            v.term.to!string,
+          string lexeme = v.term.to!string;
+          if (lexeme in exists) {
+            return [];
+          } else {
+            exists[lexeme] = true;
+          }
+          return [
+            lexeme,
             "=",
             {
-              Term po(Variant var) {
+              Term f(Variant var) {
                 return new Term(
                   var.term.token,
                   var.children.map!(
-                    c => c.isVariable ? uf.root(c).pipe!po : c.term
+                    c => c.isVariable ? uf.root(c).pipe!f : c.term
                   ).array
                 );
               }
 
-              return root.pipe!po.to!string;
+              return root.pipe!f.to!string;
             }()
-          ].join(" ")];
+          ].join(" ").only.array;
         } else {
-          return v.children.map!(u => rec(u, uf)).join.array;
+          return v.children.map!(u => rec(u, uf, exists)).join.array;
         }
       }
 
@@ -154,7 +159,8 @@ private:
           auto uf = result.front;
           result.popFront;
           _engine.showAllMessage();
-          string answer = rec(first, uf).join(", ");
+          bool[string] exists;
+          string answer = rec(first, uf, exists).join(", ");
           if (result.empty) {
             _engine.writelnMessage(Message(answer ~ "."));
           } else {
