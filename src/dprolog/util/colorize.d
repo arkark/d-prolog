@@ -1,5 +1,6 @@
 module dprolog.util.colorize;
 
+import std.conv;
 import std.format;
 import std.traits;
 
@@ -27,16 +28,14 @@ enum BackgroundColor {
   White
 }
 
-T colorizeForeground(T)(T text, ForegroundColor color)
-if (isNarrowString!T) {
-  if (color == ForegroundColor.None) return text;
-  return format!"\033[%dm%s\033[0m"(color, text);
+bool isColor(Color)() {
+  return is(Color == ForegroundColor) || is(Color == BackgroundColor);
 }
 
-T colorizeBackground(T)(T text, BackgroundColor color)
-if (isNarrowString!T) {
-  if (color == BackgroundColor.None) return text;
-  return format!"\033[%dm%s\033[0m"(color, text);
+@property String colorize(String, Color)(String text, Color color)
+if (isSomeString!String && isColor!Color) {
+  if (color == Color.None) return text;
+  return format!"\033[%dm%s\033[0m"(color, text).to!String;
 }
 
 import std.stdio;
@@ -46,7 +45,7 @@ unittest {
   foreach(bgColor; EnumMembers!BackgroundColor) {
     foreach(fgColor; EnumMembers!ForegroundColor) {
       writeln("backgroundColor: ", bgColor, ", foregroundColor: ", fgColor);
-      "Hello world!".colorizeBackground(bgColor).colorizeForeground(fgColor).writeln;
+      "Hello world!".colorize(bgColor).colorize(bgColor).writeln;
     }
   }
 }
