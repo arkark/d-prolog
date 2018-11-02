@@ -3,7 +3,7 @@ module dprolog.engine.Evaluator;
 import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.data.Variant;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.util.functions;
 import dprolog.util.UnionFind;
 import dprolog.util.Either;
@@ -28,7 +28,7 @@ public:
         x => op.calc(x)
       ),
       (Number num) => Right!(Message, Number)(num),
-      (Object _) => Left!(Message, Number)(Message("Warning: Evaluation Fault"))
+      (Object _) => Left!(Message, Number)(WarningMessage("Warning: Evaluation Fault"))
     );
   }
 

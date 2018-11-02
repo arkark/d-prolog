@@ -1,6 +1,6 @@
 module dprolog.converter.Converter;
 
-import dprolog.data.Message;
+import dprolog.util.Message;
 
 // Converter: S => T
 

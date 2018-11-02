@@ -4,7 +4,7 @@ import dprolog.data.token;
 import dprolog.data.AST;
 import dprolog.data.Clause;
 import dprolog.data.Term;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
@@ -12,6 +12,7 @@ import dprolog.util.functions;
 import dprolog.util.Maybe;
 
 import std.stdio;
+import std.format;
 import std.conv;
 import std.range;
 import std.array;
@@ -215,8 +216,13 @@ private:
   }
 
   void setErrorMessage(Token[] tokens) in(!tokens.empty) do {
-    dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = Message("SyntaxError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): \"" ~str~ "\"");
+    _errorMessage = ErrorMessage(
+      format!"SyntaxError(%d, %d): \"%s\""(
+        tokens.front.line,
+        tokens.front.column,
+        tokens.map!(t => t.lexeme).join(" ")
+      )
+    );
   }
 
 

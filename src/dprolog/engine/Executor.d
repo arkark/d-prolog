@@ -4,7 +4,7 @@ import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.data.Clause;
 import dprolog.data.Variant;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
@@ -88,7 +88,7 @@ private:
 
   void executeClause(Clause clause) {
     if (_engine.verboseMode) {
-      _engine.writelnMessage(Message(format!"execute: %s"(clause)));
+      _engine.writelnMessage(VerboseMessage(format!"execute: %s"(clause)));
     }
     clause.castSwitch!(
       (Fact fact)   => executeFact(fact),
@@ -117,7 +117,7 @@ private:
       () => unificate(first, unionFind)
     );
     if (query.first.isDetermined) {
-      _engine.writelnMessage(Message((!result.empty).to!string ~ "."));
+      _engine.writelnMessage(DefaultMessage((!result.empty).to!string ~ "."));
     } else {
 
       string[] rec(Variant v, UnificationUF uf, ref bool[string] exists) {
@@ -152,7 +152,7 @@ private:
 
       if (result.empty) {
         _engine.showAllMessage();
-        _engine.writelnMessage(Message("false."));
+        _engine.writelnMessage(DefaultMessage("false."));
       } else {
 
         while(!result.empty) {
@@ -162,12 +162,12 @@ private:
           bool[string] exists;
           string answer = rec(first, uf, exists).join(", ");
           if (result.empty) {
-            _engine.writelnMessage(Message(answer ~ "."));
+            _engine.writelnMessage(DefaultMessage(answer ~ "."));
           } else {
             auto line = Linenoise.nextLine(answer ~ "; ");
             if (line.isJust) {
             } else {
-              _engine.writelnMessage(Message("% Execution Aborted"));
+              _engine.writelnMessage(InfoMessage("% Execution Aborted"));
               break;
             }
           }

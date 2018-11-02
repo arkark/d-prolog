@@ -1,12 +1,13 @@
 module dprolog.converter.Lexer;
 
 import dprolog.data.token;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.converter.Converter;
 import dprolog.util.functions;
 import dprolog.util.Maybe;
 
 import std.stdio;
+import std.format;
 import std.conv;
 import std.string;
 import std.format;
@@ -121,7 +122,13 @@ private:
     dstring str = node.value.pipe!(
       lexeme => lexeme.length>num ? lexeme.take(num).to!dstring ~ " ... " : lexeme
     );
-    _errorMessage = Message("TokenError(" ~node.line.to!dstring~ ", " ~node.column.to!dstring~ "): cannot tokenize \"" ~str~ "\".");
+    _errorMessage = ErrorMessage(
+      format!"TokenError(%d, %d): cannot tokenize \"%s\"."(
+        node.line,
+        node.column,
+        str
+      )
+    );
   }
 
   Generator!Node getLookaheader(immutable dstring src) {
