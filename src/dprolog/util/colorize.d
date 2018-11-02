@@ -4,6 +4,7 @@ import std.format;
 import std.traits;
 
 enum ForegroundColor {
+  None = -1,
   Black = 30,
   Red,
   Green,
@@ -15,6 +16,7 @@ enum ForegroundColor {
 }
 
 enum BackgroundColor {
+  None = -1,
   Black = 40,
   Red,
   Green,
@@ -27,11 +29,13 @@ enum BackgroundColor {
 
 T colorizeForeground(T)(T text, ForegroundColor color)
 if (isNarrowString!T) {
+  if (color == ForegroundColor.None) return text;
   return format!"\033[%dm%s\033[0m"(color, text);
 }
 
 T colorizeBackground(T)(T text, BackgroundColor color)
 if (isNarrowString!T) {
+  if (color == BackgroundColor.None) return text;
   return format!"\033[%dm%s\033[0m"(color, text);
 }
 
