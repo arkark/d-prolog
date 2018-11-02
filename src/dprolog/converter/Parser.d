@@ -9,6 +9,7 @@ import dprolog.util.functions;
 import dprolog.util.Maybe;
 
 import std.stdio;
+import std.format;
 import std.conv;
 import std.algorithm;
 import std.array;
@@ -226,8 +227,13 @@ private:
   }
 
   void setErrorMessage(Token[] tokens) in(!tokens.empty) do {
-    dstring str = tokens.map!(t => t.lexeme).join(" ");
-    _errorMessage = Message("ParseError(" ~tokens.front.line.to!dstring~ ", " ~tokens.front.column.to!dstring~ "): cannot parse \"" ~str~ "\".");
+    _errorMessage = ErrorMessage(
+      format!"ParseError(%d, %d): cannot parse \"%s\"."(
+        tokens.front.line,
+        tokens.front.column,
+        tokens.map!(t => t.lexeme).join(" ")
+        )
+    );
   }
 
 

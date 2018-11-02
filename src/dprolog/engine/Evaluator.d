@@ -28,7 +28,7 @@ public:
         x => op.calc(x)
       ),
       (Number num) => Right!(Message, Number)(num),
-      (Object _) => Left!(Message, Number)(Message("Warning: Evaluation Fault"))
+      (Object _) => Left!(Message, Number)(WarningMessage("Warning: Evaluation Fault"))
     );
   }
 

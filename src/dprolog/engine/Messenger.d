@@ -20,12 +20,12 @@ public:
   }
 
   void write(Message msg) {
-    msg.text.write;
+    msg.write;
     stdout.flush;
   }
 
   void writeln(Message msg) {
-    msg.text.writeln;
+    msg.writeln;
     stdout.flush;
   }
 
@@ -34,7 +34,7 @@ public:
   }
 
   void show() in(!empty) do {
-    _messageList.front.text.writeln;
+    _messageList.front.writeln;
     _messageList.removeFront;
     stdout.flush;
   }

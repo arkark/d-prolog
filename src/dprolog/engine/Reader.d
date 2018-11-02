@@ -21,7 +21,7 @@ public:
     if (filePath.exists) {
       _engine.execute(filePath.readText.to!dstring);
     } else {
-      _engine.addMessage(Message(format!"Warning: file '%s' cannot be read"(filePath)));
+      _engine.addMessage(WarningMessage(format!"Warning: file '%s' cannot be read"(filePath)));
     }
   }
 
