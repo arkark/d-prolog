@@ -4,7 +4,7 @@ import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.data.Clause;
 import dprolog.data.Variant;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;

@@ -1,6 +1,6 @@
 module dprolog.engine.Messenger;
 
-import dprolog.data.Message;
+import dprolog.util.Message;
 
 import std.stdio;
 import std.container : DList;

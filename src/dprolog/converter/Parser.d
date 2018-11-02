@@ -2,7 +2,7 @@ module dprolog.converter.Parser;
 
 import dprolog.data.token;
 import dprolog.data.AST;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.util.functions;

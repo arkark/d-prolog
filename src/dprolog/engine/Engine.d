@@ -2,7 +2,7 @@ module dprolog.engine.Engine;
 
 import dprolog.data.token;
 import dprolog.data.Term;
-import dprolog.data.Message;
+import dprolog.util.Message;
 import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 import dprolog.engine.Executor;

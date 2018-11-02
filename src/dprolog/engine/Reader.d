@@ -1,7 +1,7 @@
 module dprolog.engine.Reader;
 
 import dprolog.engine.Engine;
-import dprolog.data.Message;
+import dprolog.util.Message;
 
 import std.format;
 import std.conv;

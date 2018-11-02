@@ -1,4 +1,4 @@
-module dprolog.data.Message;
+module dprolog.util.Message;
 
 import std.conv;
 
