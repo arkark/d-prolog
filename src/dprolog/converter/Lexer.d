@@ -90,11 +90,12 @@ private:
 
   Maybe!Token getToken(Generator!Node lookaheader, TokenGen tokenGen) {
     if (lookaheader.empty) return None!Token;
-    Node node = getTokenNode(lookaheader, tokenGen);
-    return tokenGen.getToken(node);
+    return getTokenNode(lookaheader, tokenGen).bind!(
+      node => tokenGen.getToken(node)
+    );
   }
 
-  Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in(!lookaheader.empty) do {
+  Maybe!Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in(!lookaheader.empty) do {
     Node nowNode = lookaheader.front;
     lookaheader.popFront;
     while(!lookaheader.empty) {
@@ -106,11 +107,12 @@ private:
         break;
       }
     }
-    if (!tokenGen.validateAll(nowNode.value)) {
+    bool isValid = tokenGen.validateAll(nowNode.value);
+    if (!isValid) {
       setErrorMessage(nowNode);
       clearLookaheader(lookaheader);
     }
-    return nowNode;
+    return isValid.fmap(nowNode);
   }
 
   void setErrorMessage(Node node) {
