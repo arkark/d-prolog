@@ -35,6 +35,7 @@ X = jim.
 ```prolog
 ?- halt.
 ```
+or input `ctrl+c` or `ctrl+d` to stop D-Prolog.
 
 ### Example files
 
