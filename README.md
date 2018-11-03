@@ -112,7 +112,7 @@ true.
 ### Conjunctions and Disjunctions
 
 ```console
-dprolog -f list.pro
+$ dprolog -f list.pro
 ```
 
 conjunctions:
