@@ -4,7 +4,7 @@
   "description": "A Prolog implementation in Dlang.",
   "homepage": "https://github.com/ArkArk/d-prolog",
   "targetName": "dprolog",
-  "targetPath": "build",
+  "targetPath": "bin",
   "dependencies": {
     "linenoise": "~>1.1.0"
   },

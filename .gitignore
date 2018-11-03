@@ -5,6 +5,6 @@ __dummy.html
 *.obj
 *.exe
 __test__*__
-build/*
+bin/*
 lib/*
 !lib/.gitkeep

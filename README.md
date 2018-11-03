@@ -174,7 +174,7 @@ and move `liblinenoise.a` to `./lib/` or somewhere D can find it (e.g. `/usr/lib
 ```console
 $ dub build
 ```
-The destination path of the output binary is `./build`.
+The destination path of the output binary is `./bin`.
 
 ### Run
 
