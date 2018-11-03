@@ -17,10 +17,9 @@ FILE_NAME="dprolog-$VERSION-$OS-$ARCH"
 echo "Building $FILE_NAME"
 
 mkdir "bin/$FILE_NAME"
+dub build -b release --arch=x86_64
+cp "bin/dprolog" "bin/$FILE_NAME"
 cp -r example "bin/$FILE_NAME/example"
-DUB_TARGET_PATH="bin/$FILE_NAME"
-DUB_ARCH=x86_64
-dub build -b release
 
-tar cvfz "bin/$FILE_NAME.tar.gz" "bin/$FILE_NAME"
+tar cvfz "bin/$FILE_NAME.tar.gz" -C bin "$FILE_NAME"
 rm -r "bin/$FILE_NAME"
