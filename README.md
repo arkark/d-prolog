@@ -30,6 +30,12 @@ X = tom;
 X = jim.
 ```
 
+### Stop D-Prolog
+
+```prolog
+?- halt.
+```
+
 ### Example files
 
 - `example/family.pro`
@@ -85,7 +91,7 @@ X = [a, b, c].
 X = [a, b, c].
 ```
 
-### integers and arithmetic operations
+### Integers and Arithmetic Operations
 
 ```prolog
 ?- X = 10. % a decimal literal
@@ -141,11 +147,6 @@ X = 4.
 
 ?- (member(X, [1, 2, 3]); member(X, [3, 4])), X > 3.
 X = 4.
-```
-
-### Stop D-Prolog
-```prolog
-?- halt.
 ```
 
 ## Development
