@@ -80,7 +80,18 @@ X = [a, b, c].
 X = [a, b, c].
 ```
 
-### arithmetic operations
+### integers and arithmetic operations
+
+```prolog
+?- X = 10. % a decimal literal
+X = 10.
+
+?- X = 0b1010. % a binary literal
+X = 10.
+
+?- X = 0xff. % a hexadecimal literal
+X = 255.
+```
 
 ```prolog
 ?- X is 1 + 2.
