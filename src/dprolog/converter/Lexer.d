@@ -152,12 +152,12 @@ private:
 
   static TokenGen AtomGen = TokenGen(
     (dstring prefix) {
-      static auto re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*'?)|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
+      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*'?)|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
       auto res = prefix.matchFirst(re);
       return !res.empty && res.front==prefix;
     },
     (dstring lexeme) {
-      static auto re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
+      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
@@ -169,7 +169,7 @@ private:
       enum dstring decimal = r"0|[1-9][0-9]*"d;
       enum dstring binary = r"0[bB](0|[1-1][0-1]*)?"d;
       enum dstring hexadecimal = r"0[xX](0|[1-9a-fA-F][0-9a-fA-F]*)?"d;
-      static auto re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
+      enum re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
       auto res = prefix.matchFirst(re);
       return !res.empty && res.front==prefix;
     },
@@ -177,7 +177,7 @@ private:
       enum dstring decimal = r"0|[1-9][0-9]*"d;
       enum dstring binary = r"0[bB](0|[1-1][0-1]*)"d;
       enum dstring hexadecimal = r"0[xX](0|[1-9a-fA-F][0-9a-fA-F]*)"d;
-      static auto re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
+      enum re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
@@ -186,12 +186,12 @@ private:
 
   static TokenGen VariableGen = TokenGen(
     (dstring prefix) {
-      static auto re = ctRegex!(r"[_A-Z][_0-9a-zA-Z]*$"d);
+      enum re = ctRegex!(r"[_A-Z][_0-9a-zA-Z]*$"d);
       auto res = prefix.matchFirst(re);
       return !res.empty && res.front==prefix;
     },
     (dstring lexeme) {
-      static auto re = ctRegex!(r"[_A-Z][_0-9a-zA-Z]*$"d);
+      enum re = ctRegex!(r"[_A-Z][_0-9a-zA-Z]*$"d);
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
