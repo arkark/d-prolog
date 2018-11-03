@@ -30,6 +30,11 @@ X = tom;
 X = jim.
 ```
 
+### Example files
+
+- `example/family.pro`
+- `example/list.pro`
+
 ### Options
 
 - `-f`, `--file=VALUE`:  Read `VALUE` as a user initialization file
@@ -99,6 +104,43 @@ X = 3.
 
 ?- X = 10, Y is X * X - 1.
 X = 10, Y = 99.
+
+?- 10 < 100.
+true.
+```
+
+### Conjunctions and Disjunctions
+
+```console
+dprolog -f list.pro
+```
+
+conjunctions:
+```prolog
+?- member(X, [1, 2, 3]), member(X, [3, 4]).
+X = 3.
+```
+
+disjunctions:
+```prolog
+?- member(X, [1, 2, 3]); member(X, [3, 4]).
+X = 1;
+X = 2;
+X = 3;
+X = 3;
+X = 4.
+```
+
+conjuctions and disjunctions:
+```prolog
+?- member(X, [1, 2, 3]); member(X, [3, 4]), X > 3.
+X = 1;
+X = 2;
+X = 3;
+X = 4.
+
+?- (member(X, [1, 2, 3]); member(X, [3, 4])), X > 3.
+X = 4.
 ```
 
 ### Stop D-Prolog
