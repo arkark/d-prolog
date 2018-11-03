@@ -169,16 +169,16 @@ private:
   static TokenGen NumberGen = TokenGen(
     (dstring prefix) {
       enum dstring decimal = r"0|[1-9][0-9]*"d;
-      enum dstring binary = r"0[bB](0|[1-1][0-1]*)?"d;
-      enum dstring hexadecimal = r"0[xX](0|[1-9a-fA-F][0-9a-fA-F]*)?"d;
+      enum dstring binary = r"0[bB][0-1]*"d;
+      enum dstring hexadecimal = r"0[xX][0-9a-fA-F]*"d;
       enum re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
       auto res = prefix.matchFirst(re);
       return !res.empty && res.front==prefix;
     },
     (dstring lexeme) {
       enum dstring decimal = r"0|[1-9][0-9]*"d;
-      enum dstring binary = r"0[bB](0|[1-1][0-1]*)"d;
-      enum dstring hexadecimal = r"0[xX](0|[1-9a-fA-F][0-9a-fA-F]*)"d;
+      enum dstring binary = r"0[bB][0-1]+"d;
+      enum dstring hexadecimal = r"0[xX][0-9a-fA-F]+"d;
       enum re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;

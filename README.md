@@ -161,7 +161,7 @@ Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
 ```
 <token>         ::= <atom> | <number> | <variable> | <left paren> | <right paren> | <left bracket> | <right bracket> | <period>
 <atom>          ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` ) | (<special>)+
-<number>        ::= regex( 0|[1-9][0-9]* ) | regex( 0[bB](0|1[0-1]*) ) | regex( 0[xX](0|[1-9a-fA-F][0-9a-fA-F]*) )
+<number>        ::= regex( 0|[1-9][0-9]* ) | regex( 0[bB][0-1]+ ) | regex( 0[xX][0-9a-fA-F]+ )
 <variable>      ::= regex( [_A-Z][_0-9a-zA-Z]* )
 <left paren>    ::= "("
 <right paren>   ::= ")"
