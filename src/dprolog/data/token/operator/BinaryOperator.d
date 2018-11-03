@@ -37,8 +37,9 @@ unittest {
   BinaryOperator plusOp = makeBinaryOperator!"a + b"("+", 500, "yfx");
   BinaryOperator multOp = makeBinaryOperator!"a * b"("*", 500, "yfx");
 
+  import std.bigint;
   Number num(long value) {
-    return new Number(value);
+    return new Number(BigInt(value));
   }
 
   assert(plusOp.calc(num(121), num(12)) == num(121 + 12));

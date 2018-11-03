@@ -38,8 +38,9 @@ unittest {
   ComparisonOperator eqOp = makeComparisonOperator!"a == b"("=:=", 700, "xfx");
   ComparisonOperator neqOp = makeComparisonOperator!"a != b"("=\\=", 700, "xfx");
 
+  import std.bigint;
   Number num(long value) {
-    return new Number(value);
+    return new Number(BigInt(value));
   }
 
   assert(lessOp.calc(num(1), num(10)) == (1 < 10));

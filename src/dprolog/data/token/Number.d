@@ -2,17 +2,17 @@ module dprolog.data.token.Number;
 
 import dprolog.data.token;
 
-import std.format;
 import std.conv;
+import std.format;
+import std.bigint;
 
 class Number : Token {
 
-  private immutable long value;
+  private immutable BigInt value;
   this(dstring lexeme, long line, long column) {
-    super(lexeme, line, column);
-    this.value = lexeme.to!long;
+    this(BigInt(lexeme.to!string), line, column);
   }
-  this(long value, long line = -1, long column = -1) {
+  this(BigInt value, long line = -1, long column = -1) {
     super(value.to!dstring, line, column);
     this.value = value;
   }
@@ -32,7 +32,7 @@ class Number : Token {
     return that && this.lexeme==that.lexeme;
   }
 
-  long opCmp(Number that) const {
+  BigInt opCmp(Number that) const {
     return this.value - that.value;
   }
 
