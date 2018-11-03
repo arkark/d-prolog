@@ -70,6 +70,37 @@ The %-style line comments are supported.
 X = 1.
 ```
 
+### Lists
+
+```prolog
+?- X = [a, b, c].
+X = [a, b, c].
+
+?- X = [a | [b, c]].
+X = [a, b, c].
+```
+
+### integers and arithmetic operations
+
+```prolog
+?- X = 10. % a decimal literal
+X = 10.
+
+?- X = 0b1010. % a binary literal
+X = 10.
+
+?- X = 0xff. % a hexadecimal literal
+X = 255.
+```
+
+```prolog
+?- X is 1 + 2.
+X = 3.
+
+?- X = 10, Y is X * X - 1.
+X = 10, Y = 99.
+```
+
 ### Stop D-Prolog
 ```prolog
 ?- halt.
@@ -130,7 +161,7 @@ Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
 ```
 <token>         ::= <atom> | <number> | <variable> | <left paren> | <right paren> | <left bracket> | <right bracket> | <period>
 <atom>          ::= regex( [a-z][_0-9a-zA-Z]* ) | regex( `[^`]*` ) | (<special>)+
-<number>        ::= regex( 0 | [1-9][0-9]* )
+<number>        ::= regex( 0|[1-9][0-9]* ) | regex( 0[bB](0|1[0-1]*) ) | regex( 0[xX](0|[1-9a-fA-F][0-9a-fA-F]*) )
 <variable>      ::= regex( [_A-Z][_0-9a-zA-Z]* )
 <left paren>    ::= "("
 <right paren>   ::= ")"
@@ -140,7 +171,7 @@ Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
 <special>       ::= ":" | "?" | "&" | ";" | "," | "|" | "=" | "<" | ">" | "+" | "-" | "*" | "/" | "\"
 ```
 
-- `<number>` is a 64-bit integer.
+- `<number>` is an arbitrary-precision integer.
 
 ### Syntax
 

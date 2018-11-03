@@ -73,7 +73,7 @@ private:
 
   TokenGen getTokenGen(Generator!Node lookaheader) {
     Node node = lookaheader.front;
-    dchar c = node.value.to!dchar;
+    dstring head = node.value;
     auto genR = [
       AtomGen,
       NumberGen,
@@ -84,37 +84,35 @@ private:
       RBracketGen,
       PeriodGen,
       EmptyGen
-    ].find!(gen => gen.validateHead(c));
+    ].find!(gen => gen.validatePrefix(head));
     return genR.empty ? ErrorGen : genR.front;
   }
 
   Maybe!Token getToken(Generator!Node lookaheader, TokenGen tokenGen) {
     if (lookaheader.empty) return None!Token;
-    Node node = getTokenNode(lookaheader, tokenGen);
-    return tokenGen.getToken(node);
+    return getTokenNode(lookaheader, tokenGen).bind!(
+      node => tokenGen.getToken(node)
+    );
   }
 
-  Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in(!lookaheader.empty) do {
+  Maybe!Node getTokenNode(Generator!Node lookaheader, TokenGen tokenGen) in(!lookaheader.empty) do {
     Node nowNode = lookaheader.front;
-    bool existToken = tokenGen.validate(nowNode.value);
-    if (tokenGen.validateHead(nowNode.value.to!dchar)) {
-      nowNode = Node("", long.max, long.max);
-      while(!lookaheader.empty) {
-        Node tmpNode = nowNode ~ lookaheader.front;
-        if (tokenGen.validate(tmpNode.value)) {
-          existToken = true;
-        } else if (existToken) {
-          break;
-        }
-        nowNode = tmpNode;
+    lookaheader.popFront;
+    while(!lookaheader.empty) {
+      Node nextNode = nowNode ~ lookaheader.front;
+      if (tokenGen.validatePrefix(nextNode.value)) {
+        nowNode = nextNode;
         lookaheader.popFront;
+      } else {
+        break;
       }
     }
-    if (!existToken) {
+    bool isValid = tokenGen.validateAll(nowNode.value);
+    if (!isValid) {
       setErrorMessage(nowNode);
       clearLookaheader(lookaheader);
     }
-    return nowNode;
+    return isValid.fmap(nowNode);
   }
 
   void setErrorMessage(Node node) {
@@ -149,79 +147,97 @@ private:
   }
 
   struct TokenGen {
-    immutable bool function(dchar) validateHead;
-    immutable bool function(dstring) validate;
+    immutable bool function(dstring) validatePrefix;
+    immutable bool function(dstring) validateAll;
     immutable Maybe!Token function(Node) getToken;
   }
 
   static TokenGen AtomGen = TokenGen(
-    (dchar head)     => head.isLower || head=='\'' || Token.specialCharacters.canFind(head),
+    (dstring prefix) {
+      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*'?)|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
+      auto res = prefix.matchFirst(re);
+      return !res.empty && res.front==prefix;
+    },
     (dstring lexeme) {
-      static auto re = regex(r"([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+)"d);
+      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
-    (Node node)      => Just!Token(new Atom(node.value, node.line, node.column))
+    (Node node) => Just!Token(new Atom(node.value, node.line, node.column))
   );
 
   static TokenGen NumberGen = TokenGen(
-    (dchar head)     => head.isDigit,
+    (dstring prefix) {
+      enum dstring decimal = r"0|[1-9][0-9]*"d;
+      enum dstring binary = r"0[bB](0|[1-1][0-1]*)?"d;
+      enum dstring hexadecimal = r"0[xX](0|[1-9a-fA-F][0-9a-fA-F]*)?"d;
+      enum re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
+      auto res = prefix.matchFirst(re);
+      return !res.empty && res.front==prefix;
+    },
     (dstring lexeme) {
-      static auto re = regex(r"0|[1-9][0-9]*"d);
+      enum dstring decimal = r"0|[1-9][0-9]*"d;
+      enum dstring binary = r"0[bB](0|[1-1][0-1]*)"d;
+      enum dstring hexadecimal = r"0[xX](0|[1-9a-fA-F][0-9a-fA-F]*)"d;
+      enum re = ctRegex!(format!r"((%s)|(%s)|(%s))$"d(decimal, binary, hexadecimal));
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
-    (Node node)      => Just!Token(new Number(node.value, node.line, node.column))
+    (Node node) => Just!Token(new Number(node.value, node.line, node.column))
   );
 
   static TokenGen VariableGen = TokenGen(
-    (dchar head)     => head.isUpper || head=='_',
+    (dstring prefix) {
+      enum re = ctRegex!(r"[_A-Z][_0-9a-zA-Z]*$"d);
+      auto res = prefix.matchFirst(re);
+      return !res.empty && res.front==prefix;
+    },
     (dstring lexeme) {
-      static auto re = regex(r"[_A-Z][_0-9a-zA-Z]*"d);
+      enum re = ctRegex!(r"[_A-Z][_0-9a-zA-Z]*$"d);
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
-    (Node node)      => Just!Token(new Variable(node.value, node.line, node.column))
+    (Node node) => Just!Token(new Variable(node.value, node.line, node.column))
   );
 
   static TokenGen LParenGen = TokenGen(
-    (dchar head)     => head=='(',
-    (dstring lexeme) => lexeme=="(",
+    (dstring prefix) => prefix == "(",
+    (dstring lexeme) => lexeme == "(",
     (Node node)      => Just!Token(new LParen(node.value, node.line, node.column))
   );
 
   static TokenGen RParenGen = TokenGen(
-    (dchar head)     => head==')',
-    (dstring lexeme) => lexeme==")",
+    (dstring prefix) => prefix == ")",
+    (dstring lexeme) => lexeme == ")",
     (Node node)      => Just!Token(new RParen(node.value, node.line, node.column))
   );
 
   static TokenGen LBracketGen = TokenGen(
-    (dchar head)     => head=='[',
-    (dstring lexeme) => lexeme=="[",
+    (dstring prefix) => prefix == "[",
+    (dstring lexeme) => lexeme == "[",
     (Node node)      => Just!Token(new LBracket(node.value, node.line, node.column))
   );
 
   static TokenGen RBracketGen = TokenGen(
-    (dchar head)     => head==']',
-    (dstring lexeme) => lexeme=="]",
+    (dstring prefix) => prefix == "]",
+    (dstring lexeme) => lexeme == "]",
     (Node node)      => Just!Token(new RBracket(node.value, node.line, node.column))
   );
 
   static TokenGen PeriodGen = TokenGen(
-    (dchar head)     => head=='.',
-    (dstring lexeme) => lexeme==".",
+    (dstring prefix) => prefix == ".",
+    (dstring lexeme) => lexeme == ".",
     (Node node)      => Just!Token(new Period(node.value, node.line, node.column))
   );
 
   static TokenGen EmptyGen = TokenGen(
-    (dchar head)     => head.isWhite,
+    (dstring prefix) => prefix.length==1 && prefix.front.isWhite,
     (dstring lexeme) => lexeme.length==1 && lexeme.front.isWhite,
     (Node node)      => None!Token
   );
 
   static TokenGen ErrorGen = TokenGen(
-    (dchar head)     => false,
+    (dstring prefix) => false,
     (dstring lexeme) => false,
     (Node node)      => None!Token
   );
@@ -249,7 +265,6 @@ private:
 
 
 
-
   /* ---------- Unit Tests ---------- */
 
   // test Node
@@ -268,46 +283,58 @@ private:
     writeln(__FILE__, ": test TokenGen");
 
     // AtomGen
-    assert(AtomGen.validateHead('a'));
-    assert(AtomGen.validateHead('\''));
-    assert(AtomGen.validateHead(','));
-    assert(!AtomGen.validateHead('A'));
-    assert(AtomGen.validate("abc"));
-    assert(AtomGen.validate("' po _'"));
-    assert(AtomGen.validate("''"));
-    assert(AtomGen.validate("|+|"));
-    assert(!AtomGen.validate("'"));
-    assert(!AtomGen.validate("' po _"));
+    assert(AtomGen.validatePrefix("a"));
+    assert(AtomGen.validatePrefix("\'"));
+    assert(AtomGen.validatePrefix("\'aaa"));
+    assert(!AtomGen.validatePrefix("aaa\'"));
+    assert(AtomGen.validatePrefix(","));
+    assert(!AtomGen.validatePrefix("A"));
+    assert(AtomGen.validateAll("abc"));
+    assert(AtomGen.validateAll("' po _'"));
+    assert(AtomGen.validateAll("''"));
+    assert(AtomGen.validateAll("|+|"));
+    assert(!AtomGen.validateAll("'"));
+    assert(!AtomGen.validateAll("' po _"));
     // NumberGen
-    assert(NumberGen.validateHead('0'));
-    assert(!NumberGen.validateHead('_'));
-    assert(NumberGen.validate("123"));
-    assert(NumberGen.validate("0"));
-    assert(!NumberGen.validate("0123"));
+    assert(NumberGen.validatePrefix("0"));
+    assert(NumberGen.validatePrefix("0b"));
+    assert(NumberGen.validatePrefix("0B"));
+    assert(NumberGen.validatePrefix("0x"));
+    assert(NumberGen.validatePrefix("0X"));
+    assert(!NumberGen.validatePrefix("_"));
+    assert(NumberGen.validateAll("123"));
+    assert(NumberGen.validateAll("0"));
+    assert(NumberGen.validateAll("0b10"));
+    assert(NumberGen.validateAll("0xff"));
+    assert(NumberGen.validateAll("0XFF"));
+    assert(!NumberGen.validateAll("0b123"));
+    assert(!NumberGen.validateAll("0xxxx"));
+    assert(!NumberGen.validateAll("0123"));
     // VariableGen
-    assert(VariableGen.validateHead('A'));
-    assert(VariableGen.validateHead('_'));
-    assert(!VariableGen.validateHead('a'));
-    assert(VariableGen.validate("Po"));
-    assert(VariableGen.validate("_yeah"));
+    assert(VariableGen.validatePrefix("A"));
+    assert(VariableGen.validatePrefix("_"));
+    assert(VariableGen.validatePrefix("_a"));
+    assert(!VariableGen.validatePrefix("a"));
+    assert(VariableGen.validateAll("Po"));
+    assert(VariableGen.validateAll("_yeah"));
     // LParenGen
-    assert(LParenGen.validateHead('('));
-    assert(LParenGen.validate("("));
+    assert(LParenGen.validatePrefix("("));
+    assert(LParenGen.validateAll("("));
     // RParenGen
-    assert(RParenGen.validateHead(')'));
-    assert(RParenGen.validate(")"));
+    assert(RParenGen.validatePrefix(")"));
+    assert(RParenGen.validateAll(")"));
     // LBracketGen
-    assert(LBracketGen.validateHead('['));
-    assert(LBracketGen.validate("["));
+    assert(LBracketGen.validatePrefix("["));
+    assert(LBracketGen.validateAll("["));
     // RBracketGen
-    assert(RBracketGen.validateHead(']'));
-    assert(RBracketGen.validate("]"));
+    assert(RBracketGen.validatePrefix("]"));
+    assert(RBracketGen.validateAll("]"));
     // PeriodGen
-    assert(PeriodGen.validateHead('.'));
-    assert(PeriodGen.validate("."));
+    assert(PeriodGen.validatePrefix("."));
+    assert(PeriodGen.validateAll("."));
     // EmptyGen
-    assert(EmptyGen.validateHead(' '));
-    assert(EmptyGen.validate(" "));
+    assert(EmptyGen.validatePrefix(" "));
+    assert(EmptyGen.validateAll(" "));
   }
 
   // test lookaheader
@@ -424,6 +451,7 @@ private:
     assert(tokens[1].instanceOf!Atom);
     assert(tokens[2].instanceOf!RParen);
     assert(tokens[3].instanceOf!Period);
+
   }
 
   // test errorMessage

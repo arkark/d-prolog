@@ -44,8 +44,8 @@ unittest {
   writeln(__FILE__, ": test color print");
   foreach(bgColor; EnumMembers!BackgroundColor) {
     foreach(fgColor; EnumMembers!ForegroundColor) {
-      writeln("backgroundColor: ", bgColor, ", foregroundColor: ", fgColor);
-      "Hello world!".colorize(bgColor).colorize(bgColor).writeln;
+      format!"(%d, %d)"(bgColor, fgColor).colorize(bgColor).colorize(fgColor).write;
     }
+    writeln;
   }
 }

@@ -37,8 +37,9 @@ unittest {
   UnaryOperator plusOp = makeUnaryOperator!"+a"("+", 200, "fy");
   UnaryOperator subOp = makeUnaryOperator!"-a"("-", 200, "fy");
 
+  import std.bigint;
   Number num(long value) {
-    return new Number(value);
+    return new Number(BigInt(value));
   }
 
   assert(plusOp.calc(num(10)) == num(+10));
