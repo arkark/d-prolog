@@ -134,12 +134,15 @@ private:
             "=",
             {
               Term f(Variant var) {
-                return new Term(
-                  var.term.token,
-                  var.children.map!(
-                    c => c.isVariable ? uf.root(c).pipe!f : c.term
-                  ).array
-                );
+                if (var.isVariable) {
+                  auto x = uf.root(var);
+                  return x == var ? x.term : x.pipe!f;
+                } else {
+                  return new Term(
+                    var.term.token,
+                    var.children.map!f.array
+                  );
+                }
               }
 
               return root.pipe!f.to!string;
