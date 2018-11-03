@@ -9,6 +9,20 @@ A Prolog implementation in D language.
 
 [![](demo/family.gif)](https://asciinema.org/a/204818)
 
+## Install
+
+### Download binary
+
+Download the [latest](https://github.com/ArkArk/d-prolog/releases/) `dprolog` binary.
+
+### Install from source
+
+```console
+$ git clone https://github.com/ArkArk/d-prolog.git
+$ cd d-prolog
+```
+and build (refer to Development).
+
 ## Getting Started
 
 ### Start D-Prolog
@@ -20,7 +34,7 @@ $ dprolog
 
 with an initialization file:
 ```console
-$ dprolog -f family.pro
+$ dprolog -f example/family.pro
 ?-
 ```
 ```prolog
@@ -52,7 +66,7 @@ or input `ctrl+c` or `ctrl+d` to stop D-Prolog.
 
 Input a query `?- [<file path>].` while running as follows:
 ```prolog
-?- [`family.pro`].
+?- [`file.pro`].
 ```
 ```prolog
 ?- [`/path/to/file.pro`].
