@@ -114,7 +114,8 @@ private:
     Variant first, second;
     UnificationUF unionFind = buildUnionFind(query, first, second);
     auto result = new Generator!UnificationUF(
-      () => unificate(first, unionFind)
+      () => unificate(first, unionFind),
+      1<<20
     );
     if (query.first.isDetermined) {
       _engine.writelnMessage(DefaultMessage((!result.empty).to!string ~ "."));
@@ -186,7 +187,8 @@ private:
     if (term.token == Operator.comma) {
       // conjunction
       new Generator!UnificationUF(
-        () => unificate(variant.children.front, unionFind)
+        () => unificate(variant.children.front, unionFind),
+        1<<20
       ).array.each!(
         uf => unificate(variant.children.back, uf)
       );

@@ -55,6 +55,7 @@ or input `ctrl+c` or `ctrl+d` to stop D-Prolog.
 
 - `example/family.pro`
 - `example/list.pro`
+- `example/factorial.pro`
 
 ### Options
 
