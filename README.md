@@ -7,7 +7,7 @@ D-Prolog
 
 A Prolog implementation in D language.
 
-[![](demo/family.gif)](https://asciinema.org/a/210225)
+[![](demo/demo.gif)](https://asciinema.org/a/210436)
 
 ## Install
 
