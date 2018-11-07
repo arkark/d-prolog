@@ -159,22 +159,29 @@ private:
         _engine.writelnMessage(DefaultMessage("false."));
       } else {
 
-        while(!result.empty) {
-          auto uf = result.front;
-          result.popFront;
+        if (query.hasOnlyUnderscore()) {
           _engine.showAllMessage();
-          bool[string] exists;
-          string answer = rec(first, uf, exists).join(", ");
-          if (result.empty) {
-            _engine.writelnMessage(DefaultMessage(answer ~ "."));
-          } else {
-            auto line = Linenoise.nextLine(answer ~ "; ");
-            if (line.isJust) {
+          _engine.writelnMessage(DefaultMessage("true."));
+        } else {
+
+          while(!result.empty) {
+            auto uf = result.front;
+            result.popFront;
+            _engine.showAllMessage();
+            bool[string] exists;
+            string answer = rec(first, uf, exists).join(", ");
+            if (result.empty) {
+              _engine.writelnMessage(DefaultMessage(answer ~ "."));
             } else {
-              _engine.writelnMessage(InfoMessage("% Execution Aborted"));
-              break;
+              auto line = Linenoise.nextLine(answer ~ "; ");
+              if (line.isJust) {
+              } else {
+                _engine.writelnMessage(InfoMessage("% Execution Aborted"));
+                break;
+              }
             }
           }
+
         }
 
       }

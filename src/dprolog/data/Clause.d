@@ -5,6 +5,7 @@ import dprolog.data.Term;
 import dprolog.util.UnionFind;
 
 import std.format;
+import std.algorithm;
 
 abstract class Clause {}
 
@@ -51,5 +52,13 @@ class Query : Clause {
 
   override string toString() const {
     return format!"Query(\"?- %s.\")"(first);
+  }
+
+  bool hasOnlyUnderscore() {
+    bool rec(Term term) {
+      if (term.isVariable && !term.token.isUnderscore) return false;
+      return term.children.all!rec;
+    }
+    return rec(first);
   }
 }
