@@ -3,13 +3,13 @@ Getting Started
 
 ## Start D-Prolog
 
-```console
+```bash
 $ dprolog
 ?-
 ```
 
 with an initialization file:
-```console
+```bash
 $ dprolog -f example/family.pro
 ?-
 ```
@@ -109,7 +109,7 @@ true.
 
 ## Conjunctions and Disjunctions
 
-```console
+```bash
 $ dprolog -f list.pro
 ```
 

@@ -17,7 +17,7 @@ Download the [latest](https://github.com/ArkArk/d-prolog/releases/) `dprolog` bi
 
 ### Install from source
 
-```console
+```bash
 $ git clone https://github.com/ArkArk/d-prolog.git
 $ cd d-prolog
 ```
@@ -39,7 +39,7 @@ Look at [docs/](docs).
 
 #### Install Linenoise
 
-```console
+```bash
 $ git clone https://github.com/antirez/linenoise.git
 $ cd linenoise
 $ gcc -c -o linenoise.o linenoise.c
@@ -50,7 +50,7 @@ and move `liblinenoise.a` to `lib/` or somewhere D can find it (e.g. `/usr/lib/`
 
 ### Build
 
-```console
+```bash
 $ dub build
 ```
 The destination directory of the output binary is `bin`.
@@ -58,24 +58,24 @@ The destination directory of the output binary is `bin`.
 ### Run
 
 with no option:
-```console
+```bash
 $ dub run
 ```
 
 with some options:
-```console
+```bash
 $ dub run -- -f example/family.pro -v
 ```
 
 ### Tests
 
-```console
+```bash
 $ dub test
 ```
 
 ### Release
 
-```console
+```bash
 $ git tag <version>
 $ ./release.sh
 ```
