@@ -122,7 +122,7 @@ private:
     } else {
 
       string[] rec(Variant v, UnificationUF uf, ref bool[string] exists) {
-        if (v.isVariable) {
+        if (v.isVariable && !v.term.token.isUnderscore) {
           Variant root = uf.root(v);
           string lexeme = v.term.to!string;
           if (lexeme in exists) {
