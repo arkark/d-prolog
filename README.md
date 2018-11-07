@@ -73,6 +73,13 @@ $ dub run -- -f example/family.pro -v
 $ dub test
 ```
 
+### Release
+
+```console
+$ git tag <version>
+$ ./release.sh
+```
+
 ### Remaining Tasks
 
 Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
