@@ -11,6 +11,7 @@ import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
+import dprolog.core.Linenoise;
 
 import std.range;
 import std.string;
@@ -57,6 +58,12 @@ private:
       term => _engine.halt()
     );
 
+    // clear screen
+    auto clearScreen = buildPattern(
+      "clear",
+      term => Linenoise.clearScreen()
+    );
+
     // add rules
     auto addRules = buildPattern(
       "[user]",
@@ -78,6 +85,7 @@ private:
       ]
     );
 
+    // 42
     auto answerToEverything = buildPattern(
       "X",
       (term) {
@@ -100,11 +108,13 @@ private:
       ]
     );
 
+
     _patterns = [
       halt,
       addRules,
       readFile,
-      answerToEverything
+      answerToEverything,
+      clearScreen
     ];
   }
 

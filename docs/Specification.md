@@ -34,7 +34,7 @@ Specification
 <list>          ::= <left bracket> [<term> ("," <term>)* ["|" <list>]] <right bracket>
 ```
 
-## System Operators
+## Operators
 
 | Precedence | Type | Name |
 | ---------: | :--: | :--- |
@@ -49,3 +49,13 @@ Specification
 
 - `+`, `-`, `*`, `div`, `mod`: arithmetic functions
 - `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: arithmetic comparison predicates
+
+## System Commands
+
+```prolog
+?- halt. % Stop D-Prolog
+```
+
+```prolog
+?- clear. % Clear the screen
+```
