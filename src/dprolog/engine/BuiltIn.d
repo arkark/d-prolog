@@ -13,6 +13,7 @@ import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
 
 import std.range;
+import std.string;
 import std.functional;
 
 class BuildIn {
@@ -77,10 +78,33 @@ private:
       ]
     );
 
+    auto answerToEverything = buildPattern(
+      "X",
+      (term) {
+        enum string lines =
+`
+██╗  ██╗██████╗
+██║  ██║╚════██╗
+███████║ █████╔╝
+╚════██║██╔═══╝
+     ██║███████╗
+     ╚═╝╚══════╝ ■
+`;
+        foreach(line; lines.splitLines) {
+          if (line.empty) continue;
+          _engine.writelnMessage(InfoMessage(line));
+        }
+      },
+      [
+        "X": (Term term) => term.isVariable
+      ]
+    );
+
     _patterns = [
       halt,
       addRules,
       readFile,
+      answerToEverything
     ];
   }
 
@@ -88,8 +112,6 @@ private:
     Term targetTerm = toTerm(src);
     return new class() Pattern {
       override bool isMatch(Term term) {
-        if (!term.isDetermined) return false;
-
         bool rec(Term src, Term dst) {
           if (dst.isVariable) {
             if (!validators[dst.token.lexeme](src)) return false;
