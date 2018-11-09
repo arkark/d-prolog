@@ -2,6 +2,7 @@ module dprolog.engine.BuiltIn;
 
 import dprolog.util.functions;
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
 import dprolog.engine.Consulter;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
@@ -100,7 +101,7 @@ private:
 `;
         foreach(line; lines.splitLines) {
           if (line.empty) continue;
-          _engine.writelnMessage(InfoMessage(line));
+          Messenger.writeln(InfoMessage(line));
         }
       },
       [

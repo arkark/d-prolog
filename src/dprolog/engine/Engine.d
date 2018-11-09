@@ -18,7 +18,6 @@ private:
   BuildIn _builtIn;
   Reader _reader;
   Executor _executor;
-  Messenger _messenger;
 
   bool _isHalt = false;
   public bool verboseMode = false;
@@ -28,7 +27,6 @@ public:
     _builtIn = new BuildIn(this);
     _reader = new Reader(this);
     _executor = new Executor(this);
-    _messenger = new Messenger;
   }
 
   void next() in(!isHalt) do {
@@ -38,7 +36,7 @@ public:
       Linenoise.addHistory(line.get);
       dstring clause = line.get.to!dstring;
       execute(queryfier ~ clause);
-      showAllMessage();
+      Messenger.showAll();
       writeln;
     } else {
       halt();
@@ -46,7 +44,7 @@ public:
   }
 
   void execute(dstring src) in(!isHalt) do {
-    _messenger.clear();
+    Messenger.clear();
     _executor.execute(src);
   }
 
@@ -64,22 +62,6 @@ public:
 
   bool traverseBuiltIn(Term term) {
     return _builtIn.traverse(term);
-  }
-
-  void showAllMessage() {
-    _messenger.showAll();
-  }
-
-  void addMessage(Message msg) {
-    _messenger.add(msg);
-  }
-
-  void writeMessage(Message msg) {
-    _messenger.write(msg);
-  }
-
-  void writelnMessage(Message msg) {
-    _messenger.writeln(msg);
   }
 
 }

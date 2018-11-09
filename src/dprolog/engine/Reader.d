@@ -1,6 +1,7 @@
 module dprolog.engine.Reader;
 
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
 import dprolog.util.Message;
 
 import std.format;
@@ -21,7 +22,7 @@ public:
     if (filePath.exists) {
       _engine.execute(filePath.readText.to!dstring);
     } else {
-      _engine.addMessage(WarningMessage(format!"Warning: file '%s' cannot be read"(filePath)));
+      Messenger.add(WarningMessage(format!"Warning: file '%s' cannot be read"(filePath)));
     }
   }
 

@@ -1,6 +1,7 @@
 module dprolog.util.GetOpt;
 
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
 
 import std.stdio;
 import std.format;
@@ -57,7 +58,7 @@ public:
     // read a file
     if (!filePath.empty) {
       engine.readFile(filePath.to!dstring);
-      engine.showAllMessage();
+      Messenger.showAll();
     }
   }
 
