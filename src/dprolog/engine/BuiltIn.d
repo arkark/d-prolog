@@ -34,8 +34,6 @@ private:
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
-  Consulter _consulter;
-
   Pattern[] _patterns;
 
 public:
@@ -43,7 +41,6 @@ public:
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
-    _consulter = new Consulter;
     setPatterns();
   }
 
@@ -74,7 +71,7 @@ private:
     // add rules
     auto addRules = buildPattern(
       "[user]",
-      term => _consulter.exec()
+      term => Consulter.consult()
     );
 
     // read file

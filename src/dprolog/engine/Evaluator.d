@@ -1,13 +1,9 @@
 module dprolog.engine.Evaluator;
 
 import dprolog.data.token;
-import dprolog.data.Term;
 import dprolog.data.Variant;
 import dprolog.util.Message;
-import dprolog.util.functions;
-import dprolog.util.UnionFind;
 import dprolog.util.Either;
-import dprolog.engine.Executor;
 import dprolog.engine.UnificationUF;
 
 import std.range;

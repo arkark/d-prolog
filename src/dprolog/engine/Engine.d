@@ -1,14 +1,11 @@
 module dprolog.engine.Engine;
 
 import dprolog.data.token;
-import dprolog.data.Term;
-import dprolog.util.Message;
-import dprolog.engine.Reader;
 import dprolog.engine.Executor;
 import dprolog.engine.Messenger;
+import dprolog.util.Message;
 import dprolog.core.Linenoise;
 
-import std.stdio;
 import std.conv;
 
 @property Engine_ Engine() {
@@ -34,7 +31,7 @@ public:
       dstring clause = line.get.to!dstring;
       Executor.execute(queryfier ~ clause);
       Messenger.showAll();
-      writeln;
+      Messenger.writeln(DefaultMessage(""));
     } else {
       halt();
     }

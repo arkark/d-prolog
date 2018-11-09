@@ -1,6 +1,5 @@
 module dprolog.engine.Reader;
 
-import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.Executor;
 import dprolog.util.Message;

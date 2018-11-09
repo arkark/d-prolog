@@ -1,15 +1,21 @@
 module dprolog.engine.Consulter;
 
-import dprolog.engine.Engine;
 import dprolog.engine.Executor;
 import dprolog.core.Linenoise;
 
-import std.stdio;
 import std.conv;
 import std.array;
 
-class Consulter {
-  void exec() {
+@property Consulter_ Consulter() {
+  static Consulter_ instance;
+  if (!instance) {
+    instance = new Consulter_();
+  }
+  return instance;
+}
+
+class Consulter_ {
+  void consult() {
     dstring[] texts = [];
     string prompt = "|: ";
     while(true) {

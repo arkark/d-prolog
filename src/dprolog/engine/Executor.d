@@ -10,7 +10,6 @@ import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
 import dprolog.util.functions;
-import dprolog.util.UnionFind;
 import dprolog.util.Maybe;
 import dprolog.util.Either;
 import dprolog.engine.Engine;
