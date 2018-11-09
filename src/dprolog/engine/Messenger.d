@@ -5,7 +5,15 @@ import dprolog.util.Message;
 import std.stdio;
 import std.container : DList;
 
-class Messenger {
+@property Messenger_ Messenger() {
+  static Messenger_ instance;
+  if (!instance) {
+    instance = new Messenger_();
+  }
+  return instance;
+}
+
+private class Messenger_ {
 
 private:
   DList!Message _messageList;

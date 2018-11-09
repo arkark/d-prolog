@@ -1,21 +1,24 @@
 module dprolog.engine.Evaluator;
 
 import dprolog.data.token;
-import dprolog.data.Term;
 import dprolog.data.Variant;
 import dprolog.util.Message;
-import dprolog.util.functions;
-import dprolog.util.UnionFind;
 import dprolog.util.Either;
-import dprolog.engine.Executor;
 import dprolog.engine.UnificationUF;
 
 import std.range;
 import std.algorithm;
 
-class Evaluator {
+@property Evaluator_ Evaluator() {
+  static Evaluator_ instance;
+  if (!instance) {
+    instance = new Evaluator_();
+  }
+  return instance;
+}
 
-public:
+private class Evaluator_ {
+
   Either!(Message, Number) calc(Variant variant, UnificationUF unionFind) {
     Variant root = unionFind.root(variant);
     return root.term.token.castSwitch!(

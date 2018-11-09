@@ -2,6 +2,8 @@ module dprolog.engine.BuiltIn;
 
 import dprolog.util.functions;
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
+import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
@@ -17,26 +19,28 @@ import std.range;
 import std.string;
 import std.functional;
 
-class BuildIn {
+@property BuiltIn_ BuiltIn() {
+  static BuiltIn_ instance;
+  if (!instance) {
+    instance = new BuiltIn_();
+  }
+  return instance;
+}
+
+private class BuiltIn_ {
 
 private:
   Lexer _lexer;
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
-  Consulter _consulter;
-
-  Engine _engine;
-
   Pattern[] _patterns;
 
 public:
-  this(Engine engine) {
-    _engine = engine;
+  this() {
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
-    _consulter = new Consulter(engine);
     setPatterns();
   }
 
@@ -55,7 +59,7 @@ private:
     // halt
     auto halt = buildPattern(
       "halt",
-      term => _engine.halt()
+      term => Engine.halt()
     );
 
     // clear screen
@@ -67,7 +71,7 @@ private:
     // add rules
     auto addRules = buildPattern(
       "[user]",
-      term => _consulter.exec()
+      term => Consulter.consult()
     );
 
     // read file
@@ -78,7 +82,7 @@ private:
         if (filePath.front == '\'') {
           filePath = filePath[1..$-1];
         }
-        _engine.readFile(filePath);
+        Reader.read(filePath);
       },
       [
         "FilePath": (Term term) => term.isAtom && term.children.empty
@@ -100,7 +104,7 @@ private:
 `;
         foreach(line; lines.splitLines) {
           if (line.empty) continue;
-          _engine.writelnMessage(InfoMessage(line));
+          Messenger.writeln(InfoMessage(line));
         }
       },
       [

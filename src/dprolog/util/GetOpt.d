@@ -1,6 +1,8 @@
 module dprolog.util.GetOpt;
 
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
+import dprolog.engine.Reader;
 
 import std.stdio;
 import std.format;
@@ -28,7 +30,7 @@ private:
   enum helpOption = Option("h", "help", "This help information", false);
 
 public:
-  void run(Engine engine, string[] args) {
+  void run(string[] args) {
     string filePath;
     bool verbose;
     bool help;
@@ -52,12 +54,12 @@ public:
       return;
     }
 
-    engine.verboseMode = verbose;
+    Engine.verboseMode = verbose;
 
     // read a file
     if (!filePath.empty) {
-      engine.readFile(filePath.to!dstring);
-      engine.showAllMessage();
+      Reader.read(filePath.to!dstring);
+      Messenger.showAll();
     }
   }
 

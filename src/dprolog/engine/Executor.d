@@ -10,10 +10,11 @@ import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
 import dprolog.util.functions;
-import dprolog.util.UnionFind;
 import dprolog.util.Maybe;
 import dprolog.util.Either;
 import dprolog.engine.Engine;
+import dprolog.engine.Messenger;
+import dprolog.engine.BuiltIn;
 import dprolog.engine.Evaluator;
 import dprolog.engine.UnificationUF;
 import dprolog.core.Linenoise;
@@ -26,33 +27,35 @@ import std.algorithm;
 import std.functional;
 import std.concurrency : Generator, yield;
 
-class Executor {
+@property Executor_ Executor() {
+  static Executor_ instance;
+  if (!instance) {
+    instance = new Executor_();
+  }
+  return instance;
+}
+
+private class Executor_ {
 
 private:
-  Engine _engine;
-
   Lexer _lexer;
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
-  Evaluator _evaluator;
-
   Clause[] _storage;
 
 public:
-  this(Engine engine) {
-    _engine = engine;
+  this() {
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
-    _evaluator = new Evaluator;
     clear();
   }
 
-  void execute(dstring src) in(!_engine.isHalt) do {
+  void execute(dstring src) in(!Engine.isHalt) do {
     toClauseList(src).apply!((clauseList) {
       foreach(clause; clauseList) {
-        if (_engine.isHalt) break;
+        if (Engine.isHalt) break;
         executeClause(clause);
       }
     });
@@ -71,7 +74,7 @@ private:
       return (S src) {
         converter.run(src);
         if (converter.hasError) {
-          _engine.addMessage(converter.errorMessage);
+          Messenger.add(converter.errorMessage);
           return None!T;
         }
         return converter.get.Just;
@@ -87,8 +90,8 @@ private:
   }
 
   void executeClause(Clause clause) {
-    if (_engine.verboseMode) {
-      _engine.writelnMessage(VerboseMessage(format!"execute: %s"(clause)));
+    if (Engine.verboseMode) {
+      Messenger.writeln(VerboseMessage(format!"execute: %s"(clause)));
     }
     clause.castSwitch!(
       (Fact fact)   => executeFact(fact),
@@ -106,7 +109,7 @@ private:
   }
 
   void executeQuery(Query query) {
-    if (_engine.traverseBuiltIn(query.first)) {
+    if (BuiltIn.traverse(query.first)) {
       // when matching a built-in pattern
       return;
     }
@@ -118,7 +121,7 @@ private:
       1<<20
     );
     if (query.first.isDetermined) {
-      _engine.writelnMessage(DefaultMessage((!result.empty).to!string ~ "."));
+      Messenger.writeln(DefaultMessage((!result.empty).to!string ~ "."));
     } else {
 
       string[] rec(Variant v, UnificationUF uf, ref bool[string] exists) {
@@ -155,28 +158,28 @@ private:
       }
 
       if (result.empty) {
-        _engine.showAllMessage();
-        _engine.writelnMessage(DefaultMessage("false."));
+        Messenger.showAll();
+        Messenger.writeln(DefaultMessage("false."));
       } else {
 
         if (query.hasOnlyUnderscore()) {
-          _engine.showAllMessage();
-          _engine.writelnMessage(DefaultMessage("true."));
+          Messenger.showAll();
+          Messenger.writeln(DefaultMessage("true."));
         } else {
 
           while(!result.empty) {
             auto uf = result.front;
             result.popFront;
-            _engine.showAllMessage();
+            Messenger.showAll();
             bool[string] exists;
             string answer = rec(first, uf, exists).join(", ");
             if (result.empty) {
-              _engine.writelnMessage(DefaultMessage(answer ~ "."));
+              Messenger.writeln(DefaultMessage(answer ~ "."));
             } else {
               auto line = Linenoise.nextLine(answer ~ "; ");
               if (line.isJust) {
               } else {
-                _engine.writelnMessage(InfoMessage("% Execution Aborted"));
+                Messenger.writeln(InfoMessage("% Execution Aborted"));
                 break;
               }
             }
@@ -216,9 +219,9 @@ private:
       }
     } else if (term.token == Operator.eval) {
       // arithmetic evaluation
-      auto result = _evaluator.calc(variant.children.back, unionFind);
+      auto result = Evaluator.calc(variant.children.back, unionFind);
       if (result.isLeft) {
-        _engine.addMessage(result.left);
+        Messenger.add(result.left);
       } else {
         Number y = result.right;
         Variant xVar = unionFind.root(variant.children.front);
@@ -240,13 +243,13 @@ private:
     } else if (term.token.instanceOf!ComparisonOperator) {
       // arithmetic comparison
       auto op = cast(ComparisonOperator) term.token;
-      auto result = _evaluator.calc(variant.children.front, unionFind).bind!(
-        x => _evaluator.calc(variant.children.back, unionFind).fmap!(
+      auto result = Evaluator.calc(variant.children.front, unionFind).bind!(
+        x => Evaluator.calc(variant.children.back, unionFind).fmap!(
           y => op.calc(x, y)
         )
       );
       if (result.isLeft) {
-        _engine.addMessage(result.left);
+        Messenger.add(result.left);
       } else {
         if (result.right) unionFind.yield;
       }
