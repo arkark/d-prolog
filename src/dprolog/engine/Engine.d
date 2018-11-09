@@ -22,7 +22,6 @@ import std.conv;
 private class Engine_ {
 
 private:
-  Reader _reader;
   Executor _executor;
 
   bool _isHalt = false;
@@ -30,7 +29,6 @@ private:
 
 public:
   this() {
-    _reader = new Reader;
     _executor = new Executor;
   }
 
@@ -59,10 +57,6 @@ public:
 
   @property bool isHalt() {
     return _isHalt;
-  }
-
-  void readFile(dstring filePath) {
-    _reader.read(filePath);
   }
 
 }

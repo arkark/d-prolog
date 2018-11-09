@@ -3,6 +3,7 @@ module dprolog.engine.BuiltIn;
 import dprolog.util.functions;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
+import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
@@ -84,7 +85,7 @@ private:
         if (filePath.front == '\'') {
           filePath = filePath[1..$-1];
         }
-        Engine.readFile(filePath);
+        Reader.read(filePath);
       },
       [
         "FilePath": (Term term) => term.isAtom && term.children.empty

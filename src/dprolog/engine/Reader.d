@@ -8,7 +8,15 @@ import std.format;
 import std.conv;
 import std.file;
 
-class Reader {
+@property Reader_ Reader() {
+  static Reader_ instance;
+  if (!instance) {
+    instance = new Reader_();
+  }
+  return instance;
+}
+
+private class Reader_ {
   void read(dstring filePath) {
     if (filePath.exists) {
       Engine.execute(filePath.readText.to!dstring);
