@@ -1,6 +1,7 @@
 module dprolog.engine.BuiltIn;
 
 import dprolog.util.functions;
+import dprolog.util.Message;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.Reader;
@@ -8,12 +9,12 @@ import dprolog.engine.Consulter;
 import dprolog.data.Pattern;
 import dprolog.data.Clause;
 import dprolog.data.Term;
-import dprolog.util.Message;
 import dprolog.converter.Converter;
 import dprolog.converter.Lexer;
 import dprolog.converter.Parser;
 import dprolog.converter.ClauseBuilder;
 import dprolog.core.Linenoise;
+import dprolog.sl.SL;
 
 import std.range;
 import std.string;
@@ -112,13 +113,18 @@ private:
       ]
     );
 
+    auto runSL = buildPattern(
+      "sl",
+      term => SL.run()
+    );
 
     _patterns = [
       halt,
       addRules,
       readFile,
       answerToEverything,
-      clearScreen
+      clearScreen,
+      runSL,
     ];
   }
 
