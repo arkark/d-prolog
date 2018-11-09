@@ -1,4 +1,4 @@
-module dprolog.engine.BuiltIn;
+module dprolog.engine.builtIn.BuiltInCommand;
 
 import dprolog.util.functions;
 import dprolog.util.Message;
@@ -20,15 +20,15 @@ import std.range;
 import std.string;
 import std.functional;
 
-@property BuiltIn_ BuiltIn() {
-  static BuiltIn_ instance;
+@property BuiltInCommand_ BuiltInCommand() {
+  static BuiltInCommand_ instance;
   if (!instance) {
-    instance = new BuiltIn_();
+    instance = new BuiltInCommand_();
   }
   return instance;
 }
 
-private class BuiltIn_ {
+private class BuiltInCommand_ {
 
 private:
   Lexer _lexer;
