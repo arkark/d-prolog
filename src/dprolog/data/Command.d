@@ -1,8 +1,8 @@
-module dprolog.data.Pattern;
+module dprolog.data.Command;
 
 import dprolog.data.Term;
 
-interface Pattern {
+interface Command {
   bool isMatch(Term term);
   void execute(Term term);
 }

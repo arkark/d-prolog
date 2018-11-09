@@ -6,7 +6,7 @@ import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
-import dprolog.data.Pattern;
+import dprolog.data.Command;
 import dprolog.data.Clause;
 import dprolog.data.Term;
 import dprolog.converter.Converter;
@@ -35,20 +35,20 @@ private:
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
-  Pattern[] _patterns;
+  Command[] _commands;
 
 public:
   this() {
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
-    setPatterns();
+    setCommands();
   }
 
   bool traverse(Term term) {
-    foreach(pattern; _patterns) {
-      if (pattern.isMatch(term)) {
-        pattern.execute(term);
+    foreach(command; _commands) {
+      if (command.isMatch(term)) {
+        command.execute(term);
         return true;
       }
     }
@@ -56,27 +56,27 @@ public:
   }
 
 private:
-  void setPatterns() {
+  void setCommands() {
     // halt
-    auto halt = buildPattern(
+    auto halt = buildCommand(
       "halt",
       term => Engine.halt()
     );
 
     // clear screen
-    auto clearScreen = buildPattern(
+    auto clearScreen = buildCommand(
       "clear",
       term => Linenoise.clearScreen()
     );
 
     // add rules
-    auto addRules = buildPattern(
+    auto addRules = buildCommand(
       "[user]",
       term => Consulter.consult()
     );
 
     // read file
-    auto readFile = buildPattern(
+    auto readFile = buildCommand(
       "[FilePath]",
       (term) {
         dstring filePath = term.children[0].token.lexeme;
@@ -91,7 +91,7 @@ private:
     );
 
     // 42
-    auto answerToEverything = buildPattern(
+    auto answerToEverything = buildCommand(
       "X",
       (term) {
         enum string lines =
@@ -113,12 +113,12 @@ private:
       ]
     );
 
-    auto runSL = buildPattern(
+    auto runSL = buildCommand(
       "sl",
       term => SL.run()
     );
 
-    _patterns = [
+    _commands = [
       halt,
       addRules,
       readFile,
@@ -128,9 +128,9 @@ private:
     ];
   }
 
-  Pattern buildPattern(dstring src, void delegate(Term) executeFun, bool delegate(Term)[dstring] validators = null) {
+  Command buildCommand(dstring src, void delegate(Term) executeFun, bool delegate(Term)[dstring] validators = null) {
     Term targetTerm = toTerm(src);
-    return new class() Pattern {
+    return new class() Command {
       override bool isMatch(Term term) {
         bool rec(Term src, Term dst) {
           if (dst.isVariable) {
