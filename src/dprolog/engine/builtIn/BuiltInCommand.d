@@ -2,23 +2,18 @@ module dprolog.engine.builtIn.BuiltInCommand;
 
 import dprolog.util.functions;
 import dprolog.util.Message;
+import dprolog.data.Command;
+import dprolog.data.Term;
+import dprolog.core.Linenoise;
+import dprolog.sl.SL;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
-import dprolog.data.Command;
-import dprolog.data.Clause;
-import dprolog.data.Term;
-import dprolog.converter.Converter;
-import dprolog.converter.Lexer;
-import dprolog.converter.Parser;
-import dprolog.converter.ClauseBuilder;
-import dprolog.core.Linenoise;
-import dprolog.sl.SL;
+import dprolog.engine.builtIn.BuiltIn;
 
 import std.range;
 import std.string;
-import std.functional;
 
 @property BuiltInCommand_ BuiltInCommand() {
   static BuiltInCommand_ instance;
@@ -28,20 +23,14 @@ import std.functional;
   return instance;
 }
 
-private class BuiltInCommand_ {
+private class BuiltInCommand_ : BuiltIn {
 
 private:
-  Lexer _lexer;
-  Parser _parser;
-  ClauseBuilder _clauseBuilder;
-
   Command[] _commands;
 
 public:
   this() {
-    _lexer = new Lexer;
-    _parser = new Parser;
-    _clauseBuilder = new ClauseBuilder;
+    super();
     setCommands();
   }
 
@@ -150,22 +139,5 @@ private:
         executeFun(term);
       }
     };
-  }
-
-  Term toTerm(dstring src) {
-    auto convert(S, T)(Converter!(S, T) converter) {
-      return (S src) {
-        converter.run(src);
-        assert(!converter.hasError);
-        return converter.get;
-      };
-    }
-    Clause[] clauseList = (src ~ ".").pipe!(
-      a => convert(_lexer)(a),
-      a => convert(_parser)(a),
-      a => convert(_clauseBuilder)(a)
-    );
-    assert(clauseList.length == 1 && clauseList.front.instanceOf!Fact);
-    return (cast(Fact) clauseList.front).first;
   }
 }
