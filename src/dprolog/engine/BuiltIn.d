@@ -18,7 +18,15 @@ import std.range;
 import std.string;
 import std.functional;
 
-class BuildIn {
+@property BuiltIn_ BuiltIn() {
+  static BuiltIn_ instance;
+  if (!instance) {
+    instance = new BuiltIn_();
+  }
+  return instance;
+}
+
+private class BuiltIn_ {
 
 private:
   Lexer _lexer;

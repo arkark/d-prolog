@@ -15,6 +15,7 @@ import dprolog.util.Maybe;
 import dprolog.util.Either;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
+import dprolog.engine.BuiltIn;
 import dprolog.engine.Evaluator;
 import dprolog.engine.UnificationUF;
 import dprolog.core.Linenoise;
@@ -104,7 +105,7 @@ private:
   }
 
   void executeQuery(Query query) {
-    if (Engine.traverseBuiltIn(query.first)) {
+    if (BuiltIn.traverse(query.first)) {
       // when matching a built-in pattern
       return;
     }

@@ -3,7 +3,6 @@ module dprolog.engine.Engine;
 import dprolog.data.token;
 import dprolog.data.Term;
 import dprolog.util.Message;
-import dprolog.engine.BuiltIn;
 import dprolog.engine.Reader;
 import dprolog.engine.Executor;
 import dprolog.engine.Messenger;
@@ -23,7 +22,6 @@ import std.conv;
 private class Engine_ {
 
 private:
-  BuildIn _builtIn;
   Reader _reader;
   Executor _executor;
 
@@ -32,7 +30,6 @@ private:
 
 public:
   this() {
-    _builtIn = new BuildIn;
     _reader = new Reader;
     _executor = new Executor;
   }
@@ -66,10 +63,6 @@ public:
 
   void readFile(dstring filePath) {
     _reader.read(filePath);
-  }
-
-  bool traverseBuiltIn(Term term) {
-    return _builtIn.traverse(term);
   }
 
 }
