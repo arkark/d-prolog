@@ -52,21 +52,21 @@ Specification
 
 ## System Commands
 
-### `?- halt.`
+### ?- halt.
 
 ```prolog
 ?- halt. % Stop D-Prolog
 ```
 
-### `?- clear.`
+### ?- clear.
 
 ```prolog
 ?- clear. % Clear the screen
 ```
 
-### `?- sl.`
+### ?- sl.
 
 ```prolog
-?- sl. % A SL run
+?- sl. % SL runs
 ```
 Inspired by [SL(1)](https://github.com/mtoyoda/sl), which is loved by many hackers :)
