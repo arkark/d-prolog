@@ -28,7 +28,15 @@ import std.algorithm;
 import std.functional;
 import std.concurrency : Generator, yield;
 
-class Executor {
+@property Executor_ Executor() {
+  static Executor_ instance;
+  if (!instance) {
+    instance = new Executor_();
+  }
+  return instance;
+}
+
+private class Executor_ {
 
 private:
   Lexer _lexer;

@@ -22,33 +22,22 @@ import std.conv;
 private class Engine_ {
 
 private:
-  Executor _executor;
-
   bool _isHalt = false;
   public bool verboseMode = false;
 
 public:
-  this() {
-    _executor = new Executor;
-  }
-
   void next() in(!isHalt) do {
     dstring queryfier = Operator.queryfier.lexeme ~ " ";
     auto line = Linenoise.nextLine(queryfier.to!string);
     if (line.isJust) {
       Linenoise.addHistory(line.get);
       dstring clause = line.get.to!dstring;
-      execute(queryfier ~ clause);
+      Executor.execute(queryfier ~ clause);
       Messenger.showAll();
       writeln;
     } else {
       halt();
     }
-  }
-
-  void execute(dstring src) in(!isHalt) do {
-    Messenger.clear();
-    _executor.execute(src);
   }
 
   void halt() {

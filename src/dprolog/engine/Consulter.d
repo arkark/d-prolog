@@ -1,6 +1,7 @@
 module dprolog.engine.Consulter;
 
 import dprolog.engine.Engine;
+import dprolog.engine.Executor;
 import dprolog.core.Linenoise;
 
 import std.stdio;
@@ -19,6 +20,6 @@ class Consulter {
         break;
       }
     }
-    Engine.execute(texts.join("\n"));
+    Executor.execute(texts.join("\n"));
   }
 }
