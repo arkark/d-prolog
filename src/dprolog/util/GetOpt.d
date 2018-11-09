@@ -29,7 +29,7 @@ private:
   enum helpOption = Option("h", "help", "This help information", false);
 
 public:
-  void run(Engine engine, string[] args) {
+  void run(string[] args) {
     string filePath;
     bool verbose;
     bool help;
@@ -53,11 +53,11 @@ public:
       return;
     }
 
-    engine.verboseMode = verbose;
+    Engine.verboseMode = verbose;
 
     // read a file
     if (!filePath.empty) {
-      engine.readFile(filePath.to!dstring);
+      Engine.readFile(filePath.to!dstring);
       Messenger.showAll();
     }
   }

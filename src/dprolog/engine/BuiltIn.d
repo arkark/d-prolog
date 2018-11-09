@@ -27,17 +27,14 @@ private:
 
   Consulter _consulter;
 
-  Engine _engine;
-
   Pattern[] _patterns;
 
 public:
-  this(Engine engine) {
-    _engine = engine;
+  this() {
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
-    _consulter = new Consulter(engine);
+    _consulter = new Consulter;
     setPatterns();
   }
 
@@ -56,7 +53,7 @@ private:
     // halt
     auto halt = buildPattern(
       "halt",
-      term => _engine.halt()
+      term => Engine.halt()
     );
 
     // clear screen
@@ -79,7 +76,7 @@ private:
         if (filePath.front == '\'') {
           filePath = filePath[1..$-1];
         }
-        _engine.readFile(filePath);
+        Engine.readFile(filePath);
       },
       [
         "FilePath": (Term term) => term.isAtom && term.children.empty

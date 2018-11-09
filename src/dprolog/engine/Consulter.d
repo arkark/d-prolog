@@ -8,15 +8,6 @@ import std.conv;
 import std.array;
 
 class Consulter {
-
-private:
-  Engine _engine;
-
-public:
-  this(Engine engine) {
-    _engine = engine;
-  }
-
   void exec() {
     dstring[] texts = [];
     string prompt = "|: ";
@@ -28,6 +19,6 @@ public:
         break;
       }
     }
-    _engine.execute(texts.join("\n"));
+    Engine.execute(texts.join("\n"));
   }
 }

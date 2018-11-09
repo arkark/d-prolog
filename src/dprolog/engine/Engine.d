@@ -12,7 +12,15 @@ import dprolog.core.Linenoise;
 import std.stdio;
 import std.conv;
 
-class Engine {
+@property Engine_ Engine() {
+  static Engine_ instance;
+  if (!instance) {
+    instance = new Engine_();
+  }
+  return instance;
+}
+
+private class Engine_ {
 
 private:
   BuildIn _builtIn;
@@ -24,9 +32,9 @@ private:
 
 public:
   this() {
-    _builtIn = new BuildIn(this);
-    _reader = new Reader(this);
-    _executor = new Executor(this);
+    _builtIn = new BuildIn;
+    _reader = new Reader;
+    _executor = new Executor;
   }
 
   void next() in(!isHalt) do {

@@ -9,21 +9,11 @@ import std.conv;
 import std.file;
 
 class Reader {
-
-private:
-  Engine _engine;
-
-public:
-  this(Engine engine) {
-    _engine = engine;
-  }
-
   void read(dstring filePath) {
     if (filePath.exists) {
-      _engine.execute(filePath.readText.to!dstring);
+      Engine.execute(filePath.readText.to!dstring);
     } else {
       Messenger.add(WarningMessage(format!"Warning: file '%s' cannot be read"(filePath)));
     }
   }
-
 }

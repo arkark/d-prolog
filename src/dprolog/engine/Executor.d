@@ -30,8 +30,6 @@ import std.concurrency : Generator, yield;
 class Executor {
 
 private:
-  Engine _engine;
-
   Lexer _lexer;
   Parser _parser;
   ClauseBuilder _clauseBuilder;
@@ -41,8 +39,7 @@ private:
   Clause[] _storage;
 
 public:
-  this(Engine engine) {
-    _engine = engine;
+  this() {
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
@@ -50,10 +47,10 @@ public:
     clear();
   }
 
-  void execute(dstring src) in(!_engine.isHalt) do {
+  void execute(dstring src) in(!Engine.isHalt) do {
     toClauseList(src).apply!((clauseList) {
       foreach(clause; clauseList) {
-        if (_engine.isHalt) break;
+        if (Engine.isHalt) break;
         executeClause(clause);
       }
     });
@@ -88,7 +85,7 @@ private:
   }
 
   void executeClause(Clause clause) {
-    if (_engine.verboseMode) {
+    if (Engine.verboseMode) {
       Messenger.writeln(VerboseMessage(format!"execute: %s"(clause)));
     }
     clause.castSwitch!(
@@ -107,7 +104,7 @@ private:
   }
 
   void executeQuery(Query query) {
-    if (_engine.traverseBuiltIn(query.first)) {
+    if (Engine.traverseBuiltIn(query.first)) {
       // when matching a built-in pattern
       return;
     }
