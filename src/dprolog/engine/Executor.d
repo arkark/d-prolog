@@ -42,8 +42,6 @@ private:
   Parser _parser;
   ClauseBuilder _clauseBuilder;
 
-  Evaluator _evaluator;
-
   Clause[] _storage;
 
 public:
@@ -51,7 +49,6 @@ public:
     _lexer = new Lexer;
     _parser = new Parser;
     _clauseBuilder = new ClauseBuilder;
-    _evaluator = new Evaluator;
     clear();
   }
 
@@ -222,7 +219,7 @@ private:
       }
     } else if (term.token == Operator.eval) {
       // arithmetic evaluation
-      auto result = _evaluator.calc(variant.children.back, unionFind);
+      auto result = Evaluator.calc(variant.children.back, unionFind);
       if (result.isLeft) {
         Messenger.add(result.left);
       } else {
@@ -246,8 +243,8 @@ private:
     } else if (term.token.instanceOf!ComparisonOperator) {
       // arithmetic comparison
       auto op = cast(ComparisonOperator) term.token;
-      auto result = _evaluator.calc(variant.children.front, unionFind).bind!(
-        x => _evaluator.calc(variant.children.back, unionFind).fmap!(
+      auto result = Evaluator.calc(variant.children.front, unionFind).bind!(
+        x => Evaluator.calc(variant.children.back, unionFind).fmap!(
           y => op.calc(x, y)
         )
       );
