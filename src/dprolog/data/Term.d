@@ -37,6 +37,10 @@ class Term {
     return token.instanceOf!Functor || token.instanceOf!Operator;
   }
 
+  @property bool isCut() const {
+    return token.lexeme == "!"d && token.instanceOf!Atom && children.length == 0;
+  }
+
   override string toString() const {
     if (isCompound) {
       return format!"( %s %s %s )"(children.front, token.lexeme, children.back);
