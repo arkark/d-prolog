@@ -7,7 +7,8 @@ import dprolog.engine.Executor;
 import dprolog.engine.UnificationUF;
 import dprolog.engine.builtIn.BuiltIn;
 
-import std.concurrency : yield;
+import std.range;
+import std.concurrency : Generator, yield;
 
 @property BuiltInPredicate_ BuiltInPredicate() {
   static BuiltInPredicate_ instance;
@@ -45,7 +46,7 @@ private:
     // cut
     auto cutPred = buildPredicate(
       "!", 0,
-      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+      delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         unionFind.yield;
         return UnificateResult(true, true);
       }
@@ -54,7 +55,7 @@ private:
     // true
     auto truePred = buildPredicate(
       "true", 0,
-      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+      delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         unionFind.yield;
         return UnificateResult(true, false);
       }
@@ -63,7 +64,7 @@ private:
     // false
     auto falsePred = buildPredicate(
       "false", 0,
-      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+      delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         return UnificateResult(false, false);
       }
     );
@@ -71,7 +72,7 @@ private:
     // fail
     auto failPred = buildPredicate(
       "fail", 0,
-      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+      delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         return UnificateResult(false, false);
       }
     );
@@ -86,12 +87,35 @@ private:
       }
     );
 
+    // not
+    auto notPred = buildPredicate(
+      "not", 1,
+      delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+        assert(variant.children.length == 1);
+        auto child = variant.children.front;
+
+        UnificateResult result = UnificateResult(false, false);
+        auto g = new Generator!UnificationUF({
+          result = unificateRecFun(child, unionFind);
+        }, 1<<20);
+        while(!g.empty) g.popFront;
+
+        result.found = !result.found; // not
+
+        if (result.found) {
+          unionFind.yield;
+        }
+        return result;
+      }
+    );
+
     _predicates = [
       cutPred,
       truePred,
       falsePred,
       failPred,
       repeatPred,
+      notPred,
     ];
   }
 
