@@ -80,10 +80,6 @@ $ git tag <version>
 $ ./release.sh
 ```
 
-### Remaining Tasks
-
-Look at the [issues](https://github.com/ArkArk/d-prolog/issues).
-
 ## License
 
 [MIT](https://github.com/ArkArk/d-prolog/blob/master/LICENSE)

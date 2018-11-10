@@ -155,9 +155,9 @@ X = 1.
 
 Load `example/if.pro`, then
 ```prolog
-?- if (1 < 2, X = 1, X = 2).
+?- if (true, X = 1, X = 2).
 X = 1.
 
-?- if (1 > 2, X = 1, X = 2).
+?- if (false, X = 1, X = 2).
 X = 2.
 ```

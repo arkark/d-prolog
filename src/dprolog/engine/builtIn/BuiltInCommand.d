@@ -119,7 +119,9 @@ private:
 
   Command buildCommand(dstring src, void delegate(Term) executeFun, bool delegate(Term)[dstring] validators = null) {
     Term targetTerm = toTerm(src);
+
     return new class() Command {
+
       override bool isMatch(Term term) {
         bool rec(Term src, Term dst) {
           if (dst.isVariable) {
@@ -135,9 +137,11 @@ private:
         }
         return rec(term, targetTerm);
       }
+
       override void execute(Term term) {
         executeFun(term);
       }
+      
     };
   }
 }

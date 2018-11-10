@@ -15,6 +15,7 @@ import dprolog.util.Either;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.builtIn.BuiltInCommand;
+import dprolog.engine.builtIn.BuiltInPredicate;
 import dprolog.engine.Evaluator;
 import dprolog.engine.UnificationUF;
 import dprolog.core.Linenoise;
@@ -25,7 +26,10 @@ import std.range;
 import std.array;
 import std.algorithm;
 import std.functional;
+import std.typecons;
 import std.concurrency : Generator, yield;
+
+alias UnificateResult = Tuple!(bool, "found", bool, "isCutted");
 
 @property Executor_ Executor() {
   static Executor_ instance;
@@ -116,109 +120,110 @@ private:
 
     Variant first, second;
     UnificationUF unionFind = buildUnionFind(query, first, second);
-    auto result = new Generator!UnificationUF({
+
+    auto generator = new Generator!UnificationUF({
       unificate(first, unionFind);
     }, 1<<20);
-    if (query.first.isDetermined) {
-      Messenger.writeln(DefaultMessage((!result.empty).to!string ~ "."));
-    } else {
 
-      string[] rec(Variant v, UnificationUF uf, ref bool[string] exists) {
-        if (v.isVariable && !v.term.token.isUnderscore) {
-          Variant root = uf.root(v);
-          string lexeme = v.term.to!string;
-          if (lexeme in exists) {
-            return [];
-          } else {
-            exists[lexeme] = true;
-          }
-          return [
-            lexeme,
-            "=",
-            {
-              Term f(Variant var) {
-                if (var.isVariable) {
-                  auto x = uf.root(var);
-                  return x == var ? x.term : x.pipe!f;
-                } else {
-                  return new Term(
-                    var.term.token,
-                    var.children.map!f.array
-                  );
-                }
-              }
-
-              return root.pipe!f.to!string;
-            }()
-          ].join(" ").only.array;
+    string[] rec(Variant v, UnificationUF uf, ref bool[string] exists) {
+      if (v.isVariable && !v.term.token.isUnderscore) {
+        Variant root = uf.root(v);
+        string lexeme = v.term.to!string;
+        if (lexeme in exists) {
+          return [];
         } else {
-          return v.children.map!(u => rec(u, uf, exists)).join.array;
+          exists[lexeme] = true;
         }
-      }
-
-      if (result.empty) {
-        Messenger.showAll();
-        Messenger.writeln(DefaultMessage("false."));
-      } else {
-
-        if (query.hasOnlyUnderscore()) {
-          Messenger.showAll();
-          Messenger.writeln(DefaultMessage("true."));
-        } else {
-
-          while(!result.empty) {
-            auto uf = result.front;
-            result.popFront;
-            Messenger.showAll();
-            bool[string] exists;
-            string answer = rec(first, uf, exists).join(", ");
-            if (result.empty) {
-              Messenger.writeln(DefaultMessage(answer ~ "."));
-            } else {
-              auto line = Linenoise.nextLine(answer ~ "; ");
-              if (line.isJust) {
+        return [
+          lexeme,
+          "=",
+          {
+            Term f(Variant var) {
+              if (var.isVariable) {
+                auto x = uf.root(var);
+                return x == var ? x.term : x.pipe!f;
               } else {
-                Messenger.writeln(InfoMessage("% Execution Aborted"));
-                break;
+                return new Term(
+                  var.term.token,
+                  var.children.map!f.array
+                );
               }
             }
+
+            return root.pipe!f.to!string;
+          }()
+        ].join(" ").only.array;
+      } else {
+        return v.children.map!(u => rec(u, uf, exists)).join.array;
+      }
+    }
+
+    if (generator.empty) {
+      Messenger.showAll();
+      Messenger.writeln(DefaultMessage("false."));
+    } else {
+      while(!generator.empty) {
+        auto uf = generator.front;
+        generator.popFront;
+        Messenger.showAll();
+        bool[string] exists;
+        string answer = rec(first, uf, exists).join(", ");
+        if (answer.empty) answer = "true";
+        if (generator.empty) {
+          Messenger.writeln(DefaultMessage(answer ~ "."));
+        } else {
+          auto line = Linenoise.nextLine(answer ~ "; ");
+          if (line.isJust) {
+          } else {
+            Messenger.writeln(InfoMessage("% Execution Aborted"));
+            break;
           }
-
         }
-
       }
     }
   }
 
   // fiber function
-  //   @return: cutted
-  bool unificate(Variant variant, UnificationUF unionFind) {
+  UnificateResult unificate(Variant variant, UnificationUF unionFind) {
     variant = unionFind.root(variant);
     const Term term = variant.term;
-    bool cutted = false;
+    UnificateResult unificateResult = UnificateResult(false, false);
 
     if (term.token == Operator.comma) {
       // conjunction
       auto g = new Generator!UnificationUF({
-        cutted |= unificate(variant.children.front, unionFind);
+        auto r = unificate(variant.children.front, unionFind);
+        unificateResult.isCutted |= r.isCutted;
       }, 1<<20);
       foreach(uf; g) {
-        cutted |= unificate(variant.children.back, uf);
+        auto r = unificate(variant.children.back, uf);
+        unificateResult.isCutted |= r.isCutted;
+        unificateResult.found |= r.found;
       }
     } else if (term.token == Operator.semicolon) {
       // disjunction
-      if (!cutted) cutted |= unificate(variant.children.front, unionFind);
-      if (!cutted) cutted |= unificate(variant.children.back, unionFind);
+      if (!unificateResult.isCutted) {
+        auto r = unificate(variant.children.front, unionFind);
+        unificateResult.isCutted |= r.isCutted;
+        unificateResult.found |= r.found;
+      }
+      if (!unificateResult.isCutted) {
+        auto r = unificate(variant.children.back, unionFind);
+        unificateResult.isCutted |= r.isCutted;
+        unificateResult.found |= r.found;
+      }
     } else if (term.token == Operator.equal) {
       // unification
       UnificationUF newUnionFind = unionFind.clone;
       if (match(variant.children.front, variant.children.back, newUnionFind)) {
         newUnionFind.yield;
+        unificateResult.found |= true;
       }
     } else if (term.token == Operator.equalEqual) {
       // equality comparison
       if (unionFind.same(variant.children.front, variant.children.back)) {
         unionFind.yield;
+        unificateResult.found |= true;
       }
     } else if (term.token == Operator.eval) {
       // arithmetic evaluation
@@ -235,9 +240,13 @@ private:
             newUnionFind.add(yVar);
             newUnionFind.unite(xVar, yVar);
             newUnionFind.yield;
+            unificateResult.found |= true;
           },
           (Number x) {
-            if (x == y) unionFind.yield;
+            if (x == y) {
+              unionFind.yield;
+              unificateResult.found |= true;
+            }
           },
           (Object _) {
           }
@@ -254,26 +263,40 @@ private:
       if (result.isLeft) {
         Messenger.add(result.left);
       } else {
-        if (result.right) unionFind.yield;
-      }
-    } else if (term.isCut) {
-      cutted |= true;
-      unionFind.yield;
-    } else {
-      foreach(clause; _storage) {
-        if (cutted) break;
-        Variant first, second;
-        UnificationUF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
-        if (match(variant, first, newUnionFind)) {
-          clause.castSwitch!(
-            (Fact fact) => newUnionFind.yield,
-            (Rule rule) => cutted |= unificate(second, newUnionFind)
-          );
+        if (result.right) {
+          unionFind.yield;
+          unificateResult.found |= true;
         }
+      }
+    } else {
+      auto predResult = BuiltInPredicate.unificateTraverse(variant, unionFind, &unificate);
+      if (predResult.found) {
+        unificateResult = predResult;
+      } else {
+
+        foreach(clause; _storage) {
+          if (unificateResult.isCutted) break;
+          Variant first, second;
+          UnificationUF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
+          if (match(variant, first, newUnionFind)) {
+            clause.castSwitch!(
+              (Fact fact) {
+                newUnionFind.yield;
+                unificateResult.found |= true;
+              },
+              (Rule rule) {
+                auto r = unificate(second, newUnionFind);
+                unificateResult.isCutted |= r.isCutted;
+                unificateResult.found |= r.found;
+              }
+            );
+          }
+        }
+
       }
     }
 
-    return cutted;
+    return unificateResult;
   }
 
   bool match(Variant left, Variant right, UnificationUF unionFind) {

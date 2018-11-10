@@ -50,6 +50,15 @@ Specification
 - `+`, `-`, `*`, `div`, `mod`: arithmetic functions
 - `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: arithmetic comparison predicates
 
+## Predicates
+
+- `!/0`
+- `true/0`
+- `false/0`
+- `fail/0`
+- `repeat/0`
+- `not/1`
+
 ## System Commands
 
 ### ?- halt.
