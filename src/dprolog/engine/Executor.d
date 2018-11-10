@@ -116,10 +116,9 @@ private:
 
     Variant first, second;
     UnificationUF unionFind = buildUnionFind(query, first, second);
-    auto result = new Generator!UnificationUF(
-      () => unificate(first, unionFind),
-      1<<20
-    );
+    auto result = new Generator!UnificationUF({
+      unificate(first, unionFind);
+    }, 1<<20);
     if (query.first.isDetermined) {
       Messenger.writeln(DefaultMessage((!result.empty).to!string ~ "."));
     } else {
@@ -192,20 +191,24 @@ private:
   }
 
   // fiber function
-  void unificate(Variant variant, UnificationUF unionFind) {
+  //   @return: cutted
+  bool unificate(Variant variant, UnificationUF unionFind) {
+    variant = unionFind.root(variant);
     const Term term = variant.term;
+    bool cutted = false;
+
     if (term.token == Operator.comma) {
       // conjunction
-      new Generator!UnificationUF(
-        () => unificate(variant.children.front, unionFind),
-        1<<20
-      ).array.each!(
-        uf => unificate(variant.children.back, uf)
-      );
+      auto g = new Generator!UnificationUF({
+        cutted |= unificate(variant.children.front, unionFind);
+      }, 1<<20);
+      foreach(uf; g) {
+        cutted |= unificate(variant.children.back, uf);
+      }
     } else if (term.token == Operator.semicolon) {
       // disjunction
-      unificate(variant.children.front, unionFind);
-      unificate(variant.children.back, unionFind);
+      if (!cutted) cutted |= unificate(variant.children.front, unionFind);
+      if (!cutted) cutted |= unificate(variant.children.back, unionFind);
     } else if (term.token == Operator.equal) {
       // unification
       UnificationUF newUnionFind = unionFind.clone;
@@ -253,18 +256,24 @@ private:
       } else {
         if (result.right) unionFind.yield;
       }
+    } else if (term.isCut) {
+      cutted |= true;
+      unionFind.yield;
     } else {
       foreach(clause; _storage) {
+        if (cutted) break;
         Variant first, second;
         UnificationUF newUnionFind = unionFind ~ buildUnionFind(clause, first, second);
         if (match(variant, first, newUnionFind)) {
           clause.castSwitch!(
             (Fact fact) => newUnionFind.yield,
-            (Rule rule) => unificate(second, newUnionFind)
+            (Rule rule) => cutted |= unificate(second, newUnionFind)
           );
         }
       }
     }
+
+    return cutted;
   }
 
   bool match(Variant left, Variant right, UnificationUF unionFind) {
