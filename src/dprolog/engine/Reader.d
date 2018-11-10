@@ -21,7 +21,7 @@ private class Reader_ {
     if (filePath.exists) {
       Executor.execute(filePath.readText.to!dstring);
     } else {
-      Messenger.add(WarningMessage(format!"Warning: file '%s' cannot be read"(filePath)));
+      Messenger.add(ErrorMessage(format!"Error: file '%s' cannot be read"(filePath)));
     }
   }
 }
