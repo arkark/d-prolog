@@ -3,10 +3,10 @@ module dprolog.engine.builtIn.BuiltInPredicate;
 import dprolog.data.Term;
 import dprolog.data.Variant;
 import dprolog.data.Predicate;
+import dprolog.engine.Executor;
 import dprolog.engine.UnificationUF;
 import dprolog.engine.builtIn.BuiltIn;
 
-import std.typecons;
 import std.concurrency : yield;
 
 @property BuiltInPredicate_ BuiltInPredicate() {
@@ -18,7 +18,6 @@ import std.concurrency : yield;
 }
 
 private class BuiltInPredicate_ : BuiltIn {
-  alias UnificateResult = Tuple!(bool, "found", bool, "isCutted");
   alias UnificateRecFun = Predicate.UnificateRecFun;
 
 private:
@@ -34,10 +33,8 @@ public:
     const Term term = variant.term;
     foreach(predicate; _predicates) {
       if (predicate.isMatch(term)) {
-        return UnificateResult(
-          true,
-          predicate.unificate(variant, unionFind, unificateRecFun)
-        );
+        auto result = predicate.unificate(variant, unionFind, unificateRecFun);
+        if (result.found) return result;
       }
     }
     return UnificateResult(false, false);
@@ -46,24 +43,33 @@ public:
 private:
   void setPredicates() {
     // cut
-    auto cut = buildPredicate(
-      "!",
-      0,
+    auto cutPred = buildPredicate(
+      "!", 0,
       (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         unionFind.yield;
-        return true; // cut flag
+        return UnificateResult(true, true);
+      }
+    );
+
+    // true
+    auto truePred = buildPredicate(
+      "true", 0,
+      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+        unionFind.yield;
+        return UnificateResult(true, false);
       }
     );
 
     _predicates = [
-      cut,
+      cutPred,
+      truePred,
     ];
   }
 
   Predicate buildPredicate(
     dstring lexeme,
     size_t arity,
-    bool delegate(Variant, UnificationUF, UnificateRecFun) unificateFun
+    UnificateResult delegate(Variant, UnificationUF, UnificateRecFun) unificateFun
   ) {
     return new class() Predicate {
 
@@ -71,7 +77,7 @@ private:
         return term.isAtom && term.token.lexeme == lexeme && term.children.length == arity;
       }
 
-      override bool unificate(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+      override UnificateResult unificate(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         return unificateFun(variant, unionFind, unificateRecFun);
       }
 
