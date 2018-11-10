@@ -154,12 +154,12 @@ private:
 
   static TokenGen AtomGen = TokenGen(
     (dstring prefix) {
-      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*'?)|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
+      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*'?)|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+)|!)$"d);
       auto res = prefix.matchFirst(re);
       return !res.empty && res.front==prefix;
     },
     (dstring lexeme) {
-      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+))$"d);
+      enum re = ctRegex!(r"(([a-z][_0-9a-zA-Z]*)|('[^']*')|(["d ~Token.specialCharacters.escaper.to!dstring~ r"]+)|!)$"d);
       auto res = lexeme.matchFirst(re);
       return !res.empty && res.front==lexeme;
     },
@@ -289,12 +289,15 @@ private:
     assert(!AtomGen.validatePrefix("aaa\'"));
     assert(AtomGen.validatePrefix(","));
     assert(!AtomGen.validatePrefix("A"));
+    assert(AtomGen.validatePrefix("!"));
     assert(AtomGen.validateAll("abc"));
     assert(AtomGen.validateAll("' po _'"));
     assert(AtomGen.validateAll("''"));
     assert(AtomGen.validateAll("|+|"));
     assert(!AtomGen.validateAll("'"));
     assert(!AtomGen.validateAll("' po _"));
+    assert(AtomGen.validateAll("!"));
+
     // NumberGen
     assert(NumberGen.validatePrefix("0"));
     assert(NumberGen.validatePrefix("0b"));
@@ -310,6 +313,7 @@ private:
     assert(!NumberGen.validateAll("0b123"));
     assert(!NumberGen.validateAll("0xxxx"));
     assert(!NumberGen.validateAll("0123"));
+
     // VariableGen
     assert(VariableGen.validatePrefix("A"));
     assert(VariableGen.validatePrefix("_"));
@@ -317,21 +321,27 @@ private:
     assert(!VariableGen.validatePrefix("a"));
     assert(VariableGen.validateAll("Po"));
     assert(VariableGen.validateAll("_yeah"));
+
     // LParenGen
     assert(LParenGen.validatePrefix("("));
     assert(LParenGen.validateAll("("));
+
     // RParenGen
     assert(RParenGen.validatePrefix(")"));
     assert(RParenGen.validateAll(")"));
+
     // LBracketGen
     assert(LBracketGen.validatePrefix("["));
     assert(LBracketGen.validateAll("["));
+
     // RBracketGen
     assert(RBracketGen.validatePrefix("]"));
     assert(RBracketGen.validateAll("]"));
+
     // PeriodGen
     assert(PeriodGen.validatePrefix("."));
     assert(PeriodGen.validateAll("."));
+
     // EmptyGen
     assert(EmptyGen.validatePrefix(" "));
     assert(EmptyGen.validateAll(" "));
