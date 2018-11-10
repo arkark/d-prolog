@@ -82,21 +82,7 @@ private:
     // 42
     auto answerToEverything = buildCommand(
       "X",
-      (term) {
-        enum string lines =
-`
-██╗  ██╗██████╗
-██║  ██║╚════██╗
-███████║ █████╔╝
-╚════██║██╔═══╝
-     ██║███████╗
-     ╚═╝╚══════╝ ■
-`;
-        foreach(line; lines.splitLines) {
-          if (line.empty) continue;
-          Messenger.writeln(InfoMessage(line));
-        }
-      },
+      term => Messenger.writeln(DefaultMessage("42.")),
       [
         "X": (Term term) => term.isVariable
       ]
@@ -141,7 +127,7 @@ private:
       override void execute(Term term) {
         executeFun(term);
       }
-      
+
     };
   }
 }
