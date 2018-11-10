@@ -76,11 +76,22 @@ private:
       }
     );
 
+    // repeat
+    auto repeatPred = buildPredicate(
+      "repeat", 0,
+      delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+        while(true) {
+          unionFind.yield;
+        }
+      }
+    );
+
     _predicates = [
       cutPred,
       truePred,
       falsePred,
       failPred,
+      repeatPred,
     ];
   }
 

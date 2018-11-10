@@ -162,30 +162,23 @@ private:
       Messenger.showAll();
       Messenger.writeln(DefaultMessage("false."));
     } else {
-
-      if (query.hasOnlyUnderscore()) {
+      while(!generator.empty) {
+        auto uf = generator.front;
+        generator.popFront;
         Messenger.showAll();
-        Messenger.writeln(DefaultMessage("true."));
-      } else {
-
-        while(!generator.empty) {
-          auto uf = generator.front;
-          generator.popFront;
-          Messenger.showAll();
-          bool[string] exists;
-          string answer = rec(first, uf, exists).join(", ");
-          if (generator.empty) {
-            Messenger.writeln(DefaultMessage(answer ~ "."));
+        bool[string] exists;
+        string answer = rec(first, uf, exists).join(", ");
+        if (answer.empty) answer = "true";
+        if (generator.empty) {
+          Messenger.writeln(DefaultMessage(answer ~ "."));
+        } else {
+          auto line = Linenoise.nextLine(answer ~ "; ");
+          if (line.isJust) {
           } else {
-            auto line = Linenoise.nextLine(answer ~ "; ");
-            if (line.isJust) {
-            } else {
-              Messenger.writeln(InfoMessage("% Execution Aborted"));
-              break;
-            }
+            Messenger.writeln(InfoMessage("% Execution Aborted"));
+            break;
           }
         }
-
       }
     }
   }
