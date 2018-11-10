@@ -15,6 +15,7 @@ import dprolog.util.Either;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.builtIn.BuiltInCommand;
+import dprolog.engine.builtIn.BuiltInPredicate;
 import dprolog.engine.Evaluator;
 import dprolog.engine.UnificationUF;
 import dprolog.core.Linenoise;
@@ -256,10 +257,12 @@ private:
       } else {
         if (result.right) unionFind.yield;
       }
-    } else if (term.isCut) {
-      cutted |= true;
-      unionFind.yield;
     } else {
+      auto result = BuiltInPredicate.unificateTraverse(variant, unionFind, &unificate);
+      if (result.found) {
+        return result.isCutted;
+      }
+
       foreach(clause; _storage) {
         if (cutted) break;
         Variant first, second;
