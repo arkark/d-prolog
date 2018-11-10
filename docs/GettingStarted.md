@@ -141,3 +141,23 @@ X = 4.
 ?- (member(X, [1, 2, 3]); member(X, [3, 4])), X > 3.
 X = 4.
 ```
+
+## Cut Operator
+
+```prolog
+?- X = 1; X = 2.
+X = 1;
+X = 2.
+
+?- X = 1, !; X = 2.
+X = 1.
+```
+
+Load `example/if.pro`, then
+```prolog
+?- if (1 < 2, X = 1, X = 2).
+X = 1.
+
+?- if (1 > 2, X = 1, X = 2).
+X = 2.
+```
