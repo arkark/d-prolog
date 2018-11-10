@@ -22,7 +22,7 @@ class Term {
   }
 
   @property bool isAtom() const {
-    return token.instanceOf!Atom && !token.instanceOf!Functor && !token.instanceOf!Operator;
+    return token.instanceOf!Atom;
   }
 
   @property bool isNumber() const {
@@ -116,23 +116,13 @@ class Term {
     assert(!listT.children.back.children.back.isCompound);
     assert(comT.isCompound);
 
-    import std.range, std.array, std.algorithm, std.functional;
-    bool validate(Term term, long index) {
-      return term.adjoin!(
-        /* case: 0 */ t => t.isAtom,
-        /* case: 1 */ t => t.isNumber,
-        /* case: 2 */ t => t.isVariable,
-        /* case: 3 */ t => t.isStructure
-      ).array.enumerate.all!(a => a.value == (a.index == index));
-    }
-
-    assert(validate(atomT, 0));
-    assert(validate(numT, 1));
-    assert(validate(varT, 2));
-    assert(validate(funT, 3));
-    assert(validate(listT, 3));
-    assert(validate(listT.children.back, 3));
-    assert(validate(listT.children.back.children.back, 2));
-    assert(validate(comT, 3));
+    assert(atomT.isAtom);
+    assert(numT.isNumber);
+    assert(varT.isVariable);
+    assert(funT.isStructure);
+    assert(listT.isStructure);
+    assert(listT.children.back.isStructure);
+    assert(listT.children.back.children.back.isVariable);
+    assert(comT.isStructure);
   }
 }
