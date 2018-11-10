@@ -60,9 +60,27 @@ private:
       }
     );
 
+    // false
+    auto falsePred = buildPredicate(
+      "false", 0,
+      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+        return UnificateResult(false, false);
+      }
+    );
+
+    // fail
+    auto failPred = buildPredicate(
+      "fail", 0,
+      (Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
+        return UnificateResult(false, false);
+      }
+    );
+
     _predicates = [
       cutPred,
       truePred,
+      falsePred,
+      failPred,
     ];
   }
 
