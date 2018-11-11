@@ -73,6 +73,27 @@ Specification
 ?- clear. % Clear the screen
 ```
 
+### ?- pwd
+
+```prolog
+?- pwd. % Print the name of the current working directory
+```
+
+### ?- ls
+
+```prolog
+?- ls. % List information about the FILEs
+```
+```prolog
+?- ls('/path/to/directory').
+```
+
+### ?- cd
+
+```prolog
+?- cd('/path/to/directory'). % Change the current working directory
+```
+
 ### ?- sl.
 
 ```prolog
