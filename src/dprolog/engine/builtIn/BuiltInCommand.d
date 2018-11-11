@@ -1,17 +1,19 @@
 module dprolog.engine.builtIn.BuiltInCommand;
 
-import dprolog.util.functions;
 import dprolog.util.Message;
+import dprolog.util.Either;
 import dprolog.data.Command;
 import dprolog.data.Term;
-import dprolog.core.Linenoise;
 import dprolog.sl.SL;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
 import dprolog.engine.builtIn.BuiltIn;
+import dprolog.core.Linenoise;
+import dprolog.core.Shell;
 
+import std.conv;
 import std.range;
 import std.string;
 
@@ -68,7 +70,7 @@ private:
     auto readFile = buildCommand(
       "[FilePath]",
       (term) {
-        dstring filePath = term.children[0].token.lexeme;
+        dstring filePath = term.children.front.token.lexeme;
         if (filePath.front == '\'') {
           filePath = filePath[1..$-1];
         }
@@ -88,7 +90,46 @@ private:
       ]
     );
 
-    auto runSL = buildCommand(
+    auto lsCommand = buildCommand(
+      "ls",
+      (term) {
+        Shell.executeLs.apply!(
+          msg => Messenger.writeln(msg),
+          (lines) {
+            foreach(line; lines) {
+              Message msg = InfoMessage("%  " ~ line);
+              Messenger.writeln(msg);
+            }
+          }
+        );
+      }
+    );
+
+    auto lsCommandWithPath = buildCommand(
+      "ls(Path)",
+      (term) {
+        dstring path = term.children.front.token.lexeme;
+        if (path.front == '\'') {
+          path = path[1..$-1];
+        }
+
+        Shell.executeLsWithPath(path.to!string).apply!(
+          msg => Messenger.writeln(msg),
+          (lines) {
+            foreach(line; lines) {
+              Message msg = InfoMessage("%  " ~ line);
+              Messenger.writeln(msg);
+            }
+          }
+        );
+      },
+      [
+        "Path": (Term term) => term.isAtom && term.children.empty
+      ]
+    );
+
+    // sl
+    auto slCommand = buildCommand(
       "sl",
       term => SL.run()
     );
@@ -99,7 +140,9 @@ private:
       readFile,
       answerToEverything,
       clearScreen,
-      runSL,
+      lsCommand,
+      lsCommandWithPath,
+      slCommand,
     ];
   }
 

@@ -24,7 +24,7 @@ private class Shell_ {
       if (result.status == 0) {
         return result.output.chomp.to!int.Right!(Message, int);
       } else {
-        return ErrorMessage("Shell Error").Left!(Message, int);
+        return ErrorMessage(result.output.chomp).Left!(Message, int);
       }
     } catch (ProcessException e) {
       return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
@@ -41,7 +41,7 @@ private class Shell_ {
       if (result.status == 0) {
         return result.output.chomp.to!int.Right!(Message, int);
       } else {
-        return ErrorMessage("Shell Error").Left!(Message, int);
+        return ErrorMessage(result.output.chomp).Left!(Message, int);
       }
     } catch (ProcessException e) {
       return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
@@ -49,6 +49,40 @@ private class Shell_ {
       return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
     } catch (ConvException e) {
       return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
+    }
+  }
+
+  Either!(Message, string[]) executeLs() {
+    try {
+      auto result = execute(["ls"]);
+      if (result.status == 0) {
+        return result.output.chomp.splitLines.Right!(Message, string[]);
+      } else {
+        return ErrorMessage(result.output.chomp).Left!(Message, string[]);
+      }
+    } catch (ProcessException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, string[]);
+    } catch (StdioException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, string[]);
+    } catch (ConvException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, string[]);
+    }
+  }
+
+  Either!(Message, string[]) executeLsWithPath(string path) {
+    try {
+      auto result = execute(["ls", path]);
+      if (result.status == 0) {
+        return result.output.chomp.splitLines.Right!(Message, string[]);
+      } else {
+        return ErrorMessage(result.output.chomp).Left!(Message, string[]);
+      }
+    } catch (ProcessException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, string[]);
+    } catch (StdioException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, string[]);
+    } catch (ConvException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, string[]);
     }
   }
 }
