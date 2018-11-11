@@ -63,7 +63,10 @@ private:
     // add rules
     auto addRules = buildCommand(
       "[user]",
-      term => Consulter.consult()
+      (term) {
+        Consulter.consult();
+        writelnTrue();
+      }
     );
 
     // read file
@@ -75,6 +78,7 @@ private:
           filePath = filePath[1..$-1];
         }
         Reader.read(filePath);
+        writelnTrue();
       },
       [
         "FilePath": (Term term) => term.isAtom && term.children.empty
@@ -102,6 +106,7 @@ private:
             }
           }
         );
+        writelnTrue();
       }
     );
 
@@ -117,6 +122,7 @@ private:
             }
           }
         );
+        writelnTrue();
       }
     );
 
@@ -137,6 +143,7 @@ private:
             }
           }
         );
+        writelnTrue();
       },
       [
         "Path": (Term term) => term.isAtom && term.children.empty
@@ -160,6 +167,7 @@ private:
             }
           }
         );
+        writelnTrue();
       },
       [
         "Path": (Term term) => term.isAtom && term.children.empty
@@ -212,5 +220,9 @@ private:
       }
 
     };
+  }
+
+  void writelnTrue() {
+    Messenger.writeln(DefaultMessage("true."));
   }
 }
