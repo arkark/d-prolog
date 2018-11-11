@@ -80,6 +80,11 @@ $ git tag <version>
 $ ./release.sh
 ```
 
+### Future Work
+
+- Support for Windows
+- Adding more tests
+
 ## License
 
 [MIT](https://github.com/ArkArk/d-prolog/blob/master/LICENSE)
