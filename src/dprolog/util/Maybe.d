@@ -30,7 +30,7 @@ public:
     return value;
   }
 
-  Maybe!T opAssign(T value) in (!isNull(value)) do {
+  Maybe!T opAssign(T value) in(!isNull(value)) do {
     this.value = value;
     this._isJust = true;
     return this;
@@ -85,7 +85,7 @@ private bool isNull(T)(T value) {
   }
 }
 
-Maybe!T Just(T)(T value) in (!isNull(value)) do {
+Maybe!T Just(T)(T value) in(!isNull(value)) do {
   return Maybe!T(value);
 }
 

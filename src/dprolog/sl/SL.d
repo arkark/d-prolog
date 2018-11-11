@@ -4,11 +4,13 @@ import dprolog.core.Shell;
 import dprolog.core.Linenoise;
 import dprolog.engine.Messenger;
 import dprolog.util.Message;
+import dprolog.util.Either;
 
 import std.conv;
 import std.algorithm;
 import std.range;
 import std.array;
+import std.typecons;
 import std.concurrency : Generator, yield;
 import core.thread;
 
@@ -22,41 +24,51 @@ import core.thread;
 
 private class SL_ {
   void run() {
-    auto gen = getSLGenerator();
-    while(!gen.empty) {
-      auto sl = gen.front;
-      gen.popFront;
-      Linenoise.clearScreen;
-      foreach(line; sl) {
-        Messenger.add(InfoMessage(line));
+    getSLGenerator().apply!(
+      msg => Messenger.writeln(msg),
+      (gen) {
+        while(!gen.empty) {
+          auto sl = gen.front;
+          gen.popFront;
+          Linenoise.clearScreen;
+          foreach(line; sl) {
+            Messenger.add(InfoMessage(line));
+          }
+          Messenger.showAll();
+          Thread.sleep(20.msecs);
+        }
+        Linenoise.clearScreen;
       }
-      Messenger.showAll();
-      Thread.sleep(20.msecs);
-    }
-    Linenoise.clearScreen;
+    );
   }
 
 private:
-  Generator!(string[]) getSLGenerator() {
-    return new Generator!(string[])({
-      int columns = Shell.getColumns;
-      int lines = Shell.getLines;
-      int slWidth = getSLWidth;
-      int slHeight = getSLHeight;
-      string[] spaceLines = "".repeat(max(0, lines - slHeight) / 2).array;
-      foreach(i; 0..columns+slWidth) {
-        int diff = columns - i - 1;
-        string padding = ' '.repeat(max(0, diff)).array;
-        auto sl = makeSL(i).map!(
-          str => padding ~ str
-        ).map!(
-          str => str[clamp(-diff, 0, $)..$]
-        ).map!(
-          str => str[0..min(columns, $)]
-        ).array;
-        yield(spaceLines ~ sl);
-      }
-    });
+  Either!(Message, Generator!(string[])) getSLGenerator() {
+    return Shell.getColumns.bind!(
+      columns => Shell.getLines.fmap!(
+        lines => tuple!("columns", "lines")(columns, lines)
+      )
+    ).fmap!(
+      size => new Generator!(string[])({
+        int columns = size.columns;
+        int lines = size.lines;
+        int slWidth = getSLWidth;
+        int slHeight = getSLHeight;
+        string[] spaceLines = "".repeat(max(0, lines - slHeight) / 2).array;
+        foreach(i; 0..columns+slWidth) {
+          int diff = columns - i - 1;
+          string padding = ' '.repeat(max(0, diff)).array;
+          auto sl = makeSL(i).map!(
+            str => padding ~ str
+          ).map!(
+            str => str[clamp(-diff, 0, $)..$]
+          ).map!(
+            str => str[0..min(columns, $)]
+          ).array;
+          yield(spaceLines ~ sl);
+        }
+      })
+    );
   }
 
   int getSLWidth() {

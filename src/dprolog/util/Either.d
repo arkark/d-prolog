@@ -41,21 +41,13 @@ public:
     return _right;
   }
 
-  Either!(L, R) opAssign(L left) in {
-    static if (is(typeof(left is null))) {
-      assert(left !is null);
-    }
-  } do {
+  Either!(L, R) opAssign(L left) in(!isNull(left)) do {
     _left = left;
     _isLeft = true;
     return this;
   }
 
-  Either!(L, R) opAssign(R right) in {
-    static if (is(typeof(right is null))) {
-      assert(right !is null);
-    }
-  } do {
+  Either!(L, R) opAssign(R right) in(!isNull(right)) {
     _right = right;
     _isLeft = false;
     return this;
@@ -92,41 +84,39 @@ public:
 
 }
 
-Either!(L, Dummy) Left(L)(L left) in {
-  static if (is(typeof(left is null))) {
-    assert(left !is null);
-  }
-} do {
-  return Either!(L, Dummy)(left);
-}
-
-Either!(L, R) Left(L, R)(L left) in {
-  static if (is(typeof(left is null))) {
-    assert(left !is null);
-  }
-} do {
-  return Either!(L, R)(left);
-}
-
 private struct Dummy {
   bool opEquals(O)(O o) {
     return false;
   }
 }
 
-Either!(Dummy, R) Right(R)(R right) in {
-  static if (is(typeof(right is null))) {
-    assert(right !is null);
+private bool isNull(T)(T value) {
+  static if (is(typeof(value is null))) {
+    return (
+      isPointer!T ||
+      is(T == class) ||
+      is(T == interface) ||
+      is(T == function) ||
+      is(T == delegate)
+    ) && value is null;
+  } else {
+    return false;
   }
-} do {
+}
+
+Either!(L, Dummy) Left(L)(L left) in(!isNull(left)) do {
+  return Either!(L, Dummy)(left);
+}
+
+Either!(L, R) Left(L, R)(L left) in(!isNull(left)) do {
+  return Either!(L, R)(left);
+}
+
+Either!(Dummy, R) Right(R)(R right) in(!isNull(right)) do {
   return Either!(Dummy, R)(right);
 }
 
-Either!(L, R) Right(L, R)(R right) in {
-  static if (is(typeof(right is null))) {
-    assert(right !is null);
-  }
-} do {
+Either!(L, R) Right(L, R)(R right) in(!isNull(right)) do {
   return Either!(L, R)(right);
 }
 
