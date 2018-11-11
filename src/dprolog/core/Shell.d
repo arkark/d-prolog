@@ -1,5 +1,9 @@
 module dprolog.core.Shell;
 
+import dprolog.util.Either;
+import dprolog.util.Message;
+
+import std.stdio : StdioException;
 import std.conv;
 import std.string;
 import std.process;
@@ -14,40 +18,37 @@ import std.process;
 
 private class Shell_ {
 
-private:
-  enum {
-    DEFAULT_COLUMNS = 300,
-    DEFAULT_LINES = 100,
-  }
-
-public:
-  int getColumns() {
+  Either!(Message, int) getColumns() {
     try {
       auto result = execute(["tput", "cols"]);
       if (result.status == 0) {
-        return result.output.chomp.to!int;
+        return result.output.chomp.to!int.Right!(Message, int);
       } else {
-        return DEFAULT_COLUMNS;
+        return ErrorMessage("Shell Error").Left!(Message, int);
       }
     } catch (ProcessException e) {
-      return DEFAULT_COLUMNS;
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
+    } catch (StdioException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
     } catch (ConvException e) {
-      return DEFAULT_COLUMNS;
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
     }
   }
 
-  int getLines() {
+  Either!(Message, int) getLines() {
     try {
       auto result = execute(["tput", "lines"]);
       if (result.status == 0) {
-        return result.output.chomp.to!int;
+        return result.output.chomp.to!int.Right!(Message, int);
       } else {
-        return DEFAULT_LINES;
+        return ErrorMessage("Shell Error").Left!(Message, int);
       }
     } catch (ProcessException e) {
-      return DEFAULT_LINES;
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
+    } catch (StdioException e) {
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
     } catch (ConvException e) {
-      return DEFAULT_LINES;
+      return ErrorMessage("Shell Error: " ~ e.msg).Left!(Message, int);
     }
   }
 }
