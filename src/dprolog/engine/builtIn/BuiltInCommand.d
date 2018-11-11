@@ -90,6 +90,21 @@ private:
       ]
     );
 
+    auto pwdCommand = buildCommand(
+      "pwd",
+      (term) {
+        Shell.executePwd.apply!(
+          msg => Messenger.writeln(msg),
+          (lines) {
+            foreach(line; lines) {
+              Message msg = InfoMessage("%  " ~ line);
+              Messenger.writeln(msg);
+            }
+          }
+        );
+      }
+    );
+
     auto lsCommand = buildCommand(
       "ls",
       (term) {
@@ -128,6 +143,29 @@ private:
       ]
     );
 
+    auto cdCommandWithPath = buildCommand(
+      "cd(Path)",
+      (term) {
+        dstring path = term.children.front.token.lexeme;
+        if (path.front == '\'') {
+          path = path[1..$-1];
+        }
+
+        Shell.executeCdWithPath(path.to!string).apply!(
+          msg => Messenger.writeln(msg),
+          (lines) {
+            foreach(line; lines) {
+              Message msg = InfoMessage("%  " ~ line);
+              Messenger.writeln(msg);
+            }
+          }
+        );
+      },
+      [
+        "Path": (Term term) => term.isAtom && term.children.empty
+      ]
+    );
+
     // sl
     auto slCommand = buildCommand(
       "sl",
@@ -140,8 +178,10 @@ private:
       readFile,
       answerToEverything,
       clearScreen,
+      pwdCommand,
       lsCommand,
       lsCommandWithPath,
+      cdCommandWithPath,
       slCommand,
     ];
   }
