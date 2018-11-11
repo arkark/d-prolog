@@ -115,6 +115,7 @@ private:
   void executeQuery(Query query) {
     if (BuiltInCommand.traverse(query.first)) {
       // when matching a built-in pattern
+      Messenger.writeln(DefaultMessage("true."));
       return;
     }
 
