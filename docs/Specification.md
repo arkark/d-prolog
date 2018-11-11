@@ -82,7 +82,7 @@ Specification
 ### ?- ls
 
 ```prolog
-?- ls. % List information about the FILEs
+?- ls. % List the file/directory names
 ```
 ```prolog
 ?- ls('/path/to/directory').
