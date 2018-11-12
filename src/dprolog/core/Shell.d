@@ -19,40 +19,6 @@ import std.file : chdir, FileException;
 
 private class Shell_ {
 
-  Either!(Message, int) getColumns() {
-    try {
-      auto result = execute(["tput", "cols"]);
-      if (result.status == 0) {
-        return result.output.chomp.to!int.Right!(Message, int);
-      } else {
-        return ErrorMessage(result.output.chomp).Left!(Message, int);
-      }
-    } catch (ProcessException e) {
-      return ErrorMessage(e.msg).Left!(Message, int);
-    } catch (StdioException e) {
-      return ErrorMessage(e.msg).Left!(Message, int);
-    } catch (ConvException e) {
-      return ErrorMessage(e.msg).Left!(Message, int);
-    }
-  }
-
-  Either!(Message, int) getLines() {
-    try {
-      auto result = execute(["tput", "lines"]);
-      if (result.status == 0) {
-        return result.output.chomp.to!int.Right!(Message, int);
-      } else {
-        return ErrorMessage(result.output.chomp).Left!(Message, int);
-      }
-    } catch (ProcessException e) {
-      return ErrorMessage(e.msg).Left!(Message, int);
-    } catch (StdioException e) {
-      return ErrorMessage(e.msg).Left!(Message, int);
-    } catch (ConvException e) {
-      return ErrorMessage(e.msg).Left!(Message, int);
-    }
-  }
-
   Either!(Message, string[]) executeLs() {
     try {
       auto result = executeShell("ls");

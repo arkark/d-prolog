@@ -1,6 +1,6 @@
 module dprolog.sl.SL;
 
-import dprolog.core.Shell;
+import dprolog.core.Tty : getColumns, getRows;
 import dprolog.core.Linenoise;
 import dprolog.engine.Messenger;
 import dprolog.util.Message;
@@ -44,8 +44,8 @@ private class SL_ {
 
 private:
   Either!(Message, Generator!(string[])) getSLGenerator() {
-    return Shell.getColumns.bind!(
-      columns => Shell.getLines.fmap!(
+    return getColumns.bind!(
+      columns => getRows.fmap!(
         lines => tuple!("columns", "lines")(columns, lines)
       )
     ).fmap!(
