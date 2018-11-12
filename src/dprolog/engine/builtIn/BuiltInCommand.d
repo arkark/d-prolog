@@ -14,6 +14,7 @@ import dprolog.core.Linenoise;
 import dprolog.core.Shell;
 
 import std.conv;
+import std.file : getcwd;
 import std.range;
 import std.string;
 
@@ -97,15 +98,7 @@ private:
     auto pwdCommand = buildCommand(
       "pwd",
       (term) {
-        Shell.executePwd.apply!(
-          msg => Messenger.writeln(msg),
-          (lines) {
-            foreach(line; lines) {
-              Message msg = InfoMessage("%  " ~ line);
-              Messenger.writeln(msg);
-            }
-          }
-        );
+        Messenger.writeln(InfoMessage("%  " ~ getcwd()));
         writelnTrue();
       }
     );
