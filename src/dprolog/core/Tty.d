@@ -9,7 +9,7 @@ import dprolog.util.Message;
 Either!(Message, int) getColumns()
 {
     auto size = winsize();
-    if (ioctl(stdout.fileno(), TIOCGWINSZ, &size) == -1 || size.ws_col == 0)
+    if (ioctl(stdout.fileno(), TIOCGWINSZ, &size) == -1)
     {
         return ErrorMessage("Cannot get column size").Left!(Message, int);
     }
