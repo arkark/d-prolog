@@ -98,7 +98,7 @@ private:
     auto pwdCommand = buildCommand(
       "pwd",
       (term) {
-        Messenger.writeln(DefaultMessage(getcwd()));
+        Messenger.writeln(InfoMessage("% " ~ getcwd()));
         writelnTrue();
       }
     );
