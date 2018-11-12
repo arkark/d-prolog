@@ -53,21 +53,6 @@ private class Shell_ {
     }
   }
 
-  Either!(Message, string[]) executePwd() {
-    try {
-      auto result = executeShell("pwd");
-      if (result.status == 0) {
-        return result.output.chomp.splitLines.Right!(Message, string[]);
-      } else {
-        return ErrorMessage(result.output.chomp).Left!(Message, string[]);
-      }
-    } catch (ProcessException e) {
-      return ErrorMessage(e.msg).Left!(Message, string[]);
-    } catch (StdioException e) {
-      return ErrorMessage(e.msg).Left!(Message, string[]);
-    }
-  }
-
   Either!(Message, string[]) executeLs() {
     try {
       auto result = executeShell("ls");
