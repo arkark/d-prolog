@@ -11,7 +11,7 @@ import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
 import dprolog.engine.builtIn.BuiltIn;
 import dprolog.core.Linenoise;
-import dprolog.core.Shell;
+import Shell = dprolog.core.Shell;
 
 import std.conv;
 import std.file : getcwd;
@@ -95,6 +95,7 @@ private:
       ]
     );
 
+    // pwd
     auto pwdCommand = buildCommand(
       "pwd",
       (term) {
@@ -103,6 +104,7 @@ private:
       }
     );
 
+    // ls
     auto lsCommand = buildCommand(
       "ls",
       (term) {
@@ -119,6 +121,7 @@ private:
       }
     );
 
+    // ls with a path
     auto lsCommandWithPath = buildCommand(
       "ls(Path)",
       (term) {
@@ -143,6 +146,7 @@ private:
       ]
     );
 
+    // cd with a path
     auto cdCommandWithPath = buildCommand(
       "cd(Path)",
       (term) {
