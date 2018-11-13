@@ -162,23 +162,23 @@ private:
       Messenger.showAll();
       Messenger.writeln(DefaultMessage("false."));
     } else {
-      while(!generator.empty) {
+      while(true) {
+        if (generator.empty) {
+          Messenger.writeln(DefaultMessage("true."));
+          break;
+        }
         auto uf = generator.front;
-        generator.popFront;
         Messenger.showAll();
         bool[string] exists;
         string answer = rec(first, uf, exists).join(", ");
         if (answer.empty) answer = "true";
-        if (generator.empty) {
-          Messenger.writeln(DefaultMessage(answer ~ "."));
+        auto line = Linenoise.nextLine(answer ~ "; ");
+        if (line.isJust) {
         } else {
-          auto line = Linenoise.nextLine(answer ~ "; ");
-          if (line.isJust) {
-          } else {
-            Messenger.writeln(InfoMessage("% Execution Aborted"));
-            break;
-          }
+          Messenger.writeln(InfoMessage("% Execution Aborted"));
+          break;
         }
+        generator.popFront;
       }
     }
   }
@@ -273,7 +273,6 @@ private:
       if (predResult.found) {
         unificateResult = predResult;
       } else {
-
         foreach(clause; _storage) {
           if (unificateResult.isCutted) break;
           Variant first, second;
@@ -300,7 +299,6 @@ private:
   }
 
   bool match(Variant left, Variant right, UnificationUF unionFind) {
-
     if (!left.isVariable && !right.isVariable) {
       return left.term.token == right.term.token && left.children.length==right.children.length && zip(left.children, right.children).all!(a => match(a[0], a[1], unionFind));
     } else {
