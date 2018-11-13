@@ -32,7 +32,7 @@ class Variant {
   }
 
   override string toString() const {
-    return format!"Variant(id: %s, term: %s)"(id, term);
+    return format!"Variant(id: %s, term: %s, children: %s)"(id, term, children);
   }
 
 }
