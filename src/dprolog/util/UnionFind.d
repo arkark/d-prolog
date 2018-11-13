@@ -24,7 +24,9 @@ public:
   }
 
   void add(T value) {
-    storage[value] = new Node(value);
+    if (value !in storage) {
+      storage[value] = new Node(value);
+    }
   }
 
   void unite(T a, T b) {

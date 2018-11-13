@@ -117,7 +117,8 @@ $ dprolog -f list.pro
 conjunctions:
 ```prolog
 ?- member(X, [1, 2, 3]), member(X, [3, 4]).
-X = 3.
+X = 3;
+false.
 ```
 
 disjunctions:
@@ -127,7 +128,8 @@ X = 1;
 X = 2;
 X = 3;
 X = 3;
-X = 4.
+X = 4;
+false.
 ```
 
 conjuctions and disjunctions:

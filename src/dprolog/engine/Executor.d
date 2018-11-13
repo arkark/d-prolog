@@ -31,6 +31,9 @@ import std.concurrency : Generator, yield;
 
 alias UnificateResult = Tuple!(bool, "found", bool, "isCutted");
 
+class CallUnificateNotifier {}
+alias UnificateYield = Either!(CallUnificateNotifier, UnificationUF);
+
 @property Executor_ Executor() {
   static Executor_ instance;
   if (!instance) {
@@ -121,7 +124,7 @@ private:
     Variant first, second;
     UnificationUF unionFind = buildUnionFind(query, first, second);
 
-    auto generator = new Generator!UnificationUF({
+    auto generator = new Generator!UnificateYield({
       unificate(first, unionFind);
     }, 1<<20);
 
@@ -158,26 +161,52 @@ private:
       }
     }
 
+    void eatYields() {
+      while(!generator.empty) {
+        auto result = generator.front;
+        if (result.isLeft) {
+          generator.popFront;
+        } else {
+          break;
+        }
+      }
+    }
+
+    eatYields();
+
     if (generator.empty) {
       Messenger.showAll();
       Messenger.writeln(DefaultMessage("false."));
     } else {
-      while(!generator.empty) {
-        auto uf = generator.front;
+      while(true) {
+        assert(!generator.empty);
+        auto result = generator.front;
         generator.popFront;
+        assert(result.isRight);
+
+        auto uf = result.right;
+
         Messenger.showAll();
         bool[string] exists;
         string answer = rec(first, uf, exists).join(", ");
         if (answer.empty) answer = "true";
+
         if (generator.empty) {
           Messenger.writeln(DefaultMessage(answer ~ "."));
+          break;
+        }
+
+        auto line = Linenoise.nextLine(answer ~ "; ");
+        if (line.isJust) {
         } else {
-          auto line = Linenoise.nextLine(answer ~ "; ");
-          if (line.isJust) {
-          } else {
-            Messenger.writeln(InfoMessage("% Execution Aborted"));
-            break;
-          }
+          Messenger.writeln(InfoMessage("% Execution Aborted"));
+          break;
+        }
+
+        eatYields();
+        if (generator.empty) {
+          Messenger.writeln(ErrorMessage("false."));
+          break;
         }
       }
     }
@@ -185,17 +214,21 @@ private:
 
   // fiber function
   UnificateResult unificate(Variant variant, UnificationUF unionFind) {
+    yieldLeft();
+
     variant = unionFind.root(variant);
     const Term term = variant.term;
     UnificateResult unificateResult = UnificateResult(false, false);
 
     if (term.token == Operator.comma) {
       // conjunction
-      auto g = new Generator!UnificationUF({
+      auto gen = new Generator!UnificateYield({
         auto r = unificate(variant.children.front, unionFind);
         unificateResult.isCutted |= r.isCutted;
       }, 1<<20);
-      foreach(uf; g) {
+      foreach(result; gen) {
+        if (result.isLeft) continue;
+        auto uf = result.right;
         auto r = unificate(variant.children.back, uf);
         unificateResult.isCutted |= r.isCutted;
         unificateResult.found |= r.found;
@@ -216,13 +249,13 @@ private:
       // unification
       UnificationUF newUnionFind = unionFind.clone;
       if (match(variant.children.front, variant.children.back, newUnionFind)) {
-        newUnionFind.yield;
+        yieldRight(newUnionFind);
         unificateResult.found |= true;
       }
     } else if (term.token == Operator.equalEqual) {
       // equality comparison
       if (unionFind.same(variant.children.front, variant.children.back)) {
-        unionFind.yield;
+        yieldRight(unionFind);
         unificateResult.found |= true;
       }
     } else if (term.token == Operator.eval) {
@@ -239,12 +272,12 @@ private:
             Variant yVar = new Variant(-1, new Term(y, []), []);
             newUnionFind.add(yVar);
             newUnionFind.unite(xVar, yVar);
-            newUnionFind.yield;
+            yieldRight(newUnionFind);
             unificateResult.found |= true;
           },
           (Number x) {
             if (x == y) {
-              unionFind.yield;
+              yieldRight(unionFind);
               unificateResult.found |= true;
             }
           },
@@ -264,7 +297,7 @@ private:
         Messenger.add(result.left);
       } else {
         if (result.right) {
-          unionFind.yield;
+          yieldRight(unionFind);
           unificateResult.found |= true;
         }
       }
@@ -273,7 +306,6 @@ private:
       if (predResult.found) {
         unificateResult = predResult;
       } else {
-
         foreach(clause; _storage) {
           if (unificateResult.isCutted) break;
           Variant first, second;
@@ -281,7 +313,7 @@ private:
           if (match(variant, first, newUnionFind)) {
             clause.castSwitch!(
               (Fact fact) {
-                newUnionFind.yield;
+                yieldRight(newUnionFind);
                 unificateResult.found |= true;
               },
               (Rule rule) {
@@ -299,8 +331,19 @@ private:
     return unificateResult;
   }
 
-  bool match(Variant left, Variant right, UnificationUF unionFind) {
+  void yieldLeft() {
+    static CallUnificateNotifier notifier;
+    if (!notifier) {
+      notifier = new CallUnificateNotifier;
+    }
+    Left!(CallUnificateNotifier, UnificationUF)(notifier).yield;
+  }
 
+  void yieldRight(UnificationUF uf) {
+    Right!(CallUnificateNotifier, UnificationUF)(uf).yield;
+  }
+
+  bool match(Variant left, Variant right, UnificationUF unionFind) {
     if (!left.isVariable && !right.isVariable) {
       return left.term.token == right.term.token && left.children.length==right.children.length && zip(left.children, right.children).all!(a => match(a[0], a[1], unionFind));
     } else {
