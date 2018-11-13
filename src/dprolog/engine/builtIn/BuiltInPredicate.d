@@ -6,6 +6,7 @@ import dprolog.data.Predicate;
 import dprolog.engine.Executor;
 import dprolog.engine.UnificationUF;
 import dprolog.engine.builtIn.BuiltIn;
+import dprolog.util.Either;
 
 import std.range;
 import std.concurrency : Generator, yield;
@@ -47,7 +48,7 @@ private:
     auto cutPred = buildPredicate(
       "!", 0,
       delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
-        unionFind.yield;
+        Right!(CallUnificateNotifier, UnificationUF)(unionFind).yield;
         return UnificateResult(true, true);
       }
     );
@@ -56,7 +57,7 @@ private:
     auto truePred = buildPredicate(
       "true", 0,
       delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
-        unionFind.yield;
+        Right!(CallUnificateNotifier, UnificationUF)(unionFind).yield;
         return UnificateResult(true, false);
       }
     );
@@ -82,7 +83,7 @@ private:
       "repeat", 0,
       delegate UnificateResult(Variant variant, UnificationUF unionFind, UnificateRecFun unificateRecFun) {
         while(true) {
-          unionFind.yield;
+          Right!(CallUnificateNotifier, UnificationUF)(unionFind).yield;
         }
       }
     );
@@ -94,7 +95,7 @@ private:
         assert(variant.children.length == 1);
         auto child = variant.children.front;
 
-        auto g = new Generator!UnificationUF({
+        auto g = new Generator!UnificateYield({
           unificateRecFun(child, unionFind);
         }, 1<<20);
         if(g.empty) {
