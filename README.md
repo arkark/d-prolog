@@ -21,7 +21,7 @@ Download the [latest](https://github.com/ArkArk/d-prolog/releases/) `dprolog` bi
 $ git clone https://github.com/ArkArk/d-prolog.git
 $ cd d-prolog
 ```
-and build (refer to Development).
+and build (refer to [Development](#development)).
 
 ## Usage
 
