@@ -205,7 +205,7 @@ private:
 
         eatYields();
         if (generator.empty) {
-          Messenger.writeln(DefaultMessage("true."));
+          Messenger.writeln(ErrorMessage("false."));
           break;
         }
       }
