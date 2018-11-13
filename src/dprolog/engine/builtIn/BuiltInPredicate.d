@@ -94,18 +94,15 @@ private:
         assert(variant.children.length == 1);
         auto child = variant.children.front;
 
-        UnificateResult result = UnificateResult(false, false);
         auto g = new Generator!UnificationUF({
-          result = unificateRecFun(child, unionFind);
+          unificateRecFun(child, unionFind);
         }, 1<<20);
-        while(!g.empty) g.popFront;
-
-        result.found = !result.found; // not
-
-        if (result.found) {
+        if(g.empty) {
           unionFind.yield;
+          return UnificateResult(true, false);
+        } else {
+          return UnificateResult(false, false);
         }
-        return result;
       }
     );
 
