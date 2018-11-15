@@ -199,7 +199,7 @@ private:
         auto line = Linenoise.nextLine(answer ~ "; ");
         if (line.isJust) {
         } else {
-          Messenger.writeln(InfoMessage("% Execution Aborted"));
+          Messenger.writeln(InfoMessage("%  Execution Aborted"));
           break;
         }
 
