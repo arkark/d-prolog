@@ -25,7 +25,7 @@ and build (refer to [Development](#development)).
 
 ## Usage
 
-Look at [docs/](docs).
+Look at `docs/`.
 - [Getting Started](docs/GettingStarted.md)
 - [Specification](docs/Specification.md)
 
