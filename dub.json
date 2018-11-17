@@ -8,5 +8,14 @@
   "dependencies": {
     "linenoise": "~>1.1.0"
   },
-  "lflags": ["-Llib"]
+  "dflags": [
+    "-J tmp"
+  ],
+  "lflags": [
+    "-Llib"
+  ],
+  "preGenerateCommands": [
+    "git describe --tags > tmp/dprolog_version.txt",
+    "LANG=C date +\"%b %d %Y\" > tmp/compile_date.txt"
+  ]
 }

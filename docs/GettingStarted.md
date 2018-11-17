@@ -29,9 +29,10 @@ or input `ctrl+c` or `ctrl+d` to stop D-Prolog.
 
 ## Options
 
-- `-f`, `--file=VALUE`:  Read `VALUE` as a user initialization file
-- `-v`, `--verbose`:  Print diagnostic output
-- `-h`, `--help`:  Show help information
+- `-h`, `--help`:  Print a help message
+- `-v`, `--version`: Print version of dprolog
+- `-f`, `--file=VALUE`:  Read `VALUE` as an initialization file
+- `--verbose`:  Print diagnostic output
 
 ## Example files
 
