@@ -25,21 +25,26 @@ private class GetOpt_ {
 private:
   bool _shouldExit = false;
 
-  enum fileOption = Option("f", "file", "Read `VALUE` as a user initialization file", true);
-  enum verboseOption = Option("v", "verbose", "Print diagnostic output", false);
-  enum helpOption = Option("h", "help", "This help information", false);
+  enum helpOption = Option("h", "help", "Print this help message", false);
+  enum versionOption = Option("v", "version", "Print version of dprolog", false);
+  enum fileOption = Option("f", "file", "Read `VALUE` as an initialization file", true);
+  enum verboseOption = Option("", "verbose", "Print diagnostic output", false);
 
+  enum programVersion = import("dprolog_version.txt").chomp;
+  enum compileDate = import("compile_date.txt").chomp;
 public:
   void run(string[] args) {
+    bool helpMode;
+    bool versionMode;
     string filePath;
-    bool verbose;
-    bool help;
+    bool verboseMode;
 
     try {
       args.getopt(
+        helpOption.params(helpMode).expand,
+        versionOption.params(versionMode).expand,
         fileOption.params(filePath).expand,
-        verboseOption.params(verbose).expand,
-        helpOption.params(help).expand
+        verboseOption.params(verboseMode).expand,
       );
     } catch(Throwable e) {
       writeln(format!"Error processing arguments: %s"(e.msg));
@@ -48,13 +53,27 @@ public:
       return;
     }
 
-    if (help) {
-      printUsage!([fileOption, verboseOption, helpOption]);
+    if (helpMode) {
+      printUsage!([
+        helpOption,
+        versionOption,
+        fileOption,
+        verboseOption,
+      ]);
       _shouldExit = true;
       return;
     }
 
-    Engine.verboseMode = verbose;
+    if (versionMode) {
+      format!"D-Prolog %s, built on %s"(
+        programVersion,
+        compileDate
+      ).writeln;
+      _shouldExit = true;
+      return;
+    }
+
+    Engine.verboseMode = verboseMode;
 
     // read a file
     if (!filePath.empty) {
@@ -74,10 +93,17 @@ private:
     string description;
     bool requiredValue;
     auto params(T)(ref T value) {
-      return tuple(format!"%s|%s"(longOpt, shortOpt), description, &value);
+      return tuple(
+        format!"%s%s"(
+          longOpt,
+          (shortOpt.empty ? "" : "|") ~ shortOpt
+        ),
+        description,
+        &value
+      );
     }
     @property string shortString() {
-      return format!"-%s"(shortOpt);
+      return shortOpt.empty ? "" : format!"-%s"(shortOpt);
     }
     @property string longString() {
       return format!"--%s%s"(longOpt, requiredValue ? "=VALUE" : "");
