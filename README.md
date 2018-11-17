@@ -64,7 +64,7 @@ $ dub run
 
 with some options:
 ```bash
-$ dub run -- -f example/family.pro -v
+$ dub run -- -f example/family.pro --verbose
 ```
 
 ### Tests
