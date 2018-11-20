@@ -7,6 +7,7 @@ __dummy.html
 __test__*__
 
 bin/*
+!bin/.gitkeep
 lib/*
 !lib/.gitkeep
 tmp/*
