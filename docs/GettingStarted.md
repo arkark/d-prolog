@@ -34,7 +34,7 @@ or input `ctrl+c` or `ctrl+d` to stop D-Prolog.
 - `-f`, `--file=VALUE`:  Read `VALUE` as an initialization file
 - `--verbose`:  Print diagnostic output
 
-## Example files
+## Example Prolog files
 
 - `example/family.pro`
 - `example/list.pro`
@@ -158,9 +158,9 @@ X = 1.
 
 Load `example/if.pro`, then
 ```prolog
-?- if (true, X = 1, X = 2).
+?- if(true, X = 1, X = 2).
 X = 1.
 
-?- if (false, X = 1, X = 2).
+?- if(false, X = 1, X = 2).
 X = 2.
 ```

@@ -61,42 +61,42 @@ Specification
 
 ## System Commands
 
-### ?- halt.
+### halt
 
 ```prolog
 ?- halt. % Stop D-Prolog
 ```
 
-### ?- clear.
+### clear
 
 ```prolog
 ?- clear. % Clear the screen
 ```
 
-### ?- pwd
+### pwd
 
 ```prolog
 ?- pwd. % Print the name of the current working directory
 ```
 
-### ?- ls
+### ls
 
 ```prolog
 ?- ls. % List the file/directory names
 ```
 ```prolog
-?- ls('/path/to/directory').
+?- ls('/path/to/directory'). % Use `ls` for a specific path.
 ```
 
-### ?- cd
+### cd
 
 ```prolog
 ?- cd('/path/to/directory'). % Change the current working directory
 ```
 
-### ?- sl.
+### sl
 
 ```prolog
-?- sl. % SL runs
+?- sl. % Display a SL
 ```
 Inspired by [SL(1)](https://github.com/mtoyoda/sl), which is loved by many hackers :)
