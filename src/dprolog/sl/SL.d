@@ -1,10 +1,11 @@
 module dprolog.sl.SL;
 
-import dprolog.core.Tty : getColumns, getRows;
+import dprolog.core.tty : getColumns, getRows;
 import dprolog.core.Linenoise;
 import dprolog.engine.Messenger;
 import dprolog.util.Message;
 import dprolog.util.Either;
+import dprolog.util.Singleton;
 
 import std.conv;
 import std.algorithm;
@@ -14,13 +15,7 @@ import std.typecons;
 import std.concurrency : Generator, yield;
 import core.thread;
 
-@property SL_ SL() {
-  static SL_ instance;
-  if (!instance) {
-    instance = new SL_();
-  }
-  return instance;
-}
+alias SL = Singleton!SL_;
 
 private class SL_ {
   void run() {

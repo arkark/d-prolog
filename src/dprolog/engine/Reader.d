@@ -3,18 +3,13 @@ module dprolog.engine.Reader;
 import dprolog.engine.Messenger;
 import dprolog.engine.Executor;
 import dprolog.util.Message;
+import dprolog.util.Singleton;
 
 import std.format;
 import std.conv;
 import std.file;
 
-@property Reader_ Reader() {
-  static Reader_ instance;
-  if (!instance) {
-    instance = new Reader_();
-  }
-  return instance;
-}
+alias Reader = Singleton!Reader_;
 
 private class Reader_ {
   void read(dstring filePath) {

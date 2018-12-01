@@ -2,6 +2,7 @@ module dprolog.engine.builtIn.BuiltInCommand;
 
 import dprolog.util.Message;
 import dprolog.util.Either;
+import dprolog.util.Singleton;
 import dprolog.data.Command;
 import dprolog.data.Term;
 import dprolog.sl.SL;
@@ -11,20 +12,14 @@ import dprolog.engine.Reader;
 import dprolog.engine.Consulter;
 import dprolog.engine.builtIn.BuiltIn;
 import dprolog.core.Linenoise;
-import Shell = dprolog.core.Shell;
+import dprolog.core.Shell;
 
 import std.conv;
 import std.file : getcwd;
 import std.range;
 import std.string;
 
-@property BuiltInCommand_ BuiltInCommand() {
-  static BuiltInCommand_ instance;
-  if (!instance) {
-    instance = new BuiltInCommand_();
-  }
-  return instance;
-}
+alias BuiltInCommand = Singleton!BuiltInCommand_;
 
 private class BuiltInCommand_ : BuiltIn {
 

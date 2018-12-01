@@ -12,6 +12,7 @@ import dprolog.converter.ClauseBuilder;
 import dprolog.util.functions;
 import dprolog.util.Maybe;
 import dprolog.util.Either;
+import dprolog.util.Singleton;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.builtIn.BuiltInCommand;
@@ -34,13 +35,7 @@ alias UnificateResult = Tuple!(bool, "found", bool, "isCutted");
 class CallUnificateNotifier {}
 alias UnificateYield = Either!(CallUnificateNotifier, UnificationUF);
 
-@property Executor_ Executor() {
-  static Executor_ instance;
-  if (!instance) {
-    instance = new Executor_();
-  }
-  return instance;
-}
+alias Executor = Singleton!Executor_;
 
 private class Executor_ {
 

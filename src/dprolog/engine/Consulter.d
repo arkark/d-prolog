@@ -1,18 +1,13 @@
 module dprolog.engine.Consulter;
 
 import dprolog.engine.Executor;
+import dprolog.util.Singleton;
 import dprolog.core.Linenoise;
 
 import std.conv;
 import std.array;
 
-@property Consulter_ Consulter() {
-  static Consulter_ instance;
-  if (!instance) {
-    instance = new Consulter_();
-  }
-  return instance;
-}
+alias Consulter = Singleton!Consulter_;
 
 class Consulter_ {
   void consult() {
