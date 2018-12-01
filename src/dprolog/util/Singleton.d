@@ -4,7 +4,7 @@ import std.format;
 
 static class Singleton(T) {
   private static T instance;
-  static auto opDispatch(string name, Args...)(Args args) {
+  static auto opDispatch(string name, Args...)(auto ref Args args) {
     if (!instance) {
       instance = new T();
     }
