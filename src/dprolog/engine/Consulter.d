@@ -9,7 +9,7 @@ import std.array;
 
 alias Consulter = Singleton!Consulter_;
 
-class Consulter_ {
+private class Consulter_ {
   void consult() {
     dstring[] texts = [];
     string prompt = "|: ";

@@ -13,7 +13,7 @@ import std.traits;
 
 alias Shell = Singleton!Shell_;
 
-class Shell_ {
+private class Shell_ {
 
 private:
   alias Result = ReturnType!executeShell;
