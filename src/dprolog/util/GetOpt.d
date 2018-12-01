@@ -3,6 +3,7 @@ module dprolog.util.GetOpt;
 import dprolog.engine.Engine;
 import dprolog.engine.Messenger;
 import dprolog.engine.Reader;
+import dprolog.util.Singleton;
 
 import std.stdio;
 import std.format;
@@ -12,13 +13,7 @@ import std.algorithm;
 import std.getopt;
 import std.typecons;
 
-@property GetOpt_ GetOpt() {
-  static GetOpt_ instance;
-  if (!instance) {
-    instance = new GetOpt_();
-  }
-  return instance;
-}
+alias GetOpt = Singleton!GetOpt_;
 
 private class GetOpt_ {
 

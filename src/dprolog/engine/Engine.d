@@ -4,23 +4,18 @@ import dprolog.data.token;
 import dprolog.engine.Executor;
 import dprolog.engine.Messenger;
 import dprolog.util.Message;
+import dprolog.util.Singleton;
 import dprolog.core.Linenoise;
 
 import std.conv;
 
-@property Engine_ Engine() {
-  static Engine_ instance;
-  if (!instance) {
-    instance = new Engine_();
-  }
-  return instance;
-}
+alias Engine = Singleton!Engine_;
 
 private class Engine_ {
 
 private:
   bool _isHalt = false;
-  public bool verboseMode = false;
+  bool _verboseMode = false;
 
 public:
   void next() in(!isHalt) do {
@@ -43,6 +38,13 @@ public:
 
   @property bool isHalt() {
     return _isHalt;
+  }
+
+  @property bool verboseMode() {
+    return _verboseMode;
+  }
+  @property bool verboseMode(bool value) {
+    return _verboseMode = value;
   }
 
 }

@@ -7,17 +7,12 @@ import dprolog.engine.Executor;
 import dprolog.engine.UnificationUF;
 import dprolog.engine.builtIn.BuiltIn;
 import dprolog.util.Either;
+import dprolog.util.Singleton;
 
 import std.range;
 import std.concurrency : Generator, yield;
 
-@property BuiltInPredicate_ BuiltInPredicate() {
-  static BuiltInPredicate_ instance;
-  if (!instance) {
-    instance = new BuiltInPredicate_();
-  }
-  return instance;
-}
+alias BuiltInPredicate = Singleton!BuiltInPredicate_;
 
 private class BuiltInPredicate_ : BuiltIn {
   alias UnificateRecFun = Predicate.UnificateRecFun;

@@ -4,18 +4,13 @@ import dprolog.data.token;
 import dprolog.data.Variant;
 import dprolog.util.Message;
 import dprolog.util.Either;
+import dprolog.util.Singleton;
 import dprolog.engine.UnificationUF;
 
 import std.range;
 import std.algorithm;
 
-@property Evaluator_ Evaluator() {
-  static Evaluator_ instance;
-  if (!instance) {
-    instance = new Evaluator_();
-  }
-  return instance;
-}
+alias Evaluator = Singleton!Evaluator_;
 
 private class Evaluator_ {
 

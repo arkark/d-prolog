@@ -1,17 +1,12 @@
 module dprolog.engine.Messenger;
 
 import dprolog.util.Message;
+import dprolog.util.Singleton;
 
 import std.stdio;
 import std.container : DList;
 
-@property Messenger_ Messenger() {
-  static Messenger_ instance;
-  if (!instance) {
-    instance = new Messenger_();
-  }
-  return instance;
-}
+alias Messenger = Singleton!Messenger_;
 
 private class Messenger_ {
 

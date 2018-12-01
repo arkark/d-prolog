@@ -1,4 +1,4 @@
-module dprolog.core.Tty;
+module dprolog.core.tty;
 
 import dprolog.util.Either;
 import dprolog.util.Message;

@@ -1,19 +1,14 @@
 module dprolog.core.Linenoise;
 
 import dprolog.util.Maybe;
+import dprolog.util.Singleton;
 
 import std.conv;
 import std.string;
 
 import raw = deimos.linenoise;
 
-@property Linenoise_ Linenoise() {
-  static Linenoise_ instance;
-  if (!instance) {
-    instance = new Linenoise_();
-  }
-  return instance;
-}
+alias Linenoise = Singleton!Linenoise_;
 
 private class Linenoise_ {
   private enum defaultMaxHistoryLength = 100;
