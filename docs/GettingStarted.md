@@ -3,13 +3,13 @@ Getting Started
 
 ## Start D-Prolog
 
-```bash
+```sh
 $ dprolog
 ?-
 ```
 
-with an initialization file:
-```bash
+With an initialization file:
+```sh
 $ dprolog -f example/family.pro
 ?-
 ```
@@ -59,7 +59,7 @@ Input a query `?- [user].`, and you will be able to add rules from the console:
 |: hoge(poyo).
 |:
 ```
-Input `ctrl+c` or `ctrl+d` to exit from the adding rules mode.
+Input `ctrl+c` or `ctrl+d` to exit from the mode for adding rules.
 
 ```prolog
 ?- hoge(X).
@@ -88,13 +88,13 @@ X = [a, b, c].
 ## Integers and Arithmetic Operations
 
 ```prolog
-?- X = 10. % a decimal literal
+?- X = 10. % A decimal literal
 X = 10.
 
-?- X = 0b1010. % a binary literal
+?- X = 0b1010. % A binary literal
 X = 10.
 
-?- X = 0xff. % a hexadecimal literal
+?- X = 0xff. % A hexadecimal literal
 X = 255.
 ```
 
@@ -111,18 +111,18 @@ true.
 
 ## Conjunctions and Disjunctions
 
-```bash
+```sh
 $ dprolog -f list.pro
 ```
 
-conjunctions:
+Conjunctions:
 ```prolog
 ?- member(X, [1, 2, 3]), member(X, [3, 4]).
 X = 3;
 false.
 ```
 
-disjunctions:
+Disjunctions:
 ```prolog
 ?- member(X, [1, 2, 3]); member(X, [3, 4]).
 X = 1;
@@ -133,7 +133,7 @@ X = 4;
 false.
 ```
 
-conjuctions and disjunctions:
+Conjuctions and disjunctions:
 ```prolog
 ?- member(X, [1, 2, 3]); member(X, [3, 4]), X > 3.
 X = 1;
@@ -164,3 +164,7 @@ X = 1.
 ?- if(false, X = 1, X = 2).
 X = 2.
 ```
+
+---
+
+If you want to know more about D-Prolog, see [Specification](Specification.md).

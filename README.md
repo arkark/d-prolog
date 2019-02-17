@@ -17,7 +17,7 @@ Download the [latest](https://github.com/ArkArk/d-prolog/releases/) `dprolog` bi
 
 ### Install from source
 
-```bash
+```sh
 $ git clone https://github.com/ArkArk/d-prolog.git
 $ cd d-prolog
 ```
@@ -25,7 +25,7 @@ and build (refer to [Development](#development)).
 
 ## Usage
 
-Look at `docs/`.
+See `docs/`.
 - [Getting Started](docs/GettingStarted.md)
 - [Specification](docs/Specification.md)
 
@@ -33,13 +33,13 @@ Look at `docs/`.
 
 ### Requirements
 
-- [DMD](https://dlang.org/download.html#dmd): a compiler for D programming language
-- [DUB](http://code.dlang.org/): a package manager for D programming language
+- [DMD](https://dlang.org/download.html#dmd): A compiler for D programming language
+- [DUB](http://code.dlang.org/): A package manager for D programming language
 - [Linenoise](https://github.com/antirez/linenoise)
 
 #### Install Linenoise
 
-```bash
+```sh
 $ git clone https://github.com/antirez/linenoise.git
 $ cd linenoise
 $ gcc -c -o linenoise.o linenoise.c
@@ -50,32 +50,32 @@ and move `liblinenoise.a` to `lib/` or somewhere D can find it (e.g. `/usr/lib/`
 
 ### Build
 
-```bash
+```sh
 $ dub build
 ```
 The destination directory of the output binary is `bin`.
 
 ### Run
 
-with no option:
-```bash
+With no option:
+```sh
 $ dub run
 ```
 
-with some options:
-```bash
+With some options:
+```sh
 $ dub run -- -f example/family.pro --verbose
 ```
 
 ### Tests
 
-```bash
+```sh
 $ dub test
 ```
 
 ### Release
 
-```bash
+```sh
 $ git tag <version>
 $ ./release.sh
 ```

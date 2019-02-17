@@ -47,8 +47,8 @@ Specification
 | 400 | yfx | `*`, `div`, `mod` |
 | 200 | fy | `+`, `-` |
 
-- `+`, `-`, `*`, `div`, `mod`: arithmetic functions
-- `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: arithmetic comparison predicates
+- `+`, `-`, `*`, `div`, `mod`: Arithmetic functions
+- `<`, `=<`, `>`, `>=`, `=:=`, `=\=`: Arithmetic comparison predicates
 
 ## Predicates
 
