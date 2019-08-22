@@ -14,7 +14,7 @@ esac
 
 FILE_NAME="dprolog-$VERSION-$OS-$ARCH"
 
-echo -e "\e[36mBuilding $FILE_NAME\e[0m"
+echo -e "\e[36mBuilding bin/$FILE_NAME\e[0m"
 
 mkdir "bin/$FILE_NAME"
 dub build -b release --arch=x86_64 --force

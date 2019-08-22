@@ -82,6 +82,9 @@ $ git tag <version>
 $ ./release.sh
 ```
 
+- Building a binary for release -> `bin/$FILE_NAME`
+- Calculating lines of code -> `docs/LoC.md`
+
 ### Future Work
 
 - Support for Windows
