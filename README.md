@@ -1,10 +1,10 @@
 D-Prolog
 ===
 
-[![Build Status](https://travis-ci.com/ArkArk/d-prolog.svg?branch=master)](https://travis-ci.com/ArkArk/d-prolog)
-[![codecov.io](https://codecov.io/gh/ArkArk/d-prolog/coverage.svg?branch=master)](https://codecov.io/gh/ArkArk/d-prolog)
-[![license: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/ArkArk/d-prolog/blob/master/LICENSE)
-[![Lines of code](https://tokei.rs/b1/github/ArkArk/d-prolog?category=code)](docs/LoC.md)
+[![](https://github.com/arkark/d-prolog/workflows/D/badge.svg)](https://github.com/arkark/d-prolog/actions)
+[![codecov.io](https://codecov.io/gh/arkark/d-prolog/coverage.svg?branch=master)](https://codecov.io/gh/arkark/d-prolog)
+[![license: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/arkark/d-prolog/blob/master/LICENSE)
+[![Lines of code](https://tokei.rs/b1/github/arkark/d-prolog?category=code)](docs/LoC.md)
 [![GitHub version](https://badge.fury.io/gh/arkark%2Fd-prolog.svg)](https://badge.fury.io/gh/arkark%2Fd-prolog)
 
 A Prolog implementation in D language.
@@ -15,12 +15,12 @@ A Prolog implementation in D language.
 
 ### Download binary
 
-Download the [latest](https://github.com/ArkArk/d-prolog/releases/) `dprolog` binary.
+Download the [latest](https://github.com/arkark/d-prolog/releases/) `dprolog` binary.
 
 ### Install from source
 
 ```sh
-$ git clone https://github.com/ArkArk/d-prolog.git
+$ git clone https://github.com/arkark/d-prolog.git
 $ cd d-prolog
 ```
 and build (refer to [Development](#development)).
@@ -92,4 +92,4 @@ $ ./release.sh
 
 ## License
 
-[MIT](https://github.com/ArkArk/d-prolog/blob/master/LICENSE)
+[MIT](https://github.com/arkark/d-prolog/blob/master/LICENSE)
