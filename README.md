@@ -1,7 +1,7 @@
 D-Prolog
 ===
 
-[![Build Status](https://travis-ci.com/arkark/d-prolog.svg?branch=master)](https://travis-ci.com/arkark/d-prolog)
+[![](https://github.com/arkark/d-prolog/workflows/D/badge.svg)](https://github.com/arkark/d-prolog/actions)
 [![codecov.io](https://codecov.io/gh/arkark/d-prolog/coverage.svg?branch=master)](https://codecov.io/gh/arkark/d-prolog)
 [![license: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/arkark/d-prolog/blob/master/LICENSE)
 [![Lines of code](https://tokei.rs/b1/github/arkark/d-prolog?category=code)](docs/LoC.md)
