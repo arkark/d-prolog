@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Install linenoise
         run: |-
           git clone https://github.com/antirez/linenoise.git \
@@ -36,6 +38,8 @@ jobs:
       - test
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Install linenoise
         run: |-
           git clone https://github.com/antirez/linenoise.git \
