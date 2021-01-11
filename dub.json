@@ -2,7 +2,7 @@
   "name": "d-prolog",
   "authors": ["Ark"],
   "description": "A Prolog implementation in Dlang.",
-  "homepage": "https://github.com/ArkArk/d-prolog",
+  "homepage": "https://github.com/arkark/d-prolog",
   "targetName": "dprolog",
   "targetPath": "bin",
   "dependencies": {
