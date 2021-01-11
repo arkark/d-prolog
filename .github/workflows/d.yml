@@ -23,7 +23,8 @@ jobs:
             && cd linenoise \
             && gcc -c -o linenoise.o linenoise.c \
             && ar rcs liblinenoise.a linenoise.o \
-            && cd -
+            && cd - \
+            && mv linenoise/liblinenoise.a lib
       - name: Install D compiler
         uses: dlang-community/setup-dlang@v1
         with:
@@ -46,7 +47,8 @@ jobs:
             && cd linenoise \
             && gcc -c -o linenoise.o linenoise.c \
             && ar rcs liblinenoise.a linenoise.o \
-            && cd -
+            && cd - \
+            && mv linenoise/liblinenoise.a lib
       - name: Install D compiler
         uses: dlang-community/setup-dlang@v1
         with:
